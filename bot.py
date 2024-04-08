@@ -159,7 +159,7 @@ async def yomiage_length_limit(interact: discord.Interaction, length: int):
     try:
         result = set_db_setting(db_data[0], db_data[1], interact.guild_id, "length_limit", length)
         if result is None:
-            await interact.response.send_message(f"☑読み上げ制限を「{length}文字」に設定したのだ！")
+            await interact.response.send_message(f"☑読み上げ制限を**「{length}文字」**に設定したのだ！")
             return
         await interact.response.send_message(f"設定に失敗したのだ...")
 
@@ -175,7 +175,7 @@ async def yomiage_channel(interact: discord.Interaction, channel: discord.TextCh
     try:
         result = set_db_setting(db_data[0], db_data[1], interact.guild_id, "speak_channel", channel.id)
         if result is None:
-            await interact.response.send_message(f"☑「{channel}」を読み上げるのだ！")
+            await interact.response.send_message(f"☑**「{channel}」**を読み上げるのだ！")
             return
         
         await interact.response.send_message(f"設定に失敗したのだ...")
@@ -195,7 +195,7 @@ async def yomiage_speed(interact: discord.Interaction, speed: float):
 
         if result is None:
             data = get_db_setting(db_data[0], interact.guild_id, read_type)
-            await interact.response.send_message(f"設定を保存したのだ！ {read_type}: {data}")
+            await interact.response.send_message(f"読み上げ速度を**「{data}」**に変更したのだ！")
             return
         
         await interact.response.send_message("エラーが発生したのだ...")
@@ -332,6 +332,10 @@ VC_OUTPUT = "./yomiage_data/"
 VC_HOST = "127.0.0.1"
 VC_PORT = 50021
 FS = 24000
+
+##ディレクトリがない場合は作成する
+if (not os.path.isdir(VC_OUTPUT)):
+    os.mkdir(VC_OUTPUT)
 
 async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):    
     try:
