@@ -16,6 +16,7 @@ import re
 from discord.player import FFmpegOpusAudio
 from collections import deque, defaultdict
 import threading
+import time
 from dotenv import load_dotenv
 from database import db_load, get_db_setting, set_db_setting
 
@@ -176,6 +177,7 @@ async def yomiage_channel(interact: discord.Interaction, channel: discord.TextCh
         if result is None:
             await interact.response.send_message(f"☑「{channel}」を読み上げるのだ！")
             return
+        
         await interact.response.send_message(f"設定に失敗したのだ...")
 
     except Exception as e:
@@ -250,17 +252,23 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
             ##参加時に読み上げる
             if after.channel is not None:
                 if (after.channel.id == bot_client.channel.id):
-                    await yomiage_filter(f"{member.name}が参加したのだ。", member.guild, 3)
+                    if (member.nick is not None):##ギルド内のニックネームを読み上げる
+                        await yomiage_filter(f"{member.nick}が参加したのだ。", member.guild, 3)
+                    else:
+                        await yomiage_filter(f"{member.name}が参加したのだ。", member.guild, 3)
                 
             ##退席時に読み上げる
             if before.channel is not None:
                 if (before.channel.id == bot_client.channel.id):
-                    await yomiage_filter(f"{member.name}が退席したのだ。", member.guild, 3)
-
+                    if member.nick is not None:
+                        await yomiage_filter(f"{member.nick}が退席したのだ。", member.guild, 3)
+                    else:
+                        await yomiage_filter(f"{member.name}が退席したのだ。", member.guild, 3)
             
 
 @client.event ##読み上げ用のイベント
 async def on_message(message: discord.Message):
+    print(message)
     if (message.guild.voice_client is None): ##ギルド内に接続していない場合は無視
         return
     
@@ -293,7 +301,11 @@ async def yomiage_filter(content, guild: discord.Guild, spkID: int):
         fixed_content = content.content
         for mention in content.mentions:
             mention_id = mention.id
-            mention_user = mention.name
+            if (mention.nick is not None):
+                mention_user = mention.nick
+            else:
+                mention_user = mention.name ##メンションされたユーザーがニックネームを使っている場合、ニックネームを利用
+
             fixed_content = fixed_content.replace(f'<@{mention_id}>', mention_user)
 
     elif isinstance(content, str):
@@ -345,9 +357,10 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):
             data = json.dumps(query)
         )
         voice = synthesis.content
-
+        
         ###作成時間を記録するため、timeを利用する
-        voice_file = f"{VC_OUTPUT}{guild.id}.wav"
+        wav_time = time.time()
+        voice_file = f"{VC_OUTPUT}{guild.id}-{wav_time}.wav"
 
         with wave.open(voice_file, "w") as wf:
             wf.setnchannels(1)  # チャンネル数の設定 (1:mono, 2:stereo)
@@ -355,12 +368,19 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):
             wf.setframerate(FS) 
             wf.writeframes(voice)  # ステレオデータを書きこむ
 
+        with wave.open(voice_file,  'rb') as wr:\
+            # 情報取得
+            fr = wr.getframerate()
+            fn = wr.getnframes()
+            length = fn / fr
+
+        file_list = [voice_file, length]
+
         queue = yomiage_serv_list[guild.id]
-        queue.append(await discord.FFmpegOpusAudio.from_probe(voice_file))
+        queue.append(file_list)
     
         if not guild.voice_client.is_playing():
-            task = threading.Thread(target=send_voice, args=(queue, guild.voice_client))
-            task.start()
+            send_voice(queue, guild.voice_client)
         return
             
     except Exception as e:
@@ -370,11 +390,25 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):
         await sendException(e, filename, line_no)
 
 def send_voice(queue, voice_client):
-    
     if not queue or voice_client.is_playing():
         return
+    
     source = queue.popleft()
-    voice_client.play(source, after=lambda e:send_voice(queue, voice_client))
+    voice_client.play(FFmpegOpusAudio(source[0]), after=lambda e:send_voice(queue, voice_client))
+
+    ##再生スタートが完了したら時間差でファイルを削除する。
+    task = threading.Thread(target=delete_file_latency, args=(source[0], source[1]))
+    task.start()
+
+def delete_file_latency(file_name, latency):
+    try:
+        time.sleep(latency+2.0)
+        os.remove(file_name)
+        
+    except Exception as e:
+        exception_type, exception_object, exception_traceback = sys.exc_info()
+        line_no = exception_traceback.tb_lineno
+        logging.exception(f"ファイル削除エラー： {line_no}行目、 [{type(e)}] {e}")
 
 
 @tree.command(name="vc-stop", description="ボイスチャンネルから退出するのだ")
