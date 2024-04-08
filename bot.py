@@ -268,7 +268,6 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
 
 @client.event ##読み上げ用のイベント
 async def on_message(message: discord.Message):
-    print(message)
     if (message.guild.voice_client is None): ##ギルド内に接続していない場合は無視
         return
     
@@ -337,7 +336,6 @@ FS = 24000
 async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):    
     try:
         speed = get_db_setting(db_data[0], guild.id, "speak_speed")
-        print(f"{content}, {speed}")
         # 音声化する文言と話者を指定(3で標準ずんだもんになる)
         params = (
             ('text', content),
