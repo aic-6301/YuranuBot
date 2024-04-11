@@ -597,7 +597,7 @@ async def performance(client: discord.Client):
                 ram_used = ram_info.used/1024/1024/1024
 
                 await client.change_presence(activity=discord.Game(f"RAM: {ram_used:.2f}/{ram_total:.2f}GB"))
-                await asyncio.sleep(5)
+                await asyncio.sleep(6)
 
             hard_id = 0
             sensor = computer.Hardware[hard_id].Sensors
@@ -616,18 +616,19 @@ async def performance(client: discord.Client):
                             cpu_Load = format(sensor[a].Value, ".1f")
 
                 await client.change_presence(activity=discord.Game(f"CPU: {cpu_Load}% {cpu_Temp}\u00B0C {cpu_Power}W"))
-                await asyncio.sleep(5)
-
-            await client.change_presence(activity=discord.Game(f"Discord.py {discord.__version__}"))
-            await asyncio.sleep(5)
-
-            await client.change_presence(activity=discord.Game(f"Ping {(client.latency*1000):.1f}ms"))
+                await asyncio.sleep(6)
 
             await client.change_presence(activity=discord.Game(f"Python {platform.python_version()}"))
-            await asyncio.sleep(5)
+            await asyncio.sleep(6)
+
+            await client.change_presence(activity=discord.Game(f"Discord.py {discord.__version__}"))
+            await asyncio.sleep(6)
+
+            await client.change_presence(activity=discord.Game(f"Ping {(client.latency*1000):.1f}ms"))
+            await asyncio.sleep(6)
 
             await client.change_presence(activity=discord.Game(f"ずんだもんは健康です！"))
-            await asyncio.sleep(5)
+            await asyncio.sleep(6)
 
     except Exception as e:
         await client.change_presence(activity=discord.Game(f"RPCエラー: 要報告"))
