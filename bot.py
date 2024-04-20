@@ -362,19 +362,58 @@ async def on_message(message: discord.Message):
 
 yomiage_serv_list = defaultdict(deque)
 
+def search_content(content: discord.message.Message):
+    length = len(content.attachments)
+    
+    if length >= 3: ##ファイル数が３つ以上なら
+        _len = 2
+        file_count = True
+    else:
+        _len = length
+        file_count = False
+
+    send_content = ""
+    for i in range(_len):
+        attachment = content.attachments[i]
+
+        if attachment.content_type.startswith("image"):
+            fixed_content = f"画像ファイル"
+        if attachment.content_type.startswith("video"):
+            fixed_content = f"動画ファイル"
+        if attachment.content_type.startswith("audio"):
+            fixed_content = f"音声ファイル"
+        if attachment.content_type.startswith("text"):
+            fixed_content = f"テキストファイル"
+        if attachment.content_type.startswith("application"):
+            fixed_content = f"その他ファイル"
+        send_content += fixed_content
+
+        if i != _len-1:#と　もつける
+            send_content += "と"
+    #ファイルが多すぎてもこれでおっけ！
+    if file_count:
+        send_content += f"、その他{length-2}ファイル" 
+    #語尾もちゃんとつける！
+    send_content += "が送信されました"
+
+    return send_content
+
 ##読み上げのキューに入れる前に特定ワードを変換します
 async def yomiage_filter(content, guild: discord.Guild, spkID: int):
-    fix_words = [r'(https?://\S+)', r'<:[a-zA-Z0-9_]+:[0-9]+>']
-    fix_end_word = ["URL", "えもじ"]
-    
-    ##メンションされたユーザーのIDを名前に変換
+    fix_words = [r'(https?://\S+)', r'<:[a-zA-Z0-9_]+:[0-9]+>', f"(ﾟ∀ﾟ)"]
+    fix_end_word = ["URL", "えもじ", ""]
+      
     if isinstance(content, discord.message.Message):
         fixed_content = content.content
         for mention in content.mentions:
-            mention_id = mention.id
-            mention_user = mention.display_name
+            ##メンションされたユーザーのIDを名前に変換  
+            fixed_content = fixed_content.replace(f'<@{mention.id}>', mention.display_name)
+        
+        ##コンテンツ関連の文章を生成する
+        content = search_content(content)
 
-            fixed_content = fixed_content.replace(f'<@{mention_id}>', mention_user)
+        ##コンテンツ  +　文章
+        fixed_content = content + fixed_content
 
     elif isinstance(content, str):
         fixed_content = content
@@ -391,7 +430,7 @@ async def yomiage_filter(content, guild: discord.Guild, spkID: int):
         speak_content = fixed_content
 
     if (speak_content != fixed_content):
-        speak_content = speak_content + "、省略"
+        speak_content = speak_content + "、省略なのだ"
 
     await queue_yomiage(speak_content, guild, spkID)
 
