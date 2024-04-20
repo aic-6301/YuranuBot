@@ -365,38 +365,39 @@ yomiage_serv_list = defaultdict(deque)
 def search_content(content: discord.message.Message):
     length = len(content.attachments)
     
-    if length >= 3: ##ファイル数が３つ以上なら
-        _len = 2
-        file_count = True
-    else:
-        _len = length
-        file_count = False
+    if length != 0:
+        if length >= 3: ##ファイル数が３つ以上なら
+            _len = 2
+            file_count = True
+        else:
+            _len = length
+            file_count = False
 
-    send_content = ""
-    for i in range(_len):
-        attachment = content.attachments[i]
+        send_content = ""
+        for i in range(_len):
+            attachment = content.attachments[i]
 
-        if attachment.content_type.startswith("image"):
-            fixed_content = f"画像ファイル"
-        if attachment.content_type.startswith("video"):
-            fixed_content = f"動画ファイル"
-        if attachment.content_type.startswith("audio"):
-            fixed_content = f"音声ファイル"
-        if attachment.content_type.startswith("text"):
-            fixed_content = f"テキストファイル"
-        if attachment.content_type.startswith("application"):
-            fixed_content = f"その他ファイル"
-        send_content += fixed_content
+            if attachment.content_type.startswith("image"):
+                fixed_content = f"画像ファイル"
+            if attachment.content_type.startswith("video"):
+                fixed_content = f"動画ファイル"
+            if attachment.content_type.startswith("audio"):
+                fixed_content = f"音声ファイル"
+            if attachment.content_type.startswith("text"):
+                fixed_content = f"テキストファイル"
+            if attachment.content_type.startswith("application"):
+                fixed_content = f"その他ファイル"
+            send_content += fixed_content
 
-        if i != _len-1:#と　もつける
-            send_content += "と"
-    #ファイルが多すぎてもこれでおっけ！
-    if file_count:
-        send_content += f"、その他{length-2}ファイル" 
-    #語尾もちゃんとつける！
-    send_content += "が送信されました"
+            if i != _len-1:#と　もつける
+                send_content += "と"
+        #ファイルが多すぎてもこれでおっけ！
+        if file_count:
+            send_content += f"、その他{length-2}ファイル" 
+        #語尾もちゃんとつける！
+        send_content += "が送信されました"
 
-    return send_content
+        return send_content
 
 ##読み上げのキューに入れる前に特定ワードを変換します
 async def yomiage_filter(content, guild: discord.Guild, spkID: int):
