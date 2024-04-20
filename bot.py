@@ -119,7 +119,6 @@ async def vc_command(interact: discord.Interaction):
         else:
             length_limit = f"{length_limit}文字"
     
-
         embed = discord.Embed(
             title="接続したのだ！",
             description="ボイスチャンネルに参加しました！",
@@ -395,7 +394,7 @@ def search_content(content: discord.message.Message):
         if file_count:
             send_content += f"、その他{length-2}ファイル" 
         #語尾もちゃんとつける！
-        send_content += "が送信されました"
+        send_content += "が送信されたのだ"
 
         return send_content
 
@@ -414,7 +413,8 @@ async def yomiage_filter(content, guild: discord.Guild, spkID: int):
         content = search_content(content)
 
         ##コンテンツ  +　文章
-        fixed_content = content + fixed_content
+        if content != None:
+            fixed_content = content + fixed_content
 
     elif isinstance(content, str):
         fixed_content = content
