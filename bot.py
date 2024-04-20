@@ -367,10 +367,7 @@ async def yomiage_filter(content, guild: discord.Guild, spkID: int):
         fixed_content = content.content
         for mention in content.mentions:
             mention_id = mention.id
-            if (mention.nick is not None):
-                mention_user = mention.nick
-            else:
-                mention_user = mention.name ##メンションされたユーザーがニックネームを使っている場合、ニックネームを利用
+            mention_user = mention.display_name
 
             fixed_content = fixed_content.replace(f'<@{mention_id}>', mention_user)
 
@@ -565,14 +562,10 @@ async def pc_status(interact: discord.Interaction):
         
         cpu_freq = psutil.cpu_freq().current / 1000
         cpu_cores = psutil.cpu_count()
-
         ram_info = psutil.virtual_memory()
-        
         py_version = platform.python_version()
         py_buildDate = platform.python_build()[1]
-
         ping = client.latency * 1000
-
 
         if (os_info.system == "Windows"): ### Windowsの場合、表記を変更する
             win32_edition = platform.win32_edition()
@@ -583,8 +576,6 @@ async def pc_status(interact: discord.Interaction):
             
             os_name = f"{os_info.system} {win32_ver} {win32_edition}"
 
-        
-        
         embed = discord.Embed( ### Embedを定義する
                         title="よしっ、調査完了っと！これが結果なのだ！",# タイトル
                         color=0x00ff00, # フレーム色指定(今回は緑)
