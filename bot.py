@@ -144,6 +144,11 @@ async def vc_command(interact: discord.Interaction):
             value="**[VOICEVOX、音声キャラクターの利用規約](<https://voicevox.hiroshiba.jp/>)を閲覧のうえ、正しく使うのだ！**",
             inline=False
         )
+        embed.add_field(
+            name="読み上げの機能性向上のために、ほかの方にもご協力してもらっています！",
+            value="自然係さん、ぬーんさんありがとうなのだ",
+            inline=False
+        )
 
         embed.set_footer(text="YuranuBot! | Made by yurq_", icon_url=client.user.avatar.url)
 
