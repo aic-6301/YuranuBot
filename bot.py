@@ -191,6 +191,25 @@ async def yomiage_channel(interact: discord.Interaction, channel: discord.TextCh
         line_no = exception_traceback.tb_lineno
         await sendException(e, filename, line_no)
 
+@tree.command(name="yomiage-speed", description="読み上げの速度を変更するのだ")
+async def yomiage_speed(interact: discord.Interaction, speed: float):
+    try:
+        read_type = "speak_speed"
+        result = set_db_setting(db_data[0], db_data[1], interact.guild.id, read_type, speed)
+
+        if result is None:
+            data = get_db_setting(db_data[0], interact.guild_id, read_type)
+            await interact.response.send_message(f"読み上げ速度を**「{data}」**に変更したのだ！**")
+            return
+        
+        await interact.response.send_message("エラーが発生したのだ...")
+
+    except Exception as e:
+        exception_type, exception_object, exception_traceback = sys.exc_info()
+        filename = exception_traceback.tb_frame.f_code.co_filename
+        line_no = exception_traceback.tb_lineno
+        await sendException(e, filename, line_no)
+
 @tree.command(name="yomiage-join-message", description="参加時の読み上げ内容を変更するのだ<<必ず最初にユーザー名が来るのだ>>")
 async def change_vc_join_message(interact: discord.Interaction, text: str):
     try:
@@ -241,24 +260,6 @@ async def change_vc_exit_message(interact: discord.Interaction, text: str):
         line_no = exception_traceback.tb_lineno
         await sendException(e, filename, line_no)
 
-@tree.command(name="yomiage-speed", description="読み上げの速度を変更するのだ")
-async def yomiage_speed(interact: discord.Interaction, speed: float):
-    try:
-        read_type = "speak_speed"
-        result = set_db_setting(db_data[0], db_data[1], interact.guild.id, read_type, speed)
-
-        if result is None:
-            data = get_db_setting(db_data[0], interact.guild_id, read_type)
-            await interact.response.send_message(f"読み上げ速度を**「{data}」**に変更したのだ！**")
-            return
-        
-        await interact.response.send_message("エラーが発生したのだ...")
-
-    except Exception as e:
-        exception_type, exception_object, exception_traceback = sys.exc_info()
-        filename = exception_traceback.tb_frame.f_code.co_filename
-        line_no = exception_traceback.tb_lineno
-        await sendException(e, filename, line_no)
 
 @tree.command(name="yomiage-auto-connect", description="設定したVCに自動接続するのだ(現在入っているVCが対象なのだ)")
 async def auto_connect(interact: discord.Interaction, bool: bool):
