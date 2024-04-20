@@ -309,20 +309,14 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
                 if (after.channel.id == bot_client.channel.id):
                     mess = get_db_setting(db_data[0], after.channel.guild.id, "vc_join_message")#==が参加したのだ
                     if mess is not None:
-                        if (member.nick is not None):##ギルド内のニックネームを読み上げる
-                            await yomiage_filter(f"{member.nick}{mess}", member.guild, 3)
-                        else:
-                            await yomiage_filter(f"{member.name}{mess}", member.guild, 3)
+                        await yomiage_filter(f"{member.display_name}{mess}", member.guild, 3)
                 
             ##退席時に読み上げる
             if before.channel is not None:
                 if (before.channel.id == bot_client.channel.id):
-                    if member.nick is not None:
-                        mess = get_db_setting(db_data[0], before.channel.guild.id, "vc_exit_message")#==が退席したのだ
-                        if mess is not None:
-                            await yomiage_filter(f"{member.nick}{mess}", member.guild, 3)
-                        else:
-                            await yomiage_filter(f"{member.name}{mess}", member.guild, 3)
+                    mess = get_db_setting(db_data[0], before.channel.guild.id, "vc_exit_message")#==が退席したのだ
+                    if mess is not None:
+                        await yomiage_filter(f"{member.display_name}{mess}", member.guild, 3)
 
     #カメラ配信の開始・終了を読み上げる
     if before.self_video != after.self_video:
