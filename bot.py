@@ -1,22 +1,24 @@
 import discord
-from discord import app_commands
-from discord import VoiceChannel
 import psutil
 import platform
 import pyautogui
 import os
 import asyncio
 import logging
-from random import uniform
 import sys
 import requests
 import json
 import wave
 import re
-from discord.player import FFmpegOpusAudio
-from collections import deque, defaultdict
 import threading
 import time
+import scipy
+
+from discord import app_commands
+from discord.player import FFmpegOpusAudio
+from collections import deque, defaultdict
+from random import uniform
+from scipy.io import wavfile
 from dotenv import load_dotenv
 from database import db_load, get_db_setting, set_db_setting
 
@@ -120,7 +122,7 @@ async def vc_command(interact: discord.Interaction):
 
         embed = discord.Embed(
             title="接続したのだ！",
-            description="ずんだもんが楽しそうに読み上げてくれるって！",
+            description="ボイスチャンネルに参加しました！",
             color=discord.Color.green()
         )
         embed.add_field(
@@ -146,7 +148,10 @@ async def vc_command(interact: discord.Interaction):
         embed.set_footer(text="YuranuBot! | Made by yurq_", icon_url=client.user.avatar.url)
 
         await interact.response.send_message(embed=embed)
-        await yomiage_filter("接続したのだ！", interact.guild, 1)
+
+        mess = get_db_setting(db_data[0], interact.guild_id, "vc_connect_message")
+        if mess is not None:
+            await yomiage_filter(mess, interact.guild, 1)
 
     except Exception as e:
         exception_type, exception_object, exception_traceback = sys.exc_info()
@@ -186,16 +191,65 @@ async def yomiage_channel(interact: discord.Interaction, channel: discord.TextCh
         line_no = exception_traceback.tb_lineno
         await sendException(e, filename, line_no)
 
+@tree.command(name="yomiage-join-message", description="参加時の読み上げ内容を変更するのだ<<必ず最初にユーザー名が来るのだ>>")
+async def change_vc_join_message(interact: discord.Interaction, text: str):
+    try:
+        res = set_db_setting(db_data[0], db_data[1], interact.guild_id, "vc_join_message", text)
+        if res is None:
+            await interact.response.send_message("**参加時の読み上げ内容を変更したのだ！**")
+            return
+        
+        await interact.response.send_message("設定に失敗したのだ...")
+
+    except Exception as e:
+        exception_type, exception_object, exception_traceback = sys.exc_info()
+        filename = exception_traceback.tb_frame.f_code.co_filename
+        line_no = exception_traceback.tb_lineno
+        await sendException(e, filename, line_no)
+        
+@tree.command(name="yomiage-exit-message", description="退出時の読み上げ内容を変更するのだ<<必ず最初にユーザー名が来るのだ>>")
+async def change_vc_exit_message(interact: discord.Interaction, text: str):
+    try:
+        res = set_db_setting(db_data[0], db_data[1], interact.guild.id, "vc_exit_message", text)
+        if res is None:
+            await interact.response.send_message("**退出時の読み上げ内容を変更したのだ！**")
+            return
+        
+        await interact.response.send_message("設定に失敗したのだ...")
+
+    except Exception as e:
+        exception_type, exception_object, exception_traceback = sys.exc_info()
+        filename = exception_traceback.tb_frame.f_code.co_filename
+        line_no = exception_traceback.tb_lineno
+        await sendException(e, filename, line_no)
+
+@tree.command(name="yomiage-connect-message", description="読み上げ接続時の読み上げ内容を変更するのだ")
+async def change_vc_exit_message(interact: discord.Interaction, text: str):
+    try:
+        read_type = "vc_connect_message"
+        res = set_db_setting(db_data[0], db_data[1], interact.guild.id, read_type, text)
+        if res is None:
+            await interact.response.send_message("**読み上げ接続時の読み上げ内容を変更したのだ！**")
+            return
+        
+        await interact.response.send_message("設定に失敗したのだ...")  
+        logging.warning(res)  
+
+    except Exception as e:
+        exception_type, exception_object, exception_traceback = sys.exc_info()
+        filename = exception_traceback.tb_frame.f_code.co_filename
+        line_no = exception_traceback.tb_lineno
+        await sendException(e, filename, line_no)
 
 @tree.command(name="yomiage-speed", description="読み上げの速度を変更するのだ")
 async def yomiage_speed(interact: discord.Interaction, speed: float):
     try:
         read_type = "speak_speed"
-        result = set_db_setting(db_data[0], db_data[1], interact.guild_id, read_type, speed)
+        result = set_db_setting(db_data[0], db_data[1], interact.guild.id, read_type, speed)
 
         if result is None:
             data = get_db_setting(db_data[0], interact.guild_id, read_type)
-            await interact.response.send_message(f"読み上げ速度を**「{data}」**に変更したのだ！")
+            await interact.response.send_message(f"読み上げ速度を**「{data}」**に変更したのだ！**")
             return
         
         await interact.response.send_message("エラーが発生したのだ...")
@@ -252,19 +306,37 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
             ##参加時に読み上げる
             if after.channel is not None:
                 if (after.channel.id == bot_client.channel.id):
-                    if (member.nick is not None):##ギルド内のニックネームを読み上げる
-                        await yomiage_filter(f"{member.nick}が参加したのだ。", member.guild, 3)
-                    else:
-                        await yomiage_filter(f"{member.name}が参加したのだ。", member.guild, 3)
+                    mess = get_db_setting(db_data[0], after.channel.guild.id, "vc_join_message")#==が参加したのだ
+                    if mess is not None:
+                        if (member.nick is not None):##ギルド内のニックネームを読み上げる
+                            await yomiage_filter(f"{member.nick}{mess}", member.guild, 3)
+                        else:
+                            await yomiage_filter(f"{member.name}{mess}", member.guild, 3)
                 
             ##退席時に読み上げる
             if before.channel is not None:
                 if (before.channel.id == bot_client.channel.id):
                     if member.nick is not None:
-                        await yomiage_filter(f"{member.nick}が退席したのだ。", member.guild, 3)
-                    else:
-                        await yomiage_filter(f"{member.name}が退席したのだ。", member.guild, 3)
-            
+                        mess = get_db_setting(db_data[0], before.channel.guild.id, "vc_exit_message")#==が退席したのだ
+                        if mess is not None:
+                            await yomiage_filter(f"{member.nick}{mess}", member.guild, 3)
+                        else:
+                            await yomiage_filter(f"{member.name}{mess}", member.guild, 3)
+
+    #カメラ配信の開始・終了を読み上げる
+    if before.self_video != after.self_video:
+        if after.self_video:
+            await yomiage_filter(f"{member.display_name}がカメラ配信を開始したのだ。", member.guild, 3)
+        else:
+            await yomiage_filter(f"{member.display_name}がカメラ配信を終了したのだ。", member.guild, 3)
+    
+    #画面共有の開始・終了を読み上げる
+    if before.self_stream != after.self_stream:
+        if after.self_stream:
+            await yomiage_filter(f"{member.display_name}が画面共有を開始したのだ。", member.guild, 3)
+        else:
+            await yomiage_filter(f"{member.display_name}が画面共有を終了したのだ。", member.guild, 3)
+                
 
 @client.event ##読み上げ用のイベント
 async def on_message(message: discord.Message):
@@ -322,7 +394,7 @@ async def yomiage_filter(content, guild: discord.Guild, spkID: int):
         speak_content = fixed_content
 
     if (speak_content != fixed_content):
-        speak_content = speak_content + "、省略なのだ"
+        speak_content = speak_content + "、省略"
 
     await queue_yomiage(speak_content, guild, spkID)
 
@@ -600,12 +672,10 @@ async def performance(client: discord.Client):
                 await asyncio.sleep(6)
 
             hard_id = 0
-            sensor = computer.Hardware[hard_id].Sensors
+            sensor = computer.Hardware[hard_id].Sensors                
+            cpu_name = computer.Hardware[0].Name
             for i in range(3): ###CPU使用率を表示する(2回更新)
                 computer.Hardware[hard_id].Update()
-                
-                cpu_name = computer.Hardware[0].Name
-
                 if ("AMD" in cpu_name): ### LibreHardwareMonitorを利用して取得
                     for a in range(0, len(computer.Hardware[hard_id].Sensors)):
                         if ("Temperature" in str(sensor[a].SensorType) and "Core" in str(sensor[a].Name)):
@@ -619,16 +689,16 @@ async def performance(client: discord.Client):
                 await asyncio.sleep(6)
 
             await client.change_presence(activity=discord.Game(f"Python {platform.python_version()}"))
-            await asyncio.sleep(6)
+            await asyncio.sleep(10)
 
             await client.change_presence(activity=discord.Game(f"Discord.py {discord.__version__}"))
-            await asyncio.sleep(6)
+            await asyncio.sleep(10)
 
             await client.change_presence(activity=discord.Game(f"Ping {(client.latency*1000):.1f}ms"))
-            await asyncio.sleep(6)
+            await asyncio.sleep(10)
 
             await client.change_presence(activity=discord.Game(f"ずんだもんは健康です！"))
-            await asyncio.sleep(6)
+            await asyncio.sleep(10)
 
     except Exception as e:
         await client.change_presence(activity=discord.Game(f"RPCエラー: 要報告"))
