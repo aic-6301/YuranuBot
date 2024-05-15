@@ -29,8 +29,8 @@ if platform.uname().system == "Windows":
         logging.error("管理者権限で実行されていません！")
 
 ###データベースの読み込み
-db_data = db_load("database.db")
-db_init()
+db_load("database.db")
+db_data = db_init()
 
 dic_data = dictionary_load("dictionary.db")
 
