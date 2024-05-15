@@ -1,6 +1,7 @@
 import discord
 import os
 import logging
+import platform
 import sys
 
 from discord.ext import commands
@@ -18,14 +19,14 @@ logging.basicConfig(level=logging.DEBUG)
 ROOT_DIR = os.path.dirname(__file__)
 SCRSHOT = os.path.join(ROOT_DIR, "scrshot", "scr.png")
 
-### 管理者権限を確認する。なければ終了する。
-# import ctypes
-# is_admin = ctypes.windll.shell32.IsUserAnAdmin()
-# if (is_admin):
-#     logging.debug("管理者権限を確認しました")
-# else:
-#     logging.error("管理者権限で実行されていません！")
-#     sys.exit()
+# 管理者権限を確認する。なければ終了する。
+if platform.uname().system == "Windows":
+    import ctypes
+    is_admin = ctypes.windll.shell32.IsUserAnAdmin()
+    if (is_admin):
+        logging.debug("管理者権限を確認しました")
+    else:
+        logging.error("管理者権限で実行されていません！")
 
 ###データベースの読み込み
 db_data = db_load("database.db")
@@ -136,7 +137,7 @@ async def vc_command(interact: discord.Interaction):
                 title="読み上げるチャンネルがわからないのだ...",
                 description="読み上げを開始するには読み上げるチャンネルを設定してください！"
             )
-            
+
             await interact.channel.send(embed=embed)
 
         ##参加時の読み上げ

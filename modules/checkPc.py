@@ -6,66 +6,84 @@ import sys
 from modules.exception import sendException
 from discord.ext import commands
 
-### LibreHardwareMonitorのライブラリをロード
-import clr
-clr.AddReference(r'dll\LibreHardwareMonitorLib') 
+##Windowsの場合の処理
+if platform.uname().system == "Windows":
+    ### LibreHardwareMonitorのライブラリをロード
+    import clr
+    clr.AddReference(r'dll\LibreHardwareMonitorLib') 
 
-from LibreHardwareMonitor.Hardware import Computer
-logging.debug("LibreHardWareMonitorLib -> 読み込み完了")
+    from LibreHardwareMonitor.Hardware import Computer
+    logging.debug("LibreHardWareMonitorLib -> 読み込み完了")
 
-### 表示するデータを選択してオープン
-computer = Computer()
+    ### 表示するデータを選択してオープン
+    computer = Computer()
 
-###LibreHardwareMonitorの設定を格納する
-computer.IsCpuEnabled = True
-# computer.IsGpuEnabled = True
-# computer.IsMemoryEnabled = True
-# computer.IsMotherboardEnabled = True
-# computer.IsControllerEnabled = True
-# computer.IsNetworkEnabled = True
-# computer.IsStorageEnabled = True
+    ###LibreHardwareMonitorの設定を格納する
+    computer.IsCpuEnabled = True
+    # computer.IsGpuEnabled = True
+    # computer.IsMemoryEnabled = True
+    # computer.IsMotherboardEnabled = True
+    # computer.IsControllerEnabled = True
+    # computer.IsNetworkEnabled = True
+    # computer.IsStorageEnabled = True
 
-computer.Open()
+    computer.Open()
 
 async def pc_status(interact: discord.Interaction, bot: commands.Bot):
     try:
         os_info = platform.uname()
         os_bit = platform.architecture()[1]
 
-        cpu_name = computer.Hardware[0].Name
-
-        hard_id = 0
-        cpu_Temp = "Not Available"
-        cpu_Power = "Not Available"
-        cpu_Load = "Not Available"
-
-        sensor = computer.Hardware[hard_id].Sensors
-        computer.Hardware[hard_id].Update()
-
-        if ("AMD" in cpu_name): ### LibreHardwareMonitorを利用して取得
-            for a in range(0, len(computer.Hardware[hard_id].Sensors)):
-                if ("Temperature" in str(sensor[a].SensorType) and "Core" in str(sensor[a].Name)):
-                    cpu_Temp = format(sensor[a].Value, ".1f")
-                elif("Power" in str(sensor[a].SensorType) and "Package" in str(sensor[a].Name)):
-                    cpu_Power = format(sensor[a].Value, ".1f")
-                elif(("Load" in str(sensor[a].SensorType)) and ("Total" in str(sensor[a].Name))):
-                    cpu_Load = format(sensor[a].Value, ".1f")
-        
         cpu_freq = psutil.cpu_freq().current / 1000
         cpu_cores = psutil.cpu_count()
         ram_info = psutil.virtual_memory()
         py_version = platform.python_version()
         py_buildDate = platform.python_build()[1]
+        
         ping = bot.latency * 1000
 
-        if (os_info.system == "Windows"): ### Windowsの場合、表記を変更する
-            win32_edition = platform.win32_edition()
-            win32_ver = os_info.release
+        cpu_Temp = "Not Available    "
+        cpu_Power = "Not Available    "
+        cpu_Load = "Not Available    "
 
-            if (win32_edition == "Professional"):
-                win32_edition = "Pro"
+        if os_info.system == "Windows":
+
+            cpu_name = computer.Hardware[0].Name
+
+            hard_id = 0
+
+            sensor = computer.Hardware[hard_id].Sensors
+            computer.Hardware[hard_id].Update()
+
+            if ("AMD" in cpu_name): ### LibreHardwareMonitorを利用して取得
+                for a in range(0, len(computer.Hardware[hard_id].Sensors)):
+                    if ("Temperature" in str(sensor[a].SensorType) and "Core" in str(sensor[a].Name)):
+                        cpu_Temp = format(sensor[a].Value, ".1f")
+                    elif("Power" in str(sensor[a].SensorType) and "Package" in str(sensor[a].Name)):
+                        cpu_Power = format(sensor[a].Value, ".1f")
+                    elif(("Load" in str(sensor[a].SensorType)) and ("Total" in str(sensor[a].Name))):
+                        cpu_Load = format(sensor[a].Value, ".1f")
+
+            if (os_info.system == "Windows"): ### Windowsの場合、表記を変更する
+                win32_edition = platform.win32_edition()
+                win32_ver = os_info.release
+
+                if (win32_edition == "Professional"):
+                    win32_edition = "Pro"
+                
+                os_name = f"{os_info.system} {win32_ver} {win32_edition}"
+
+        elif os_info.system == "Linux":
+            os_name = platform.uname().system
+            cpu_name = platform.processor()
+
+            cpu_Load = psutil.cpu_percent(percpu=False)
             
-            os_name = f"{os_info.system} {win32_ver} {win32_edition}"
+            temp_ = psutil.sensors_temperatures()
+            if "coretemp" in temp_:
+                for entry in temp_["coretemp"]:
+                    if entry.label == "Package id 0":
+                        cpu_Temp = f"{entry.current}\u00B0C"
 
         embed = discord.Embed( ### Embedを定義する
                         title="よしっ、調査完了っと！これが結果なのだ！",# タイトル
