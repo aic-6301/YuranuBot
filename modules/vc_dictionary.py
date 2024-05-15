@@ -22,8 +22,6 @@ def dictionary_load(file):
         conn = sqlite3.connect(file)
         cursor = conn.cursor()
 
-        conn.autocommit = True
-
         return True
     except:
         return False
@@ -65,7 +63,8 @@ def save_dictionary(server_id: int, text, reading, user: int):
     try:
         cursor.execute(f'CREATE TABLE IF NOT EXISTS "{server_id}" (text TEXT NOT NULL UNIQUE, reading TEXT NOT NULL, user INTEGER)')
         cursor.execute(f'INSERT OR REPLACE INTO "{server_id}" (text, reading, user) VALUES(?, ?, ?)', (text, reading, user))
-        
+        conn.commit()
+
         logging.debug(f"Server '{server_id}' Dictionary was updated ({text}: {reading})")
         return
     
@@ -86,6 +85,7 @@ def delete_dictionary(server_id: int, text):
     try:
         cursor.execute(f'CREATE TABLE IF NOT EXISTS "{server_id}" (text TEXT NOT NULL UNIQUE, reading TEXT NOT NULL, user INTEGER)')
         cursor.execute(f'DELETE FROM "{server_id}" WHERE text = ?', (text,))
+        conn.commit()
 
         logging.debug(f"Server '{server_id}' Dictionary was updated (deleted: {text})")
         return

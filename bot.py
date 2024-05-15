@@ -34,6 +34,15 @@ db_data = db_init()
 
 dic_data = dictionary_load("dictionary.db")
 
+
+if db_data==False:
+    logging.warning("サーバー「設定」データベースの読み込みに失敗しました")
+    sys.exit()
+
+if dic_data==False:
+    logging.warning("サーバー「辞書」データベースの読み込みに失敗しました")
+    sys.exit()
+
 ### インテントの生成
 intents = discord.Intents.default()
 intents.message_content = True

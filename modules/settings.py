@@ -36,8 +36,6 @@ def db_load(file):
         conn = sqlite3.connect(file)
         cursor = conn.cursor()
 
-        conn.autocommit = True
-
         return True
     except:
         return False
@@ -106,12 +104,17 @@ def save_setting(server_id, type, new_value):
         result = cursor.execute(f'SELECT "{type}" FROM server_settings WHERE server_id = {server_id}').fetchone()
         if result is None:
             cursor.execute(f'INSERT INTO server_settings (server_id, "{type}") VALUES ({server_id}, {new_value})')
+            conn.commit()
+            
             logging.debug(f"Server '{server_id}' Setting was created ({type}: {new_value})")
             return
     
         cursor.execute(f'UPDATE server_settings SET "{type}" = "{new_value}" WHERE server_id = {server_id}')
+        conn.commit()
+        
         logging.debug(f"Server '{server_id}' Setting was updated ({type}: {new_value})")
         return
+    
     
     except Exception as e:
         return e
