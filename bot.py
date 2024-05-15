@@ -36,11 +36,11 @@ dic_data = dictionary_load("dictionary.db")
 
 
 if db_data==False:
-    logging.warn("サーバー「設定」データベースの読み込みに失敗しました")
+    logging.warning("サーバー「設定」データベースの読み込みに失敗しました")
     sys.exit()
 
 if dic_data==False:
-    logging.warn("サーバー「辞書」データベースの読み込みに失敗しました")
+    logging.warning("サーバー「辞書」データベースの読み込みに失敗しました")
     sys.exit()
 
 ### インテントの生成
