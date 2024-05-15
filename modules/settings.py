@@ -61,7 +61,10 @@ def db_init():
         for name, type in server_settings:
             if name not in columns:
                 cursor.execute(f'ALTER TABLE server_settings ADD COLUMN {name} {type}')
-
+    
+        conn.commit()
+        return True
+    
     except:
         return False
 
@@ -111,7 +114,7 @@ def save_setting(server_id, type, new_value):
     
         cursor.execute(f'UPDATE server_settings SET "{type}" = "{new_value}" WHERE server_id = {server_id}')
         conn.commit()
-        
+
         logging.debug(f"Server '{server_id}' Setting was updated ({type}: {new_value})")
         return
     
