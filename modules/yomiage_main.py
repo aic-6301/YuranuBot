@@ -1,0 +1,186 @@
+import requests
+import threading
+import discord
+import logging
+import json
+import wave
+import time
+import sys
+import re
+import os
+
+from modules.settings import get_setting
+from modules.exception import sendException
+from modules.vc_dictionary import get_dictionary
+from collections import deque, defaultdict
+from discord import FFmpegOpusAudio
+
+## VOICEVOX用の設定
+VC_OUTPUT = "./yomiage_data/"
+VC_HOST = "127.0.0.1"
+VC_PORT = 50021
+FS = 24000
+
+yomiage_serv_list = defaultdict(deque)
+
+##ディレクトリがない場合は作成する
+if (not os.path.isdir(VC_OUTPUT)):
+    os.mkdir(VC_OUTPUT)
+
+##読み上げのキューに入れる前に特定ワードを変換します
+async def yomiage(content, guild: discord.Guild, spkID: int):
+    fix_words = [r'(https?://\S+)', r'<:[a-zA-Z0-9_]+:[0-9]+>', f"(ﾟ∀ﾟ)"]
+    fix_end_word = ["URL", "えもじ", ""]
+      
+    if isinstance(content, discord.message.Message):
+        fixed_content = content.content
+
+        ##メンションされたユーザーのIDを名前に変換  
+        for mention in content.mentions:
+            fixed_content = fixed_content.replace(f'<@{mention.id}>', mention.display_name)
+
+        ##ユーザー辞書に登録された内容で置き換える
+        dicts = get_dictionary(content.guild.id)
+        if dicts != None:
+            for text, reading, user in dicts:
+                fixed_content = re.sub(text, reading, fixed_content)
+        
+        ##コンテンツ関連の文章を生成する
+        files_content = search_content(content)
+
+        ##コンテンツ  +　文章
+        if files_content != None:
+            fixed_content = files_content + fixed_content
+
+    elif isinstance(content, str):
+        fixed_content = content
+        
+    ##fix_wordに含まれたワードをfix_end_wordに変換する
+    for i in range(len(fix_words)): 
+        fixed_content = re.sub(fix_words[i], fix_end_word[i], fixed_content)
+    
+    ##文字制限の設定を取得する
+    length_limit = get_setting(guild.id, "length_limit")
+
+    if (length_limit > 0): ##文字数制限(1文字以上なら有効化)
+        speak_content = fixed_content[:length_limit] ##文字数制限（省略もつけちゃうよ♡）
+    else:
+        speak_content = fixed_content
+
+    if (speak_content != fixed_content):
+        speak_content = speak_content + "、省略なのだ"
+
+    await queue_yomiage(speak_content, guild, spkID)
+
+async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):    
+    try:
+        speed = get_setting(guild.id, "speak_speed")
+        # 音声化する文言と話者を指定(3で標準ずんだもんになる)
+        params = (
+            ('text', content),
+            ('speaker', spkID)
+        )
+        _query = requests.post(
+            f'http://{VC_HOST}:{VC_PORT}/audio_query',
+            params=params
+        )
+        query = _query.json()
+        query["speedScale"] = speed
+
+        synthesis = requests.post(
+            f'http://{VC_HOST}:{VC_PORT}/synthesis',
+            headers = {"Content-Type": "application/json"},
+            params = params,
+            data = json.dumps(query)
+        )
+        voice = synthesis.content
+        
+        ###作成時間を記録するため、timeを利用する
+        wav_time = time.time()
+        voice_file = f"{VC_OUTPUT}{guild.id}-{wav_time}.wav"
+
+        with wave.open(voice_file, "w") as wf:
+            wf.setnchannels(1)  # チャンネル数の設定 (1:mono, 2:stereo)
+            wf.setsampwidth(2)
+            wf.setframerate(FS) 
+            wf.writeframes(voice)  # ステレオデータを書きこむ
+
+        with wave.open(voice_file,  'rb') as wr:\
+            # 情報取得
+            fr = wr.getframerate()
+            fn = wr.getnframes()
+            length = fn / fr
+
+        file_list = [voice_file, length]
+
+        queue = yomiage_serv_list[guild.id]
+        queue.append(file_list)
+    
+        if not guild.voice_client.is_playing():
+            send_voice(queue, guild.voice_client)
+        return
+            
+    except Exception as e:
+        exception_type, exception_object, exception_traceback = sys.exc_info()
+        filename = exception_traceback.tb_frame.f_code.co_filename
+        line_no = exception_traceback.tb_lineno
+        await sendException(e, filename, line_no)
+
+##コンテンツが添付されている場合の処理
+def search_content(content: discord.message.Message):
+    length = len(content.attachments)
+    
+    if length != 0:
+        if length >= 3: ##ファイル数が３つ以上なら
+            _len = 2
+            file_count = True
+        else:
+            _len = length
+            file_count = False
+
+        send_content = ""
+        for i in range(_len):
+            attachment = content.attachments[i]
+
+            if attachment.content_type.startswith("image"):
+                fixed_content = f"画像ファイル"
+            if attachment.content_type.startswith("video"):
+                fixed_content = f"動画ファイル"
+            if attachment.content_type.startswith("audio"):
+                fixed_content = f"音声ファイル"
+            if attachment.content_type.startswith("text"):
+                fixed_content = f"テキストファイル"
+            if attachment.content_type.startswith("application"):
+                fixed_content = f"その他ファイル"
+            send_content += fixed_content
+
+            if i != _len-1:#と　もつける
+                send_content += "と"
+        #ファイルが多すぎてもこれでおっけ！
+        if file_count:
+            send_content += f"、その他{length-2}ファイル" 
+        #語尾もちゃんとつける！
+        send_content += "が送信されたのだ"
+
+        return send_content
+
+def send_voice(queue, voice_client):
+    if not queue or voice_client.is_playing():
+        return
+    
+    source = queue.popleft()
+    voice_client.play(FFmpegOpusAudio(source[0]), after=lambda e:send_voice(queue, voice_client))
+
+    ##再生スタートが完了したら時間差でファイルを削除する。
+    task = threading.Thread(target=delete_file_latency, args=(source[0], source[1]))
+    task.start()
+
+def delete_file_latency(file_name, latency):
+    try:
+        time.sleep(latency+2.0)
+        os.remove(file_name)
+        
+    except Exception as e:
+        exception_type, exception_object, exception_traceback = sys.exc_info()
+        line_no = exception_traceback.tb_lineno
+        logging.exception(f"ファイル削除エラー： {line_no}行目、 [{type(e)}] {e}")
