@@ -184,7 +184,7 @@ def search_content(content: discord.message.Message):
         if file_count:
             send_content += f"、その他{length-2}ファイル" 
         #語尾もちゃんとつける！
-        send_content += "が送信されたのだ"
+        send_content += "が送信されたのだ、"
 
         return send_content
 
