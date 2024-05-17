@@ -36,8 +36,8 @@ if (not os.path.isdir(VC_OUTPUT)):
 
 ##読み上げのキューに入れる前に特定ワードを変換します
 async def yomiage(content, guild: discord.Guild, spkID: int):
-    fix_words = [r'(https?://\S+)', r'<:[a-zA-Z0-9_]+:[0-9]+>', f"(ﾟ∀ﾟ)"]
-    fix_end_word = ["URL", "えもじ", ""]
+    fix_words = [r'(https?://\S+)', r'<:[a-zA-Z0-9_]+:[0-9]+>', f"(ﾟ∀ﾟ)", r"`[a-zA-Z0-9_]'"]
+    fix_end_word = ["URL", "えもじ", "", "コードブロック省略"]
       
     if isinstance(content, discord.message.Message):
         fixed_content = content.content
@@ -45,12 +45,6 @@ async def yomiage(content, guild: discord.Guild, spkID: int):
         ##メンションされたユーザーのIDを名前に変換  
         for mention in content.mentions:
             fixed_content = fixed_content.replace(f'<@{mention.id}>', mention.display_name)
-
-        ##ユーザー辞書に登録された内容で置き換える
-        dicts = get_dictionary(content.guild.id)
-        if dicts != None:
-            for text, reading, user in dicts:
-                fixed_content = re.sub(text, reading, fixed_content)
         
         ##コンテンツ関連の文章を生成する
         files_content = search_content(content)
@@ -66,6 +60,12 @@ async def yomiage(content, guild: discord.Guild, spkID: int):
     for i in range(len(fix_words)): 
         fixed_content = re.sub(fix_words[i], fix_end_word[i], fixed_content)
     
+    ##ユーザー辞書に登録された内容で置き換える
+    dicts = get_dictionary(guild.id)
+    if dicts != None:
+        for text, reading, user in dicts:
+            fixed_content = re.sub(text, reading, fixed_content)
+
     ##文字制限の設定を取得する
     length_limit = get_setting(guild.id, "length_limit")
 
@@ -81,6 +81,8 @@ async def yomiage(content, guild: discord.Guild, spkID: int):
 
 async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):    
     try:
+        print(f"{content}")
+        
         if os_name == "Windows":
             speed = get_setting(guild.id, "speak_speed")
             # 音声化する文言と話者を指定(3で標準ずんだもんになる)
@@ -143,6 +145,7 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):
         if not guild.voice_client.is_playing():
             send_voice(queue, guild.voice_client)
         return
+            
             
     except Exception as e:
         exception_type, exception_object, exception_traceback = sys.exc_info()
