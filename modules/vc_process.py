@@ -51,7 +51,7 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
     #カメラ配信の開始・終了を読み上げる
     if before.self_video != after.self_video:
         if after.self_video:
-            if after.guild.voice_clients in client.voice_clients:
+            if after.guild.voice_client in client.voice_clients:
                 await yomiage(f"{member.display_name}がカメラ配信を開始したのだ。", member.guild, 3)
             else:
                 await yomiage(f"{member.display_name}がカメラ配信を終了したのだ。", member.guild, 3)
@@ -59,7 +59,7 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
     #画面共有の開始・終了を読み上げる
     if before.self_stream != after.self_stream:
         if after.self_stream:
-            if after.guild.voice_clients in client.voice_clients:
+            if after.guild.voice_client in client.voice_clients:
                 await yomiage(f"{member.display_name}が画面共有を開始したのだ。", member.guild, 3)
             else:
                 await yomiage(f"{member.display_name}が画面共有を終了したのだ。", member.guild, 3)
