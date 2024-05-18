@@ -15,7 +15,7 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
                 await after.channel.connect()
                 mess = get_setting(member.guild.id, "vc_connect_message")
                 if mess is not None:
-                    await yomiage(mess, member.guild, 1)
+                    await yomiage(mess, member.guild)
                 return # 接続しましただけを読ませるために終わらせる
 
     if member.guild.voice_client:
@@ -39,28 +39,28 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
                 if (after.channel.id == bot_client.channel.id):
                     mess = get_setting(after.channel.guild.id, "vc_join_message")#==が参加したのだ
                     if mess is not None:
-                        await yomiage(f"{member.display_name}{mess}", member.guild, 3)
+                        await yomiage(f"{member.display_name}{mess}", member.guild)
                 
             ##退席時に読み上げる
             if before.channel is not None:
                 if (before.channel.id == bot_client.channel.id):
                     mess = get_setting(before.channel.guild.id, "vc_exit_message")#==が退席したのだ
                     if mess is not None:
-                        await yomiage(f"{member.display_name}{mess}", member.guild, 3)       
+                        await yomiage(f"{member.display_name}{mess}", member.guild)       
 
     #カメラ配信の開始・終了を読み上げる
     if before.self_video != after.self_video:
         if after.self_video:
             if after.guild.voice_client in client.voice_clients:
-                await yomiage(f"{member.display_name}がカメラ配信を開始したのだ。", member.guild, 3)
+                await yomiage(f"{member.display_name}がカメラ配信を開始しました。", member.guild)
             else:
-                await yomiage(f"{member.display_name}がカメラ配信を終了したのだ。", member.guild, 3)
+                await yomiage(f"{member.display_name}がカメラ配信を終了しました。", member.guild)
     
     #画面共有の開始・終了を読み上げる
     if before.self_stream != after.self_stream:
         if after.self_stream:
             if after.guild.voice_client in client.voice_clients:
-                await yomiage(f"{member.display_name}が画面共有を開始したのだ。", member.guild, 3)
+                await yomiage(f"{member.display_name}が画面共有を開始しました。", member.guild)
             else:
-                await yomiage(f"{member.display_name}が画面共有を終了したのだ。", member.guild, 3)
+                await yomiage(f"{member.display_name}が画面共有を終了しました。", member.guild)
 

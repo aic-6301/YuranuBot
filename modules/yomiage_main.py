@@ -35,8 +35,8 @@ if (not os.path.isdir(VC_OUTPUT)):
     os.mkdir(VC_OUTPUT)
 
 ##読み上げのキューに入れる前に特定ワードを変換します
-async def yomiage(content, guild: discord.Guild, spkID: int):
-    fix_words = [r'(https?://\S+)', r'<:[a-zA-Z0-9_]+:[0-9]+>', f"(ﾟ∀ﾟ)", r"`[a-zA-Z0-9_]'"]
+async def yomiage(content, guild: discord.Guild):
+    fix_words = [r'(https?://\S+)', r'<:[a-zA-Z0-9_]+:[0-9]+>', f"(ﾟ∀ﾟ)", r'`[a-zA-Z0-9_]`']
     fix_end_word = ["URL", "えもじ", "", "コードブロック省略"]
       
     if isinstance(content, discord.message.Message):
@@ -77,6 +77,10 @@ async def yomiage(content, guild: discord.Guild, spkID: int):
     if (speak_content != fixed_content):
         speak_content = speak_content + "、省略なのだ"
 
+    ##話者を取得
+    spkID = get_setting(guild.id, "vc_server_speaker")
+
+    ##読み上げをキューに入れる
     await queue_yomiage(speak_content, guild, spkID)
 
 async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):    

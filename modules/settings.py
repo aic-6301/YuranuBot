@@ -9,9 +9,10 @@ server_settings = [
     ("auto_connect", "INTEGER DEFAULT 0"),
     ("speak_speed", "REAL DEFAULT 1"),
     ("length_limit", "INTEGER DEFAULT 50"),
-    ("vc_join_message", "TEXT DEFAULT がさんかしたのだ！"),
-    ("vc_exit_message", "TEXT DEFAULT がたいせきしたのだ！"),
-    ("vc_connect_message", "TEXT DEFAULT せつぞくしたのだ！")
+    ("vc_join_message", "TEXT DEFAULT がさんかしました！"),
+    ("vc_exit_message", "TEXT DEFAULT がたいせきしました！"),
+    ("vc_connect_message", "TEXT DEFAULT せつぞくしました！"),
+    ("vc_server_speaker", "INTEGER DEFAULT 3")
 ]
 
 

@@ -35,6 +35,8 @@ db_data = db_init()
 dic_data = dictionary_load("dictionary.db")
 
 
+
+
 if db_data==False:
     logging.warning("サーバー「設定」データベースの読み込みに失敗しました")
     sys.exit()
@@ -220,6 +222,33 @@ async def vc_dictionary(interact: discord.Interaction, text: str):
         
         await interact.response.send_message(f"設定に失敗したのだ...")
 
+    except Exception as e:
+        exception_type, exception_object, exception_traceback = sys.exc_info()
+        filename = exception_traceback.tb_frame.f_code.co_filename
+        line_no = exception_traceback.tb_lineno
+        await sendException(e, filename, line_no)
+
+@tree.command(name="yomiage-server-speaker", description="サーバーの読み上げ話者を設定するのだ")
+@discord.app_commands.rename(id="話者")
+@discord.app_commands.choices(
+    id=[
+        discord.app_commands.Choice(name="ずんだもん",value=3),
+        discord.app_commands.Choice(name="春日部つむぎ",value=8),
+        discord.app_commands.Choice(name="四国めたん",value=2),
+        discord.app_commands.Choice(name="九州そら",value=16)
+    ]
+)
+async def yomiage_server_speaker(interact:discord.Interaction,id:int):
+    try:
+        read_type = "vc_server_speaker"
+        result = save_setting(interact.guild.id, read_type, id)
+
+        if result is None:
+            await interact.response.send_message(f"話者を変更したのだ！")
+            return
+        
+        await interact.response.send_message("エラーが発生したのだ...")
+        
     except Exception as e:
         exception_type, exception_object, exception_traceback = sys.exc_info()
         filename = exception_traceback.tb_frame.f_code.co_filename
