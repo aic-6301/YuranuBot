@@ -19,7 +19,7 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
                     await yomiage(mess, member.guild)
                 return # 接続しましただけを読ませるために終わらせる
 
-    if member.guild.voice_client:
+    if member.guild.voice_client and before.channel != after.channel:
         if before.channel != None:
             members = before.channel.members
             count = 0
