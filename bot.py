@@ -13,9 +13,6 @@ from modules.settings import db_load, db_init, get_server_setting, save_server_s
 from modules.exception import sendException, exception_init
 from modules.vc_dictionary import dictionary_load, delete_dictionary, save_dictionary
 
-##ロギングのレベルを設定
-logging.basicConfig(level=logging.INFO)
-
 ROOT_DIR = os.path.dirname(__file__)
 SCRSHOT = os.path.join(ROOT_DIR, "scrshot", "scr.png")
 
@@ -68,7 +65,7 @@ async def on_ready():
     for file in os.listdir("./cogs"):
         if file.endswith(".py"):
             try:
-                bot.load_extension(f"cogs.{file[:-3]}")
+                await bot.load_extension(f"cogs.{file[:-3]}")
                 logging.info(f'Loaded cogs: {file[:-3]}')
             except Exception as e:
                 logging.error(f'Failed to load extension {file[:-3]}.')
