@@ -29,7 +29,7 @@ if platform.uname().system == "Windows":
 
     computer.Open()
 
-async def pc_status(interact: discord.Interaction, bot: commands.Bot):
+async def pc_status(bot: commands.Bot):
     try:
         os_info = platform.uname()
         os_bit = platform.architecture()[1]
@@ -126,8 +126,7 @@ async def pc_status(interact: discord.Interaction, bot: commands.Bot):
         embed.set_footer(text="YuranuBot! | Made by yurq_",
                     icon_url=bot.user.avatar.url)
 
-        await interact.response.send_message(embed=embed)
-        return
+        return embed
     
     except Exception as e:
         exception_type, exception_object, exception_traceback = sys.exc_info()

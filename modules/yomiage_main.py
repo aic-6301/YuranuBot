@@ -74,7 +74,7 @@ async def yomiage(content, guild: discord.Guild):
         speak_content = fixed_content
 
     if (speak_content != fixed_content):
-        speak_content = speak_content + "、省略なのだ"
+        speak_content = speak_content + "、省略"
 
 
     ##話者を取得
