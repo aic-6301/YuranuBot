@@ -35,15 +35,15 @@ if (not os.path.isdir(VC_OUTPUT)):
 
 ##読み上げのキューに入れる前に特定ワードを変換します
 async def yomiage(content, guild: discord.Guild):
-    fix_words = [r'(https?://\S+)', r'<:[a-zA-Z0-9_]+:[0-9]+>', f"(ﾟ∀ﾟ)", r'`[a-zA-Z0-9_]`']
-    fix_end_word = ["URL", "えもじ", "", "コードブロック省略"]
+    fix_words = [r'(https?://\S+)', r'<:\w+:\d+>',r'<a:\w+:\d+>',r'<#[0-9]+>', r'```[\s\S]*?```', f"(ﾟ∀ﾟ)", r'\|\|.*?\|\|']
+    fix_end_word = ["URL省略","絵文字","アニメ絵文字","チャンネル省略","コードブロック省略", "", "、"]
       
     if isinstance(content, discord.message.Message):
         fixed_content = content.content
 
         ##メンションされたユーザーのIDを名前に変換  
         for mention in content.mentions:
-            fixed_content = fixed_content.replace(f'<@{mention.id}>', mention.display_name)
+            fixed_content = fixed_content.replace(f'<@{mention.id}>', "@"+mention.display_name)
         
         ##コンテンツ関連の文章を生成する
         files_content = search_content(content)
@@ -74,7 +74,7 @@ async def yomiage(content, guild: discord.Guild):
         speak_content = fixed_content
 
     if (speak_content != fixed_content):
-        speak_content = speak_content + "、省略なのだ"
+        speak_content = speak_content + "、省略"
 
 
     ##話者を取得
@@ -193,15 +193,19 @@ def search_content(content: discord.message.Message):
                 fixed_content = f"テキストファイル"
             if attachment.content_type.startswith("application"):
                 fixed_content = f"その他ファイル"
+            if attachment.content_type.startswith("zip"):
+                fixed_content = f"じっぷファイル"
+            if attachment.content_type.startswith("pdf"):
+                fixed_content = f"PDFファイル"
             send_content += fixed_content
 
             if i != _len-1:#と　もつける
                 send_content += "と"
         #ファイルが多すぎてもこれでおっけ！
         if file_count:
-            send_content += f"、その他{length-2}ファイル" 
+            send_content += f"とその他{length-2}ファイル" 
         #語尾もちゃんとつける！
-        send_content += "が送信されたのだ、"
+        send_content += "が添付されました、"
 
         return send_content
 
