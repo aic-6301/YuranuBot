@@ -65,7 +65,6 @@ tree = bot.tree
 logging.debug("discord.py -> ツリー生成完了")
 
 
-
 @bot.event
 async def on_ready():
     for file in os.listdir("./cogs"):
