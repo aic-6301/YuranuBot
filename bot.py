@@ -65,14 +65,6 @@ logging.debug("discord.py -> ツリー生成完了")
 
 @bot.event
 async def on_ready():
-    for file in os.listdir("./cogs"):
-        if file.endswith(".py"):
-            try:
-                await bot.load_extension(f"cogs.{file[:-3]}")
-                logging.info(f'Loaded cogs: {file[:-3]}')
-            except Exception as e:
-                logging.error(f'Failed to load extension "{file[:-3]}"')
-                logging.error(e)
     print(f'{bot.user}に接続しました！')
     await tree.sync()
     print("コマンドツリーを同期しました")
