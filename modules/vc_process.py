@@ -19,18 +19,19 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
                 return # 接続しましただけを読ませるために終わらせる
 
     if member.guild.voice_client:
-        if before.channel != None:
-            members = before.channel.members
-            count = 0
-            for m in before.channel.members:
-                if m.bot:
-                    members.pop(count)
-                    count -= 1
-                count += 1
-                
-            if len(members) == 0:
-                await member.guild.voice_client.disconnect()
-                return
+        if after.channel == None or after.channel != before.channel:
+            if before.channel != None:
+                members = before.channel.members
+                count = 0
+                for m in before.channel.members:
+                    if m.bot:
+                        members.pop(count)
+                        count -= 1
+                    count += 1
+                    
+                if len(members) == 0:
+                    await member.guild.voice_client.disconnect()
+                    return
 
     if before.channel != after.channel:
         for bot_client in client.voice_clients:
