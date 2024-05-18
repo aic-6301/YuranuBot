@@ -65,13 +65,11 @@ tree = bot.tree
 logging.debug("discord.py -> ツリー生成完了")
 
 
-
 @bot.event
 async def on_ready():
     print(f'{bot.user}に接続しました！')
     await tree.sync()
     print("コマンドツリーを同期しました")
-
 
 
 @tree.command(name="vc-start", description="ユーザーが接続しているボイスチャットに接続するのだ")
