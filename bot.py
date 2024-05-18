@@ -9,12 +9,12 @@ from dotenv import load_dotenv
 from modules.checkPc import pc_status
 from modules.yomiage_main import yomiage
 from modules.vc_process import vc_inout_process
-from modules.settings import db_load, db_init, get_setting, save_setting
+from modules.settings import db_load, db_init, get_server_setting, save_server_setting, save_user_setting
 from modules.exception import sendException, exception_init
 from modules.vc_dictionary import dictionary_load, delete_dictionary, save_dictionary
 
 ##ロギングのレベルを設定
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 ROOT_DIR = os.path.dirname(__file__)
 SCRSHOT = os.path.join(ROOT_DIR, "scrshot", "scr.png")
@@ -87,10 +87,10 @@ async def vc_command(interact: discord.Interaction):
         await interact.user.voice.channel.connect()
         
         ##接続を知らせるメッセージを送信
-        channel_id = get_setting(interact.guild_id, "speak_channel")
+        channel_id = get_server_setting(interact.guild_id, "speak_channel")
         channel = discord.utils.get(interact.guild.channels, id=channel_id)
-        length_limit = get_setting(interact.guild_id, "length_limit")
-        yomiage_speed = get_setting(interact.guild_id, "speak_speed")
+        length_limit = get_server_setting(interact.guild_id, "length_limit")
+        yomiage_speed = get_server_setting(interact.guild_id, "speak_speed")
 
         if length_limit == 0:
             length_limit = f"!!文字数制限なし!!"
@@ -131,7 +131,7 @@ async def vc_command(interact: discord.Interaction):
         await interact.response.send_message(embed=embed)
 
         ##読み上げるチャンネルが存在しない場合に警告文を送信
-        channel = get_setting(interact.guild.id, "speak_channel") 
+        channel = get_server_setting(interact.guild.id, "speak_channel") 
 
         if (channel is None):
             embed = discord.Embed(
@@ -143,9 +143,9 @@ async def vc_command(interact: discord.Interaction):
             await interact.channel.send(embed=embed)
 
         ##参加時の読み上げ
-        mess = get_setting(interact.guild_id, "vc_connect_message")
+        mess = get_server_setting(interact.guild_id, "vc_connect_message")
         if mess is not None:
-            await yomiage(mess, interact.guild, 1)
+            await yomiage(mess, interact.guild)
 
 
     except Exception as e:
@@ -158,7 +158,7 @@ async def vc_command(interact: discord.Interaction):
 @tree.command(name="yomiage-channel", description="読み上げるチャンネルを変更するのだ")
 async def yomiage_channel(interact: discord.Interaction, channel: discord.TextChannel):
     try:
-        result = save_setting(interact.guild_id, "speak_channel", channel.id)
+        result = save_server_setting(interact.guild_id, "speak_channel", channel.id)
         if result is None:
             await interact.response.send_message(f"☑**「{channel}」**を読み上げるのだ！")
             return
@@ -240,15 +240,44 @@ async def vc_dictionary(interact: discord.Interaction, text: str):
 )
 async def yomiage_server_speaker(interact:discord.Interaction,id:int):
     try:
-        read_type = "vc_server_speaker"
-        result = save_setting(interact.guild.id, read_type, id)
+        read_type = "vc_speaker"
+        result = save_server_setting(interact.guild.id, read_type, id)
 
         if result is None:
-            await interact.response.send_message(f"話者を変更したのだ！")
+            await interact.response.send_message(f"サーバー話者を変更したのだ！")
             return
         
         await interact.response.send_message("エラーが発生したのだ...")
+
+    except Exception as e:
+        exception_type, exception_object, exception_traceback = sys.exc_info()
+        filename = exception_traceback.tb_frame.f_code.co_filename
+        line_no = exception_traceback.tb_lineno
+        await sendException(e, filename, line_no)
+
+
+@tree.command(name="yomiage-user-speaker", description="ユーザーの読み上げ話者を設定するのだ(どのサーバーでも同期されるのだ)")
+@discord.app_commands.rename(id="話者")
+@discord.app_commands.choices(
+    id=[
+        discord.app_commands.Choice(name="ずんだもん",value=3),
+        discord.app_commands.Choice(name="春日部つむぎ",value=8),
+        discord.app_commands.Choice(name="四国めたん",value=2),
+        discord.app_commands.Choice(name="九州そら",value=16),
+        discord.app_commands.Choice(name="サーバーのデフォルト設定を利用する", value=-1)
+    ]
+)
+async def yomiage_user_speaker(interact:discord.Interaction,id:int):
+    try:
+        read_type = "vc_speaker"
+        result = save_user_setting(interact.user.id, read_type, id)
+
+        if result is None:
+            await interact.response.send_message(f"ユーザー話者を変更したのだ！")
+            return
         
+        await interact.response.send_message("エラーが発生したのだ...")
+
     except Exception as e:
         exception_type, exception_object, exception_traceback = sys.exc_info()
         filename = exception_traceback.tb_frame.f_code.co_filename
@@ -260,7 +289,7 @@ async def yomiage_server_speaker(interact:discord.Interaction,id:int):
 async def yomiage_speed(interact: discord.Interaction, speed: float):
     try:
         read_type = "speak_speed"
-        result = save_setting(interact.guild.id, read_type, speed)
+        result = save_server_setting(interact.guild.id, read_type, speed)
 
         if result is None:
             await interact.response.send_message(f"読み上げ速度を**「{speed}」**に変更したのだ！**")
@@ -277,7 +306,7 @@ async def yomiage_speed(interact: discord.Interaction, speed: float):
 @tree.command(name="yomiage-join-message", description="参加時の読み上げ内容を変更するのだ<<必ず最初にユーザー名が来るのだ>>")
 async def change_vc_join_message(interact: discord.Interaction, text: str):
     try:
-        res = save_setting(interact.guild_id, "vc_join_message", text)
+        res = save_server_setting(interact.guild_id, "vc_join_message", text)
         if res is None:
             await interact.response.send_message("**参加時の読み上げ内容を変更したのだ！**")
             return
@@ -293,7 +322,7 @@ async def change_vc_join_message(interact: discord.Interaction, text: str):
 @tree.command(name="yomiage-exit-message", description="退出時の読み上げ内容を変更するのだ<<必ず最初にユーザー名が来るのだ>>")
 async def change_vc_exit_message(interact: discord.Interaction, text: str):
     try:
-        res = save_setting(interact.guild.id, "vc_exit_message", text)
+        res = save_server_setting(interact.guild.id, "vc_exit_message", text)
         if res is None:
             await interact.response.send_message("**退出時の読み上げ内容を変更したのだ！**")
             return
@@ -310,7 +339,7 @@ async def change_vc_exit_message(interact: discord.Interaction, text: str):
 async def change_vc_exit_message(interact: discord.Interaction, text: str):
     try:
         read_type = "vc_connect_message"
-        res = save_setting(interact.guild.id, read_type, text)
+        res = save_server_setting(interact.guild.id, read_type, text)
         if res is None:
             await interact.response.send_message("**読み上げ接続時の読み上げ内容を変更したのだ！**")
             return
@@ -330,13 +359,13 @@ async def auto_connect(interact: discord.Interaction, bool: bool):
     try:
         if bool is True:
             if interact.user.voice is not None: ##設定するユーザーがチャンネルに入っていることを確認するのだ
-                res = save_setting(interact.guild_id, "auto_connect", interact.user.voice.channel.id)
+                res = save_server_setting(interact.guild_id, "auto_connect", interact.user.voice.channel.id)
             
             else: ##ユーザーがボイスチャットに入っていない場合
                 await interact.response.send_message("自動接続したいチャンネルに入ってから実行するのだ！")
                 return
         else:
-            save_setting(interact.guild_id, "auto_connect", 0)
+            save_server_setting(interact.guild_id, "auto_connect", 0)
             await interact.response.send_message("自動接続を無効化したのだ！")
             return
 
@@ -363,10 +392,10 @@ async def on_message(message: discord.Message):
     if message.author.bot: ##ボットの内容は読み上げない
         return
     
-    channel = get_setting(message.guild.id, "speak_channel") ##読み上げるチャンネルをデータベースから取得
+    channel = get_server_setting(message.guild.id, "speak_channel") ##読み上げるチャンネルをデータベースから取得
     
     if (message.channel.id == channel): ##ChannelIDが読み上げ対象のIDと一致しているか
-        await yomiage(message, message.guild, 3) ##難なくエラーをすり抜けたチャンネルにはもれなく読み上げ
+        await yomiage(message, message.guild) ##難なくエラーをすり抜けたチャンネルにはもれなく読み上げ
 
 @tree.command(name="vc-stop", description="ボイスチャンネルから退出するのだ")
 async def vc_disconnect_command(interact: discord.Interaction):

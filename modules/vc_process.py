@@ -1,6 +1,6 @@
 import discord
 from modules.yomiage_main import yomiage
-from modules.settings import get_setting
+from modules.settings import get_server_setting
 
 async def vc_inout_process(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState, client: discord.Client):
     if (member.bot):##ボットなら無視
@@ -9,11 +9,11 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
     # #####!!!!!!自動接続関連!!!!!!!!!!########
     # ##接続時に自動接続する
     if after.channel != None:
-        auto_channel = get_setting(member.guild.id, "auto_connect")
+        auto_channel = get_server_setting(member.guild.id, "auto_connect")
         if auto_channel == after.channel.id:
             if not member.guild.voice_client or member.guild.voice_client.channel != after.channel:
                 await after.channel.connect()
-                mess = get_setting(member.guild.id, "vc_connect_message")
+                mess = get_server_setting(member.guild.id, "vc_connect_message")
                 if mess is not None:
                     await yomiage(mess, member.guild)
                 return # 接続しましただけを読ませるために終わらせる
@@ -37,14 +37,14 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
             ##参加時に読み上げる
             if after.channel is not None:
                 if (after.channel.id == bot_client.channel.id):
-                    mess = get_setting(after.channel.guild.id, "vc_join_message")#==が参加したのだ
+                    mess = get_server_setting(after.channel.guild.id, "vc_join_message")#==が参加したのだ
                     if mess is not None:
                         await yomiage(f"{member.display_name}{mess}", member.guild)
                 
             ##退席時に読み上げる
             if before.channel is not None:
                 if (before.channel.id == bot_client.channel.id):
-                    mess = get_setting(before.channel.guild.id, "vc_exit_message")#==が退席したのだ
+                    mess = get_server_setting(before.channel.guild.id, "vc_exit_message")#==が退席したのだ
                     if mess is not None:
                         await yomiage(f"{member.display_name}{mess}", member.guild)       
 

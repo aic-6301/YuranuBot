@@ -12,10 +12,9 @@ import os
 
 os_name = platform.uname().system
 
-from modules.settings import get_setting
+from modules.settings import get_server_setting, get_user_setting
 from modules.exception import sendException
 from modules.vc_dictionary import get_dictionary
-from modules.settings import get_setting
 from collections import deque, defaultdict
 from discord import FFmpegOpusAudio
 if os_name == "Linux":
@@ -67,7 +66,7 @@ async def yomiage(content, guild: discord.Guild):
             fixed_content = re.sub(text, reading, fixed_content)
 
     ##文字制限の設定を取得する
-    length_limit = get_setting(guild.id, "length_limit")
+    length_limit = get_server_setting(guild.id, "length_limit")
 
     if (length_limit > 0): ##文字数制限(1文字以上なら有効化)
         speak_content = fixed_content[:length_limit] ##文字数制限（省略もつけちゃうよ♡）
@@ -77,18 +76,29 @@ async def yomiage(content, guild: discord.Guild):
     if (speak_content != fixed_content):
         speak_content = speak_content + "、省略なのだ"
 
-    ##話者を取得
-    spkID = get_setting(guild.id, "vc_server_speaker")
 
-    ##読み上げをキューに入れる
-    await queue_yomiage(speak_content, guild, spkID)
+    ##話者を取得
+    user_spkID = -1
+
+    if (type(content)!=str):
+        user_spkID = get_user_setting(content.author.id, "vc_speaker")
+    spkID = get_server_setting(guild.id, "vc_speaker")
+
+    ##ユーザー話者がない場合はサーバー話者を利用する
+    if user_spkID == -1:
+        await queue_yomiage(speak_content, guild, spkID)
+        return
+    
+    ##ユーザー話者があるときはこっち
+    await queue_yomiage(speak_content, guild, user_spkID)
+
 
 async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):    
     try:
         print(f"{content}")
         
         if os_name == "Windows":
-            speed = get_setting(guild.id, "speak_speed")
+            speed = get_server_setting(guild.id, "speak_speed")
             # 音声化する文言と話者を指定(3で標準ずんだもんになる)
             params = (
                 ('text', content),
@@ -111,7 +121,7 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):
 
         elif os_name == "Linux":
         ##サーバーごとに利用される速度のデータを取得
-            speed = get_setting(guild.id, "speak_speed")
+            speed = get_server_setting(guild.id, "speak_speed")
 
             ###読み上げ用のコアをロードし、作成します
             core = VoicevoxCore(
