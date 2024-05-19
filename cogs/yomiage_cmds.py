@@ -118,7 +118,7 @@ class yomiage_cmds(commands.Cog):
 
 
     @yomi.command(name="dictionary-add", description="サーバー辞書に単語を追加するのだ")
-    async def vc_dictionary(interact: discord.Interaction, text: str, reading: str):
+    async def vc_dictionary(self, interact: discord.Interaction, text: str, reading: str):
         try:
             result = save_dictionary(interact.guild.id, text, reading, interact.user.id)
             if result is None:
