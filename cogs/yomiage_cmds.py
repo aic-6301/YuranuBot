@@ -322,7 +322,7 @@ class yomiage_cmds(commands.Cog):
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
     
-    @yomi.command(name="vc-stop", description="ボイスチャンネルから退出するのだ")
+    @app_commands.command(name="vc-stop", description="ボイスチャンネルから退出するのだ")
     async def vc_disconnect_command(self, interact: discord.Interaction):
         try:
             if ((interact.guild.voice_client is None)):
@@ -331,6 +331,9 @@ class yomiage_cmds(commands.Cog):
             
             elif((interact.user.voice is None)):
                 await interact.response.send_message("ボイスチャンネルに接続していないのだ...入ってから実行するのだ")
+                return
+            elif interact.user.voice.channel != interact.guild.voice_client.channel:
+                await interact.response.send_message("入ってるボイスチャンネルと違うチャンネルなのだ...実行してるチャンネルでやるのだ")
                 return
             
             await interact.guild.voice_client.disconnect()
