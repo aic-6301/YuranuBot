@@ -76,6 +76,7 @@ async def on_ready():
     except Exception as e:
         logging.error(f'Failed to load extension jishaku.')
         logging.error(e)
+        
     print(f'{bot.user}に接続しました！')
     await tree.sync()
     print("コマンドツリーを同期しました")
