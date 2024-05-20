@@ -81,7 +81,6 @@ async def yomiage(content, guild: discord.Guild):
     
     if (type(content)!=str):
         user_spkID = get_user_setting(content.author.id, "vc_speaker")
-        print(user_spkID)
     spkID = get_server_setting(guild.id, "vc_speaker")
 
     ##ユーザー話者がない場合はサーバー話者を利用する
@@ -128,7 +127,6 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):
                 acceleration_mode=AccelerationMode.AUTO,
                 open_jtalk_dict_dir = './voicevox/open_jtalk_dic_utf_8-1.11'
             )
-            print(spkID)
             core.load_model(spkID)
 
             audio_query = core.audio_query(content, spkID)
