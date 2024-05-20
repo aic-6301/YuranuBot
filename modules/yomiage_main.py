@@ -79,12 +79,12 @@ async def yomiage(content, guild: discord.Guild):
     ##読み上げ内容がメッセージ以外の場合はサーバーデフォルトを使用
     user_spkID = None
     
-    if (type(content)!=str):
+    if (type(content)==discord.message.Message):
         user_spkID = get_user_setting(content.author.id, "vc_speaker")
     spkID = get_server_setting(guild.id, "vc_speaker")
 
     ##ユーザー話者がない場合はサーバー話者を利用する
-    if user_spkID is None:
+    if user_spkID is None or -1:
         await queue_yomiage(speak_content, guild, spkID)
         return
     
@@ -94,8 +94,6 @@ async def yomiage(content, guild: discord.Guild):
 
 async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):    
     try:
-        print(f"{content}")
-        
         if os_name == "Windows":
             speed = get_server_setting(guild.id, "speak_speed")
             # 音声化する文言と話者を指定(3で標準ずんだもんになる)
@@ -230,4 +228,5 @@ def delete_file_latency(file_name, latency):
         exception_type, exception_object, exception_traceback = sys.exc_info()
         line_no = exception_traceback.tb_lineno
         logging.exception(f"ファイル削除エラー： {line_no}行目、 [{type(e)}] {e}")
+
         
