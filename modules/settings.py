@@ -5,6 +5,7 @@ import logging
 ##設定リストの管理
 server_settings = [
     ("server_id", "INTEGER"),
+    ("welcome_server", "INTEGER NOT NULL DEFAULT 0"),
     ("speak_channel", "INTEGER"),
     ("auto_connect", "INTEGER DEFAULT 0"),
     ("speak_speed", "REAL DEFAULT 1"),

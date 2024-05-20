@@ -266,7 +266,7 @@ class yomiage_cmds(commands.Cog):
             result = save_server_setting(interact.guild.id, read_type, speed)
 
             if result is None:
-                await interact.response.send_message(f"読み上げ速度を**「{speed}」**に変更したのだ！**")
+                await interact.response.send_message(f"読み上げ速度を**「{speed}」**に変更したのだ！")
                 return
             
             await interact.response.send_message("エラーが発生したのだ...")
