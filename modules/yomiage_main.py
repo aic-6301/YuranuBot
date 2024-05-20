@@ -81,6 +81,7 @@ async def yomiage(content, guild: discord.Guild):
     
     if (type(content)!=str):
         user_spkID = get_user_setting(content.author.id, "vc_speaker")
+        print(user_spkID)
     spkID = get_server_setting(guild.id, "vc_speaker")
 
     ##ユーザー話者がない場合はサーバー話者を利用する
