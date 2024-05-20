@@ -10,7 +10,8 @@ from modules.yomiage_main import yomiage
 from modules.vc_process import vc_inout_process
 from modules.settings import db_load, db_init, get_server_setting, save_server_setting, save_user_setting
 from modules.exception import sendException, exception_init
-from modules.vc_dictionary import dictionary_load, delete_dictionary, save_dictionary
+from modules.vc_dictionary import dictionary_load, delete_dictionary, save_dictionary, get_dictionary
+from modules.lists import PageView
 
 class yomiage_cmds(commands.Cog):
     def __init__(self, bot):
@@ -139,6 +140,34 @@ class yomiage_cmds(commands.Cog):
                 return
             
             await interact.response.send_message(f"設定に失敗したのだ...")
+
+        except Exception as e:
+            exception_type, exception_object, exception_traceback = sys.exc_info()
+            filename = exception_traceback.tb_frame.f_code.co_filename
+            line_no = exception_traceback.tb_lineno
+            await sendException(e, filename, line_no)
+    
+
+    @yomi.command(name="dictionary-list", description="サーバー辞書の単語を表示するのだ")
+    async def vc_dictionary(self, interact: discord.Interaction):
+        try:
+            result = get_dictionary(interact.guild.id)
+            if result:
+                embed = discord.Embed(
+                    title="サーバー辞書の単語を表示するのだ！",
+                    description="サーバー辞書の単語を表示するのだ！",
+                    color=discord.Color.green()
+                )
+                for i in range(len(result)):
+                    embed.add_field(
+                        name=f"単語{i+1}",
+                        value=f"単語: {result[i][0]}\n読み仮名: {result[i][1]}\n登録者: <@{result[i][2]}>"
+                    )
+                await interact.response.send_message(embed=embed)
+                return
+            else:
+                await interact.response.send_message("登録されている単語はないのだ...")
+                return
 
         except Exception as e:
             exception_type, exception_object, exception_traceback = sys.exc_info()

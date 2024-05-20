@@ -16,6 +16,8 @@ from modules.vc_dictionary import dictionary_load, delete_dictionary, save_dicti
 ROOT_DIR = os.path.dirname(__file__)
 SCRSHOT = os.path.join(ROOT_DIR, "scrshot", "scr.png")
 
+logging.basicConfig(level=logging.INFO)
+
 # 管理者権限を確認する。なければ終了する。
 if platform.uname().system == "Windows":
     import ctypes
@@ -76,7 +78,7 @@ async def on_ready():
     except Exception as e:
         logging.error(f'Failed to load extension jishaku.')
         logging.error(e)
-        
+
     print(f'{bot.user}に接続しました！')
     await tree.sync()
     print("コマンドツリーを同期しました")
