@@ -77,6 +77,8 @@ async def yomiage(content, guild: discord.Guild):
         speak_content = speak_content + "、省略"
 
     ##読み上げ内容がメッセージ以外の場合はサーバーデフォルトを使用
+    user_spkID = None
+    
     if (type(content)!=str):
         user_spkID = get_user_setting(content.author.id, "vc_speaker")
     spkID = get_server_setting(guild.id, "vc_speaker")
