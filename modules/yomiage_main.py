@@ -127,6 +127,7 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):
                 acceleration_mode=AccelerationMode.AUTO,
                 open_jtalk_dict_dir = './voicevox/open_jtalk_dic_utf_8-1.11'
             )
+            print(spkID)
             core.load_model(spkID)
 
             audio_query = core.audio_query(content, spkID)
