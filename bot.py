@@ -102,4 +102,7 @@ load_dotenv()
 TOKEN = os.getenv("TOKEN")
 
 # クライアントの実行
-bot.run(TOKEN)
+if type(TOKEN)==str:
+    bot.run(TOKEN)
+else
+    logging.exception("トークンの読み込みに失敗しました。.envファイルがあるか、正しく設定されているか確認してください。")
