@@ -10,9 +10,10 @@ from modules.yomiage_main import yomiage
 from modules.vc_process import vc_inout_process
 from modules.settings import db_load, db_init, get_server_setting, save_server_setting, save_user_setting
 from modules.exception import sendException, exception_init
-from modules.vc_dictionary import dictionary_load, delete_dictionary, save_dictionary
+from modules.vc_dictionary import dictionary_load, delete_dictionary, save_dictionary, get_dictionary
+from modules.lists import PageView
 
-class yomiage(commands.Cog):
+class yomiage_cmds(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
@@ -145,6 +146,34 @@ class yomiage(commands.Cog):
             filename = exception_traceback.tb_frame.f_code.co_filename
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
+    
+
+    @yomi.command(name="dictionary-list", description="サーバー辞書の単語を表示するのだ")
+    async def vc_dictionary(self, interact: discord.Interaction):
+        try:
+            result = get_dictionary(interact.guild.id)
+            if result:
+                embed = discord.Embed(
+                    title="サーバー辞書の単語を表示するのだ！",
+                    description="サーバー辞書の単語を表示するのだ！",
+                    color=discord.Color.green()
+                )
+                for i in range(len(result)):
+                    embed.add_field(
+                        name=f"単語{i+1}",
+                        value=f"単語: {result[i][0]}\n読み仮名: {result[i][1]}\n登録者: <@{result[i][2]}>"
+                    )
+                await interact.response.send_message(embed=embed)
+                return
+            else:
+                await interact.response.send_message("登録されている単語はないのだ...")
+                return
+
+        except Exception as e:
+            exception_type, exception_object, exception_traceback = sys.exc_info()
+            filename = exception_traceback.tb_frame.f_code.co_filename
+            line_no = exception_traceback.tb_lineno
+            await sendException(e, filename, line_no)
 
 
     @yomi.command(name="dictionary-delete", description="サーバー辞書の単語を削除するのだ")
@@ -237,7 +266,7 @@ class yomiage(commands.Cog):
             result = save_server_setting(interact.guild.id, read_type, speed)
 
             if result is None:
-                await interact.response.send_message(f"読み上げ速度を**「{speed}」**に変更したのだ！**")
+                await interact.response.send_message(f"読み上げ速度を**「{speed}」**に変更したのだ！")
                 return
             
             await interact.response.send_message("エラーが発生したのだ...")
@@ -323,7 +352,7 @@ class yomiage(commands.Cog):
             await sendException(e, filename, line_no)
     
     @app_commands.command(name="vc-stop", description="ボイスチャンネルから退出するのだ")
-    async def vc_disconnect_command(interact: discord.Interaction):
+    async def vc_disconnect_command(self, interact: discord.Interaction):
         try:
             if ((interact.guild.voice_client is None)):
                 await interact.response.send_message("私はボイスチャンネルに接続していないのだ...")
@@ -331,6 +360,9 @@ class yomiage(commands.Cog):
             
             elif((interact.user.voice is None)):
                 await interact.response.send_message("ボイスチャンネルに接続していないのだ...入ってから実行するのだ")
+                return
+            elif interact.user.voice.channel != interact.guild.voice_client.channel:
+                await interact.response.send_message("入ってるボイスチャンネルと違うチャンネルなのだ...実行してるチャンネルでやるのだ")
                 return
             
             await interact.guild.voice_client.disconnect()
@@ -343,4 +375,4 @@ class yomiage(commands.Cog):
     
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(yomiage(bot))
+    await bot.add_cog(yomiage_cmds(bot))

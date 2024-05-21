@@ -13,11 +13,10 @@ from modules.settings import db_load, db_init, get_server_setting, save_server_s
 from modules.exception import sendException, exception_init
 from modules.vc_dictionary import dictionary_load, delete_dictionary, save_dictionary
 
-##ロギングのレベルを設定
-logging.basicConfig(level=logging.INFO)
-
 ROOT_DIR = os.path.dirname(__file__)
 SCRSHOT = os.path.join(ROOT_DIR, "scrshot", "scr.png")
+
+logging.basicConfig(level=logging.INFO)
 
 # 管理者権限を確認する。なければ終了する。
 if platform.uname().system == "Windows":
@@ -33,8 +32,6 @@ db_load("database.db")
 db_data = db_init()
 
 dic_data = dictionary_load("dictionary.db")
-
-
 
 
 if db_data==False:
@@ -54,7 +51,7 @@ logging.debug("discord.py -> インテント生成完了")
 
 ### クライアントの生成
 # bot = discord.Client(intents=intents, activity=discord.Game(name="起きようとしています..."))
-bot = commands.Bot(command_prefix='!', intents=intents)
+bot = commands.Bot(command_prefix='yr!', intents=intents)
 logging.debug("discord.py -> クライアント生成完了")
 
 ##sendExceptionが利用できるようにする
@@ -64,23 +61,48 @@ exception_init(bot)
 tree = bot.tree
 logging.debug("discord.py -> ツリー生成完了")
 
-
 @bot.event
 async def on_ready():
+    ##cogファイルを読み込む
     for file in os.listdir("./cogs"):
         if file.endswith(".py"):
             try:
-                bot.load_extension(f"cogs.{file[:-3]}")
+                await bot.load_extension(f"cogs.{file[:-3]}")
                 logging.info(f'Loaded cogs: {file[:-3]}')
             except Exception as e:
                 logging.error(f'Failed to load extension {file[:-3]}.')
                 logging.error(e)
+    try:
+        ##jishakuを読み込む
+        await bot.load_extension('jishaku')
+        logging.info(f'Loaded cogs: jishaku')
+    except Exception as e:
+        logging.error(f'Failed to load extension jishaku.')
+        logging.error(e)
+
     print(f'{bot.user}に接続しました！')
     await tree.sync()
     print("コマンドツリーを同期しました")
+
+##入室通知
+@bot.event
+async def on_member_join(member: discord.Member):
+    guild = member.guild
+    channel = get_server_setting(guild.id, "welcome_server")
+    embed = discord.Embed(title=f"「{guild.name}」へようこそなのだ！", description=f"「{member.display_name}」がやってきました！", color= discord.Color.green())
+    embed.set_footer(text="YuranuBot! | Made by yurq_", icon_url=bot.user.avatar.url) 
+
+    if channel != 0:
+        for chn in guild.text_channels:
+            if chn.id == channel:
+                await chn.send(embed=embed)
+                return
 
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
 
 # クライアントの実行
-bot.run(TOKEN)
+if type(TOKEN)==str:
+    bot.run(TOKEN)
+else:
+    logging.exception("トークンの読み込みに失敗しました。.envファイルがあるか、正しく設定されているか確認してください。")
