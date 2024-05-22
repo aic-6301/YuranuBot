@@ -38,8 +38,8 @@ class utils(commands.Cog):
             await interact.response.send_message("処理中なのだ...")
 
             pic_name = f"dragon-{interact.guild.id}"
-            gen_dir = os.path.join("dragon")
-            pic_dir = os.path.join("dragon", pic_name)
+            gen_dir = os.path.abspath("dragon")
+            pic_dir = os.path.join(gen_dir, pic_name)
 
             await interact.followup.send(f"'{gen_dir}' and '{pic_dir}'")
 
