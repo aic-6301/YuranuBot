@@ -41,8 +41,8 @@ class utils(commands.Cog):
             gen_dir = os.path.abspath("dragon")
             pic_dir = os.path.join(gen_dir, pic_name)
 
-            result = subprocess.run(['node', 'dist/console.js', pic_dir, text], cwd=gen_dir)
-            await interact.followup.send(result)
+            result = subprocess.run(['node', 'dist/console.js', pic_dir, text], cwd=gen_dir, capture_output=True)
+            await interact.followup.send(result.stderr)
             
             file = discord.File(f"{pic_dir}.png", "dragon.png")
 
