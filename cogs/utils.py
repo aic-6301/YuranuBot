@@ -7,6 +7,7 @@ from discord import app_commands
 from modules.checkPc import pc_status
 from modules.settings import save_server_setting
 from modules.exception import sendException
+from modules.image_creator import make_welcome_image
 
 
 class utils(commands.Cog):
@@ -41,7 +42,7 @@ class utils(commands.Cog):
                 if activate == 1:
                     result = save_server_setting(interact.guild.id, read_type, channel.id)
                     if result is None:
-                        await interact.response.send_message(f"**{channel.name}に参加メッセージを設定したのだ！**")
+                        await interact.response.send_message(f"**「{channel.name}」に参加メッセージを設定したのだ！**")
                         return
                     
                 elif activate == 0:

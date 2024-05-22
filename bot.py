@@ -3,15 +3,15 @@ import os
 import logging
 import platform
 import sys
+import time
 
 from discord.ext import commands
 from dotenv import load_dotenv
-from modules.checkPc import pc_status
-from modules.yomiage_main import yomiage
-from modules.vc_process import vc_inout_process
-from modules.settings import db_load, db_init, get_server_setting, save_server_setting, save_user_setting
-from modules.exception import sendException, exception_init
-from modules.vc_dictionary import dictionary_load, delete_dictionary, save_dictionary
+from modules.delete import delete_file_latency
+from modules.settings import db_load, db_init, get_server_setting
+from modules.exception import exception_init
+from modules.vc_dictionary import dictionary_load
+from modules.image_creator import make_welcome_image
 
 ROOT_DIR = os.path.dirname(__file__)
 SCRSHOT = os.path.join(ROOT_DIR, "scrshot", "scr.png")
@@ -88,16 +88,25 @@ async def on_ready():
 @bot.event
 async def on_member_join(member: discord.Member):
     guild = member.guild
-    channel = get_server_setting(guild.id, "welcome_server")
-    embed = discord.Embed(title=f"「{guild.name}」へようこそなのだ！", description=f"「{member.display_name}」がやってきました！", color= discord.Color.green())
-    embed.set_footer(text="YuranuBot! | Made by yurq_", icon_url=bot.user.avatar.url) 
+    channel_ = get_server_setting(guild.id, "welcome_server")
 
-    if channel != 0:
+    if channel_ != 0:
         for chn in guild.text_channels:
-            if chn.id == channel:
-                await chn.send(embed=embed)
-                return
+            if chn.id == channel_:
+                path = make_welcome_image(member, guild)
 
+                file = discord.File(path[0], filename=f"{path[1]}")
+                embed = discord.Embed(title=f"「{guild.name}」へようこそなのだ！", 
+                                    description=f"{member.mention}がやってきました！",
+                                    color= discord.Color.green(),
+                                    )
+                embed.set_image(url=f"attachment://{path[1]}")
+                embed.set_footer(text="YuranuBot! | Made by yurq.", icon_url=bot.user.avatar.url)
+
+                await chn.send(file=file, embed=embed)
+
+                delete_file_latency(path[0], 2)
+            
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
 
