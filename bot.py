@@ -97,7 +97,7 @@ async def on_member_join(member: discord.Member):
 
                 file = discord.File(path[0], filename=f"{path[1]}")
                 embed = discord.Embed(title=f"「{guild.name}」へようこそなのだ！", 
-                                    description=f"@<{member.id}>がやってきました！",
+                                    description=f"{member.mention}がやってきました！",
                                     color= discord.Color.green(),
                                     )
                 embed.set_image(url=f"attachment://{path[1]}")
