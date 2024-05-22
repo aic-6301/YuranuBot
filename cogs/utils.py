@@ -24,7 +24,6 @@ class utils(commands.Cog):
         await interact.response.send_message(embed=embed)
 
     @app_commands.command(name="serv-join-message", description="サーバー参加者へメッセージを送信するチャンネルを設定するのだ！")
-    @app_commands.rename(activate="メッセージ送信のオンオフ")
     @app_commands.describe(activate="メッセージを送信する？(コマンドを実行した場所が送信場所になるのだ)")
     @app_commands.choices(
         activate=[

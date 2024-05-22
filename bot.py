@@ -3,6 +3,7 @@ import os
 import logging
 import platform
 import sys
+import subprocess
 
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -79,10 +80,13 @@ async def on_ready():
     except Exception as e:
         logging.error(f'Failed to load extension jishaku.')
         logging.error(e)
-
+    
+    print('APIサーバー起動中')   
+    subprocess.Popen("python api.py", shell=True)
     print(f'{bot.user}に接続しました！')
     await tree.sync()
     print("コマンドツリーを同期しました")
+
 
 ##入室通知
 @bot.event

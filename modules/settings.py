@@ -87,6 +87,30 @@ def db_init():
         return False
 
 ##データベースから設定を読み出し、返すやつ
+def get_server_all_setting(id):
+    """
+    データベースのサーバー設定を取得します
+
+    Args:
+        cursor: SQLite3で取得したカーソル
+        server_id: discordのサーバーID
+
+    Returns:
+        Result or None
+    """
+
+    list_type = "server_settings"
+    id_type = "server_id"
+
+    cursor.execute(f'SELECT * FROM {list_type} WHERE {id_type} = {id}')
+    result = cursor.fetchone()
+    if result:
+        return result
+    else:
+        cursor.execute(f'INSERT INTO {list_type} ({id_type}) VALUES (?)', (id,))
+
+
+##データベースから設定を読み出し、返すやつ
 def get_server_setting(id, type):
     """
     データベースのサーバー設定を取得します
