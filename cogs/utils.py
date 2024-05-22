@@ -52,9 +52,9 @@ class utils(commands.Cog):
                 embed.set_image(url="attachment://dragon.png")
                 embed.set_footer(text="好きな物発表ドラゴンジェネレーター | akikaki-bot", icon_url="https://avatars.githubusercontent.com/u/83486999?v=4")
 
-                await interact.followup.send(file=file, embed=embed)
+                await interact.edit_original_response(content="", attachments=[file], embed=embed)
             else:
-                await interact.followup.send(file=file)
+                await interact.edit_original_response(content="", attachments=[file])
 
             delete_file_latency(f"{pic_dir}.png", 2)
         except Exception as e:
@@ -62,6 +62,7 @@ class utils(commands.Cog):
             filename = exception_traceback.tb_frame.f_code.co_filename
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
+            await interact.edit_original_response(content="生成に失敗したのだ...")
 
 
     @app_commands.command(name="serv-join-message", description="サーバー参加者へメッセージを送信するチャンネルを設定するのだ！")
