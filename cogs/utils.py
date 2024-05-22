@@ -44,7 +44,7 @@ class utils(commands.Cog):
             await interact.followup.send(f"'{gen_dir}' and '{pic_dir}'")
 
             subprocess.run(['node', 'dist/console.js', pic_dir, text], cwd=gen_dir)
-            file = discord.File(f"{pic_dir}.png", "dragon.png")
+            file = discord.File(f"{gen_dir}{pic_name}.png", "dragon.png")
 
             if embed_true == 1:
                 embed = discord.Embed(
