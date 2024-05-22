@@ -38,10 +38,10 @@ class utils(commands.Cog):
             await interact.response.send_message("処理中なのだ...")
 
             pic_name = f"dragon-{interact.guild.id}"
-            gen_dir = os.path.join("dragon", "dist")
+            gen_dir = os.path.join("dragon")
             pic_dir = os.path.join("dragon", pic_name)
 
-            subprocess.run(f'node console.js "{pic_name}" "{text}"', cwd=gen_dir)
+            subprocess.run(f'node dist/console.js "{pic_name}" "{text}"', cwd=gen_dir)
             file = discord.File(f"{pic_dir}.png", "dragon.png")
 
             if embed_true == 1:
