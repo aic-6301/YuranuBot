@@ -1,5 +1,7 @@
+import subprocess
 import discord
 import sys
+import os
 
 from discord.ext import commands
 from discord import app_commands
@@ -7,7 +9,7 @@ from discord import app_commands
 from modules.checkPc import pc_status
 from modules.settings import save_server_setting
 from modules.exception import sendException
-from modules.image_creator import make_welcome_image
+from modules.delete import delete_file_latency
 
 
 class utils(commands.Cog):
@@ -23,6 +25,36 @@ class utils(commands.Cog):
         ##PCのステータスを送信
         embed = await pc_status(self.bot)
         await interact.response.send_message(embed=embed)
+
+    @app_commands.command(name="dragon_say_something",description="(ネタ枠)どこかでみたことがあるドラゴンで画像を生成するのだ")#PCの状態
+    @app_commands.rename(text="テキスト", embed_true="メッセージ送信のオンオフ")
+    @app_commands.choices(
+        embed_true=[
+            app_commands.Choice(name="オン",value=1),
+            app_commands.Choice(name="オフ",value=0)
+        ])
+    async def dragon_gen(self, interact: discord.Interaction, text: str, embed_true: int):
+        pic_name = f"dragon-{interact.guild.id}"
+        gen_dir = os.path.join("dragon")
+        pic_dir = os.path.join("dragon", pic_name)
+
+        subprocess.run(f'node dist/console.js "{pic_name}" "{text}"', cwd=gen_dir)
+        file = discord.File(f"{pic_dir}.png", "dragon.png")
+
+        if embed_true == 1:
+            embed = discord.Embed(
+                title="✅生成したのだ！",
+                color=discord.Color.green()
+            )
+            embed.set_image(url="attachment://dragon.png")
+            embed.set_footer(text="好きな物発表ドラゴンジェネレーター | akikaki-bot", icon_url="https://avatars.githubusercontent.com/u/83486999?v=4")
+
+            await interact.response.send_message(file=file, embed=embed)
+        else:
+            await interact.response.send_message(file=file)
+
+        delete_file_latency(f"{pic_dir}.png", 2)
+
 
     @app_commands.command(name="serv-join-message", description="サーバー参加者へメッセージを送信するチャンネルを設定するのだ！")
     @app_commands.rename(activate="メッセージ送信のオンオフ")
