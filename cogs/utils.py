@@ -34,28 +34,34 @@ class utils(commands.Cog):
             app_commands.Choice(name="オフ",value=0)
         ])
     async def dragon_gen(self, interact: discord.Interaction, text: str, embed_true: int):
-        pic_name = f"dragon-{interact.guild.id}"
-        gen_dir = os.path.join("dragon")
-        pic_dir = os.path.join("dragon", pic_name)
+        try:
+            await interact.response.send_message("処理中なのだ...")
 
-        interact.response.send_message("生成しています")
+            pic_name = f"dragon-{interact.guild.id}"
+            gen_dir = os.path.join("dragon")
+            pic_dir = os.path.join("dragon", pic_name)
 
-        subprocess.run(f'node dist/console.js "{pic_name}" "{text}"', cwd=gen_dir)
-        file = discord.File(f"{pic_dir}.png", "dragon.png")
+            subprocess.run(f'node dist/console.js "{pic_name}" "{text}"', cwd=gen_dir)
+            file = discord.File(f"{pic_dir}.png", "dragon.png")
 
-        if embed_true == 1:
-            embed = discord.Embed(
-                title="✅生成したのだ！",
-                color=discord.Color.green()
-            )
-            embed.set_image(url="attachment://dragon.png")
-            embed.set_footer(text="好きな物発表ドラゴンジェネレーター | akikaki-bot", icon_url="https://avatars.githubusercontent.com/u/83486999?v=4")
+            if embed_true == 1:
+                embed = discord.Embed(
+                    title="✅生成したのだ！",
+                    color=discord.Color.green()
+                )
+                embed.set_image(url="attachment://dragon.png")
+                embed.set_footer(text="好きな物発表ドラゴンジェネレーター | akikaki-bot", icon_url="https://avatars.githubusercontent.com/u/83486999?v=4")
 
-            await interact.response.edit_message(file=file, embed=embed)
-        else:
-            await interact.response.edit_message(file=file)
+                await interact.followup.send(file=file, embed=embed)
+            else:
+                await interact.followup.send(file=file)
 
-        delete_file_latency(f"{pic_dir}.png", 2)
+            delete_file_latency(f"{pic_dir}.png", 2)
+        except Exception as e:
+            exception_type, exception_object, exception_traceback = sys.exc_info()
+            filename = exception_traceback.tb_frame.f_code.co_filename
+            line_no = exception_traceback.tb_lineno
+            await sendException(e, filename, line_no)
 
 
     @app_commands.command(name="serv-join-message", description="サーバー参加者へメッセージを送信するチャンネルを設定するのだ！")
