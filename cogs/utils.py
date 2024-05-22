@@ -38,6 +38,8 @@ class utils(commands.Cog):
         gen_dir = os.path.join("dragon")
         pic_dir = os.path.join("dragon", pic_name)
 
+        interact.response.send_message("生成しています")
+
         subprocess.run(f'node dist/console.js "{pic_name}" "{text}"', cwd=gen_dir)
         file = discord.File(f"{pic_dir}.png", "dragon.png")
 
@@ -49,9 +51,9 @@ class utils(commands.Cog):
             embed.set_image(url="attachment://dragon.png")
             embed.set_footer(text="好きな物発表ドラゴンジェネレーター | akikaki-bot", icon_url="https://avatars.githubusercontent.com/u/83486999?v=4")
 
-            await interact.response.send_message(file=file, embed=embed)
+            await interact.response.edit_message(file=file, embed=embed)
         else:
-            await interact.response.send_message(file=file)
+            await interact.response.edit_message(file=file)
 
         delete_file_latency(f"{pic_dir}.png", 2)
 
