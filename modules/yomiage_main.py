@@ -17,6 +17,7 @@ from modules.exception import sendException
 from modules.vc_dictionary import get_dictionary
 from collections import deque, defaultdict
 from discord import FFmpegOpusAudio
+from modules.delete import delete_file_latency
 if os_name == "Linux":
     import voicevox_core
     from voicevox_core import AccelerationMode, AudioQuery, VoicevoxCore
@@ -215,18 +216,10 @@ def send_voice(queue, voice_client):
     source = queue.popleft()
     voice_client.play(FFmpegOpusAudio(source[0]), after=lambda e:send_voice(queue, voice_client))
 
-    ##再生スタートが完了したら時間差でファイルを削除する。
-    task = threading.Thread(target=delete_file_latency, args=(source[0], source[1]))
-    task.start()
+    ## 再生スタートが完了したら時間差でファイルを削除する。
+    delete_file_latency(source[0], source[1])
 
-def delete_file_latency(file_name, latency):
-    try:
-        time.sleep(latency+2.0)
-        os.remove(file_name)
-        
-    except Exception as e:
-        exception_type, exception_object, exception_traceback = sys.exc_info()
-        line_no = exception_traceback.tb_lineno
-        logging.exception(f"ファイル削除エラー： {line_no}行目、 [{type(e)}] {e}")
+
+
 
         

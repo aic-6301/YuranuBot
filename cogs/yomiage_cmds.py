@@ -72,7 +72,7 @@ class yomiage_cmds(commands.Cog):
                 value="自然係さん、ぬーんさんありがとうなのだ",
                 inline=False
                 )
-            embed.set_footer(text="YuranuBot! | Made by yurq_", icon_url=self.bot.user.avatar.url)
+            embed.set_footer(text="YuranuBot! | Made by yurq.", icon_url=self.bot.user.avatar.url)
 
             await interact.response.send_message(embed=embed)
 
@@ -119,6 +119,7 @@ class yomiage_cmds(commands.Cog):
 
 
     @yomi.command(name="dictionary-add", description="サーバー辞書に単語を追加するのだ")
+    @app_commands.rename(text="単語", reading="かな")
     async def vc_dictionary(self, interact: discord.Interaction, text: str, reading: str):
         try:
             result = save_dictionary(interact.guild.id, text, reading, interact.user.id)
@@ -203,13 +204,13 @@ class yomiage_cmds(commands.Cog):
             await sendException(e, filename, line_no)
 
     @yomi.command(name="server-speaker", description="サーバーの読み上げ話者を設定するのだ")
-    @discord.app_commands.rename(id="話者")
-    @discord.app_commands.choices(
+    @app_commands.rename(id="話者")
+    @app_commands.choices(
         id=[
-            discord.app_commands.Choice(name="ずんだもん",value=3),
-            discord.app_commands.Choice(name="春日部つむぎ",value=8),
-            discord.app_commands.Choice(name="四国めたん",value=2),
-            discord.app_commands.Choice(name="九州そら",value=16)
+            app_commands.Choice(name="ずんだもん",value=3),
+            app_commands.Choice(name="春日部つむぎ",value=8),
+            app_commands.Choice(name="四国めたん",value=2),
+            app_commands.Choice(name="九州そら",value=16)
         ]
     )
     async def yomiage_server_speaker(self, interact:discord.Interaction,id:int):
@@ -231,14 +232,14 @@ class yomiage_cmds(commands.Cog):
 
 
     @yomi.command(name="user-speaker", description="ユーザーの読み上げ話者を設定するのだ(どのサーバーでも同期されるのだ)")
-    @discord.app_commands.rename(id="話者")
-    @discord.app_commands.choices(
+    @app_commands.rename(id="話者")
+    @app_commands.choices(
         id=[
-            discord.app_commands.Choice(name="ずんだもん",value=3),
-            discord.app_commands.Choice(name="春日部つむぎ",value=8),
-            discord.app_commands.Choice(name="四国めたん",value=2),
-            discord.app_commands.Choice(name="九州そら",value=16),
-            discord.app_commands.Choice(name="サーバーのデフォルト設定を利用する", value=-1)
+            app_commands.Choice(name="ずんだもん",value=3),
+            app_commands.Choice(name="春日部つむぎ",value=8),
+            app_commands.Choice(name="四国めたん",value=2),
+            app_commands.Choice(name="九州そら",value=16),
+            app_commands.Choice(name="サーバーのデフォルト設定を利用する", value=-1)
         ]
     )
     async def yomiage_user_speaker(self, interact:discord.Interaction,id:int):
@@ -260,6 +261,7 @@ class yomiage_cmds(commands.Cog):
 
 
     @yomi.command(name="speed", description="読み上げの速度を変更するのだ")
+    @app_commands.rename(speed="速度")
     async def yomiage_speed(self, interact: discord.Interaction, speed: float):
         try:
             read_type = "speak_speed"
@@ -267,6 +269,25 @@ class yomiage_cmds(commands.Cog):
 
             if result is None:
                 await interact.response.send_message(f"読み上げ速度を**「{speed}」**に変更したのだ！")
+                return
+            
+            await interact.response.send_message("エラーが発生したのだ...")
+
+        except Exception as e:
+            exception_type, exception_object, exception_traceback = sys.exc_info()
+            filename = exception_traceback.tb_frame.f_code.co_filename
+            line_no = exception_traceback.tb_lineno
+            await sendException(e, filename, line_no)
+
+
+    @yomi.command(name="length-limit", description="読み上げ文字数を制限するのだ")
+    async def yomiage_speed(self, interact: discord.Interaction, limit: float):
+        try:
+            read_type = "length_limit"
+            result = save_server_setting(interact.guild.id, read_type, limit)
+
+            if result is None:
+                await interact.response.send_message(f"読み上げ文字数を**「{limit}文字」**に変更したのだ！")
                 return
             
             await interact.response.send_message("エラーが発生したのだ...")
