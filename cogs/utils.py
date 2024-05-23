@@ -45,7 +45,7 @@ class utils(commands.Cog):
             if platform.uname().system == "Windows":
                 result = subprocess.run(['node', 'dist/console.js', pic_dir, text], cwd=gen_dir, capture_output=True)
             elif platform.uname().system == "Linux":
-                result = subprocess.run(['sudo', 'node', 'dist/console.js', pic_dir, text], cwd=gen_dir, capture_output=True)
+                result = subprocess.run(['npx', 'node', 'dist/console.js', pic_dir, text], cwd=gen_dir, capture_output=True)
             await interact.followup.send(result.stderr)
             
             file = discord.File(f"{pic_dir}.png", "dragon.png")
