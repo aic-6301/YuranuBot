@@ -78,20 +78,18 @@ async def yomiage(content, guild: discord.Guild):
         speak_content = speak_content + "、省略"
 
     ##読み上げ内容がメッセージ以外の場合はサーバーデフォルトを使用
-    user_spkID = None
-    
-    if (type(content)==discord.message.Message):
-        user_spkID = get_user_setting(content.author.id, "vc_speaker")
-    spkID = get_server_setting(guild.id, "vc_speaker")
+    spkID_usr = -1
 
-    ##ユーザー話者がない場合はサーバー話者を利用する
-    if user_spkID is None or -1:
-        await queue_yomiage(speak_content, guild, spkID)
+    if (type(content)==discord.message.Message):
+        spkID_usr = get_user_setting(content.author.id, "vc_speaker")
+
+    ##ユーザー話者がある場合はサーバー話者を利用する
+    if spkID_usr != -1:
+        await queue_yomiage(speak_content, guild, spkID_usr)
         return
     
-    ##ユーザー話者があるときはこっち
-    await queue_yomiage(speak_content, guild, user_spkID)
-
+    spkID = get_server_setting(guild.id, "vc_speaker")  
+    await queue_yomiage(speak_content, guild, spkID)
 
 async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):    
     try:
