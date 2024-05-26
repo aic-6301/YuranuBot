@@ -26,50 +26,7 @@ class utils(commands.Cog):
         ##PCのステータスを送信
         embed = await pc_status(self.bot)
         await interact.response.send_message(embed=embed)
-
-    @app_commands.command(name="dragon_say_something",description="(ネタ枠)どこかでみたことがあるドラゴンで画像を生成するのだ")#PCの状態
-    @app_commands.rename(text="テキスト", embed_true="メッセージ送信のオンオフ")
-    @app_commands.choices(
-        embed_true=[
-            app_commands.Choice(name="オン",value=1),
-            app_commands.Choice(name="オフ",value=0)
-        ])
-    async def dragon_gen(self, interact: discord.Interaction, text: str, embed_true: int):
-        try:
-            await interact.response.send_message("処理中なのだ...")
-
-            pic_name = f"dragon-{interact.guild.id}"
-            gen_dir = os.path.abspath("dragon")
-            pic_dir = os.path.join(gen_dir, pic_name)
-
-            if platform.uname().system == "Windows":
-                result = subprocess.run(['node', 'dist/console.js', pic_dir, text], cwd=gen_dir, capture_output=True)
-            elif platform.uname().system == "Linux":
-                result = subprocess.run(['npx', 'node', 'dist/console.js', pic_dir, text], cwd=gen_dir, capture_output=True)
-            await interact.followup.send(result.stderr)
-            
-            file = discord.File(f"{pic_dir}.png", "dragon.png")
-
-            if embed_true == 1:
-                embed = discord.Embed(
-                    title="✅生成したのだ！",
-                    color=discord.Color.green()
-                )
-                embed.set_image(url="attachment://dragon.png")
-                embed.set_footer(text="好きな物発表ドラゴンジェネレーター | akikaki-bot", icon_url="https://avatars.githubusercontent.com/u/83486999?v=4")
-
-                await interact.edit_original_response(content="", attachments=[file], embed=embed)
-            else:
-                await interact.edit_original_response(content="", attachments=[file])
-
-            delete_file_latency(f"{pic_dir}.png", 2)
-        except Exception as e:
-            exception_type, exception_object, exception_traceback = sys.exc_info()
-            filename = exception_traceback.tb_frame.f_code.co_filename
-            line_no = exception_traceback.tb_lineno
-            await sendException(e, filename, line_no)
-            await interact.edit_original_response(content="生成に失敗したのだ...")
-
+        
 
     @app_commands.command(name="serv-join-message", description="サーバー参加者へメッセージを送信するチャンネルを設定するのだ！")
     @app_commands.rename(activate="メッセージ送信のオンオフ")

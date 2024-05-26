@@ -84,7 +84,7 @@ async def yomiage(content, guild: discord.Guild):
         spkID_usr = get_user_setting(content.author.id, "vc_speaker")
 
     ##ユーザー話者がある場合はサーバー話者を利用する
-    if spkID_usr != -1:
+    if spkID_usr != -1 or None:
         await queue_yomiage(speak_content, guild, spkID_usr)
         return
     
