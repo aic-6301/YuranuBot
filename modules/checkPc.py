@@ -83,7 +83,7 @@ async def pc_status(bot: commands.Bot):
             if "coretemp" in temp_:
                 for entry in temp_["coretemp"]:
                     if entry.label == "Package id 0":
-                        cpu_Temp = f"{entry.current}\u00B0C"
+                        cpu_Temp = f"{entry.current}"
 
         embed = discord.Embed( ### Embedを定義する
                         title="よしっ、調査完了っと！これが結果なのだ！",# タイトル
