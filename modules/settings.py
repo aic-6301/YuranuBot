@@ -110,6 +110,14 @@ def get_server_setting(id, type):
         return result[0]
     else:
         cursor.execute(f'INSERT INTO {list_type} ({id_type}) VALUES (?)', (id,))
+        conn.commit = True
+
+        cursor.execute(f'SELECT {type} FROM {list_type} WHERE {id_type} = {id}')
+        result = cursor.fetchone()
+
+        return result[0]
+
+        
     
 ##設定を上書きするやつ
 def save_server_setting(id, type, new_value):
@@ -169,6 +177,12 @@ def get_user_setting(id, type):
         return result[0]
     else:
         cursor.execute(f'INSERT INTO {list_type} ({id_type}) VALUES (?)', (id,))
+        conn.commit()
+
+        cursor.execute(f'SELECT {type} FROM {list_type} WHERE {id_type} = {id}')
+
+        result = cursor.fetchone()
+        return result[0]
     
 ##設定を上書きするやつ
 def save_user_setting(id, type, new_value):
