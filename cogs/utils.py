@@ -12,7 +12,6 @@ from modules.settings import save_server_setting
 from modules.exception import sendException
 from modules.delete import delete_file_latency
 
-
 class utils(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot

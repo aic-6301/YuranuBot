@@ -1,4 +1,5 @@
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from discord.ext import commands
 from io import BytesIO
 import os
 import time
