@@ -19,7 +19,7 @@ server_settings = [
 
 user_settings = [
     ("user_id", "INTEGER"),
-    ("vc_speaker", "INTEGER DEFAULT -1")
+    ("vc_speaker", "INTEGER NOT NULL DEFAULT -1")
 ]
 
 
