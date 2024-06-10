@@ -14,7 +14,6 @@ server_settings = [
     ("vc_exit_message", "TEXT DEFAULT がたいせきしました！"),
     ("vc_connect_message", "TEXT DEFAULT せつぞくしました！"),
     ("vc_speaker", "INTEGER NOT NULL DEFAULT 3"),
-    ("vc_watcher", "INTEGER DEFAULT 0")
 ]
 
 user_settings = [

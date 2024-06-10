@@ -22,6 +22,12 @@ if os_name == "Linux":
     import voicevox_core
     from voicevox_core import AccelerationMode, AudioQuery, VoicevoxCore
 
+###読み上げ用のコアをロードし、作成します
+    core = VoicevoxCore(
+        acceleration_mode=AccelerationMode.AUTO,
+        open_jtalk_dict_dir = './voicevox/open_jtalk_dic_utf_8-1.11'
+    )
+
 ## VOICEVOX用の設定
 VC_OUTPUT = "./yomiage_data/"
 VC_HOST = "127.0.0.1"
@@ -121,11 +127,6 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):
         ##サーバーごとに利用される速度のデータを取得
             speed = get_server_setting(guild.id, "speak_speed")
 
-            ###読み上げ用のコアをロードし、作成します
-            core = VoicevoxCore(
-                acceleration_mode=AccelerationMode.AUTO,
-                open_jtalk_dict_dir = './voicevox/open_jtalk_dic_utf_8-1.11'
-            )
             core.load_model(spkID)
 
             audio_query = core.audio_query(content, spkID)
