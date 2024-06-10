@@ -365,6 +365,13 @@ class yomiage_cmds(commands.Cog):
                 return
 
             await interact.response.send_message(f"「{interact.user.voice.channel.name}」に自動接続を設定したのだ！")
+            
+        except Exception as e:
+            exception_type, exception_object, exception_traceback = sys.exc_info()
+            filename = exception_traceback.tb_frame.f_code.co_filename
+            line_no = exception_traceback.tb_lineno
+            await sendException(e, filename, line_no)
+
     
     @app_commands.command(name="vc-stop", description="ボイスチャンネルから退出するのだ")
     async def vc_disconnect_command(self, interact: discord.Interaction):
