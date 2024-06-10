@@ -1,6 +1,6 @@
 # YuranuBotforWindows/Linux
-Windowsのみ: VOICEVOXをバックグラウンドで起動しないと読み上げを使用できません。<br>
-Linuxのみ: Voicevox_coreの導入が必要です。
+読み上げにはvoicevox_coreの導入が必要です。
+詳しくはこちら：https://github.com/VOICEVOX/voicevox_core
 
 # Special Thanks
 ・S-Server Developersの皆様 (アドバイスなど)<br>
