@@ -9,10 +9,6 @@ Linuxのみ: Voicevox_coreの導入が必要です。
 ・ぬーん様 (YuranuAPIの作成、デバッグなど)<br>
 ・あきかき様 (Webダッシュボードの作成、ドラゴン文字ジェネレーターなど)<br>
 
-# ドラゴン文字ジェネレーター
-あきかき様の「sukina_souzai_happyou_dragon_generator」を使用しています<br>
-https://github.com/akikaki-bot/sukina_souzai_happyou_dragon_generator
-
 # 内臓フォントについて
 Koruri Semibold, Koruri Boldを使用しています。<br>
 https://koruri.github.io/
