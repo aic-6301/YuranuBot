@@ -210,7 +210,8 @@ class yomiage_cmds(commands.Cog):
             app_commands.Choice(name="ずんだもん",value=3),
             app_commands.Choice(name="春日部つむぎ",value=8),
             app_commands.Choice(name="四国めたん",value=2),
-            app_commands.Choice(name="九州そら",value=16)
+            app_commands.Choice(name="九州そら",value=16),
+            app_commands.Choice(name="雨晴はう", value=10)
         ]
     )
     async def yomiage_server_speaker(self, interact:discord.Interaction,id:int):
@@ -239,6 +240,7 @@ class yomiage_cmds(commands.Cog):
             app_commands.Choice(name="春日部つむぎ",value=8),
             app_commands.Choice(name="四国めたん",value=2),
             app_commands.Choice(name="九州そら",value=16),
+            app_commands.Choice(name="雨晴はう", value=10),
             app_commands.Choice(name="サーバーのデフォルト設定を利用する", value=-1)
         ]
     )

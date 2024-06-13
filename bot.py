@@ -33,7 +33,6 @@ db_data = db_init()
 
 dic_data = dictionary_load("dictionary.db")
 
-
 if db_data==False:
     logging.warning("サーバー「設定」データベースの読み込みに失敗しました")
     sys.exit()
