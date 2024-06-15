@@ -4,7 +4,9 @@ from discord import app_commands
 
 import sys
 import logging
+import random
 
+from modules.messages import conn_message, zunda_conn_message
 from modules.checkPc import pc_status
 from modules.yomiage_main import yomiage
 from modules.vc_process import vc_inout_process
@@ -13,17 +15,6 @@ from modules.exception import sendException, exception_init
 from modules.vc_dictionary import dictionary_load, delete_dictionary, save_dictionary, get_dictionary
 import modules.lists as Page
 
-zunda_conn_message =[
-    "よっと、こんにちはなのだ！",
-    "今日も元気に読み上げするのだー！",
-    "ゆらぬぼっとの登場なのだー！"
-]
-
-conn_message = [
-    "よっと、こんにちは！",
-    "今日も元気に読み上げします！",
-    "ゆらぬぼっとです！接続しました！"
-]
 
 class yomiage_cmds(commands.Cog):
     def __init__(self, bot):
@@ -102,10 +93,12 @@ class yomiage_cmds(commands.Cog):
 
             ##参加時の読み上げ
             spkID = get_server_setting(interact.guild.id, "vc_speaker")
-            if spkID is 3:
-                mess = conn_message
+            if spkID == 3:
+                mess = random.choice(zunda_conn_message)
                 await yomiage(mess, interact.guild)
-
+            else:
+                mess = random.choice(conn_message)
+                await yomiage(mess, interact.guild)
 
         except Exception as e:
             exception_type, exception_object, exception_traceback = sys.exc_info()
@@ -307,7 +300,7 @@ class yomiage_cmds(commands.Cog):
 
 
     @yomi.command(name="length-limit", description="読み上げ文字数を制限するのだ")
-    async def yomiage_speed(self, interact: discord.Interaction, limit: float):
+    async def yomiage_speed(self, interact: discord.Interaction, limit: int):
         try:
             read_type = "length_limit"
             result = save_server_setting(interact.guild.id, read_type, limit)

@@ -1,4 +1,7 @@
 import discord
+import random
+
+from modules.messages import conn_message, zunda_conn_message
 from modules.yomiage_main import yomiage
 from modules.settings import get_server_setting
 
@@ -14,9 +17,14 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
             if not member.guild.voice_client or member.guild.voice_client.channel != after.channel:
                 await after.channel.connect()
             
-                mess = get_server_setting(member.guild.id, "vc_connect_message")
-                if mess is not None:
+                spkID = get_server_setting(member.guild.id, "vc_speaker")
+                if spkID == 3:
+                    mess = random.choice(zunda_conn_message)
+                    await yomiage(mess, member.guild.id)
+                else:
+                    mess = random.choice(conn_message)
                     await yomiage(mess, member.guild)
+
                 return # 接続しましただけを読ませるために終わらせる
 
     if member.guild.voice_client and before.channel != after.channel:
