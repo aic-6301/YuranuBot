@@ -13,6 +13,18 @@ from modules.exception import sendException, exception_init
 from modules.vc_dictionary import dictionary_load, delete_dictionary, save_dictionary, get_dictionary
 from modules.lists import PageView
 
+zunda_conn_message =[
+    "よっと、こんにちはなのだ！",
+    "今日も元気に読み上げするのだー！",
+    "ゆらぬぼっとの登場なのだー！"
+]
+
+conn_message = [
+    "よっと、こんにちは！",
+    "今日も元気に読み上げします！",
+    "ゆらぬぼっとです！接続しました！"
+]
+
 class yomiage_cmds(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -89,8 +101,9 @@ class yomiage_cmds(commands.Cog):
                 await interact.channel.send(embed=embed)
 
             ##参加時の読み上げ
-            mess = get_server_setting(interact.guild_id, "vc_connect_message")
-            if mess is not None:
+            spkID = get_server_setting(interact.guild.id, "vc_speaker")
+            if spkID is 3:
+                mess = conn_message
                 await yomiage(mess, interact.guild)
 
 
