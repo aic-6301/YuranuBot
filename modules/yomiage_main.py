@@ -64,7 +64,7 @@ async def yomiage(content, guild: discord.Guild):
     dicts = get_dictionary(guild.id)
     if dicts != None:
         for text, reading, user in dicts:
-            fixed_content = re.sub(text, reading, fixed_content)
+            fixed_content = re.sub(text.lower(), reading.lower(), fixed_content, flags=re.IGNORECASE)
 
     ##文字制限の設定を取得する
     length_limit = get_server_setting(guild.id, "length_limit")
