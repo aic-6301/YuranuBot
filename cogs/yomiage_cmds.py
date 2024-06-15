@@ -11,7 +11,7 @@ from modules.vc_process import vc_inout_process
 from modules.settings import db_load, db_init, get_server_setting, save_server_setting, save_user_setting
 from modules.exception import sendException, exception_init
 from modules.vc_dictionary import dictionary_load, delete_dictionary, save_dictionary, get_dictionary
-from modules.lists import PageView
+import modules.lists as Page
 
 class yomiage_cmds(commands.Cog):
     def __init__(self, bot):
@@ -154,6 +154,7 @@ class yomiage_cmds(commands.Cog):
         try:
             result = get_dictionary(interact.guild.id)
             if result:
+                embeds = []
                 embed = discord.Embed(
                     title="サーバー辞書の単語を表示するのだ！",
                     description="サーバー辞書の単語を表示するのだ！",
@@ -164,7 +165,17 @@ class yomiage_cmds(commands.Cog):
                         name=f"単語{i+1}",
                         value=f"単語: {result[i][0]}\n読み仮名: {result[i][1]}\n登録者: <@{result[i][2]}>"
                     )
-                await interact.response.send_message(embed=embed)
+                    if (i+1) % 10 == 0:  # Create a new embed every 10 words
+                        embeds.append(embed)
+                        embed = discord.Embed(
+                            title="サーバー辞書の単語を表示するのだ！",
+                            description="サーバー辞書の単語を表示するのだ！",
+                            color=discord.Color.green()
+                        )
+                if len(embed.fields) > 0:  # Add the last embed if there are remaining fields
+                    embeds.append(embed)
+
+                await Page.Simple().start(interact, pages=embeds)
                 return
             else:
                 await interact.response.send_message("登録されている単語はないのだ...")
