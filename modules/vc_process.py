@@ -42,21 +42,25 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
                     await member.guild.voice_client.disconnect()
                     return
 
-    if before.channel != after.channel:
-        for bot_client in bot.voice_clients:
-            ##参加時に読み上げる
-            if after.channel is not None:
-                if (after.channel.id == bot_client.channel.id):
-                    mess = get_server_setting(after.channel.guild.id, "vc_join_message")#==が参加したのだ
-                    if mess is not None:
-                        await yomiage(f"{member.display_name}{mess}", member.guild)
-                
-            ##退席時に読み上げる
-            if before.channel is not None:
-                if (before.channel.id == bot_client.channel.id):
-                    mess = get_server_setting(before.channel.guild.id, "vc_exit_message")#==が退席したのだ
-                    if mess is not None:
-                        await yomiage(f"{member.display_name}{mess}", member.guild)       
+        if before.channel != after.channel:
+            for bot_client in bot.voice_clients:
+                ##参加時に読み上げる
+                if after.channel is not None:
+                    _announce = get_server_setting(after.channel.guild.id, "vc_user_announce")
+                    if _announce == 1:
+                        if (after.channel.id == bot_client.channel.id):
+                            mess = get_server_setting(after.channel.guild.id, "vc_join_message")#==が参加したのだ
+                            if mess is not None:
+                                await yomiage(f"{member.display_name}{mess}", member.guild)
+                    
+                ##退席時に読み上げる
+                if before.channel is not None:
+                    _announce = get_server_setting(before.channel.guild.id, "vc_user_announce")
+                    if _announce == 1:
+                        if (before.channel.id == bot_client.channel.id):
+                            mess = get_server_setting(before.channel.guild.id, "vc_exit_message")#==が退席したのだ
+                            if mess is not None:
+                                await yomiage(f"{member.display_name}{mess}", member.guild)       
                         
                         
     if member.guild.voice_client:

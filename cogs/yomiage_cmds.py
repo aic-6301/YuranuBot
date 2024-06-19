@@ -122,6 +122,34 @@ class yomiage_cmds(commands.Cog):
             filename = exception_traceback.tb_frame.f_code.co_filename
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
+        
+    
+    @yomi.command(name="user-announce1", description="ユーザーの入退出を読み上げするのだ")
+    @app_commands.rename(activate="有効無効")
+    @app_commands.choices(
+        activate=[
+            app_commands.Choice(name="有効",value=1),
+            app_commands.Choice(name="無効",value=0)
+        ]
+    )
+    async def yomiage_channel(self, interact: discord.Interaction, activate: int):
+        try:
+            result = save_server_setting(interact.guild_id, "vc_user_announce", activate)
+
+            if result is None:
+                if activate == 0:
+                    await interact.response.send_message(f"ユーザーの入退出読み上げを**「無効」**にしたのだ！")
+                elif activate == 1:
+                    await interact.response.send_message(f"ユーザーの入退出読み上げを**「有効」**にしたのだ！")
+                return
+            
+            await interact.response.send_message(f"設定に失敗したのだ...")
+
+        except Exception as e:
+            exception_type, exception_object, exception_traceback = sys.exc_info()
+            filename = exception_traceback.tb_frame.f_code.co_filename
+            line_no = exception_traceback.tb_lineno
+            await sendException(e, filename, line_no)
 
 
     @yomi.command(name="dictionary-add", description="サーバー辞書に単語を追加するのだ")
