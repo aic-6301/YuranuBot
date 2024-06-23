@@ -10,7 +10,7 @@
 ・あきかき様 (Webダッシュボードの作成など)<br>
 
 # requirements.txtについて
-pip install -r requirements.txt を実行すると、必要なモジュールをインストールできます。
+`pip install -r requirements.txt` を実行すると、必要なモジュールをインストールできます。<br>
 YuranuBotのディレクトリで実行して下さい。
 
 # 内臓フォントについて
