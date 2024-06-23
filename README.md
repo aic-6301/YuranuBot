@@ -1,4 +1,4 @@
-# YuranuBotforWindows/Linux
+# YuranuBotForWindows/Linux
 **読み上げにはvoicevox_coreの導入が必要です。**<br>
 詳しくはこちら：https://github.com/VOICEVOX/voicevox_core
 
