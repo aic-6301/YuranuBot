@@ -9,6 +9,10 @@
 ・ぬーん様 (YuranuAPIの作成、デバッグなど)<br>
 ・あきかき様 (Webダッシュボードの作成など)<br>
 
+# requirements.txtについて
+pip install -r requirements.txt を実行すると、必要なモジュールをインストールできます。
+YuranuBotのディレクトリで実行して下さい。
+
 # 内臓フォントについて
 Koruri Semibold, Koruri Boldを使用しています。<br>
 https://koruri.github.io/
