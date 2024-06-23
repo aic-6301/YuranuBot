@@ -1,5 +1,5 @@
 # YuranuBotForWindows/Linux
-**読み上げにはvoicevox_coreの導入が必要です。**<br>
+**読み上げにはvoicevox_coreを使用しています。**<br>
 詳しくはこちら：https://github.com/VOICEVOX/voicevox_core
 
 # Special Thanks
