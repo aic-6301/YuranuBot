@@ -92,3 +92,4 @@ if type(TOKEN)==str:
     bot.run(TOKEN)
 else:
     logging.exception("トークンの読み込みに失敗しました。.envファイルがあるか、正しく設定されているか確認してください。")
+

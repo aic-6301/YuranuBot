@@ -37,7 +37,7 @@ if (not os.path.isdir(VC_OUTPUT)):
 async def yomiage(content, guild: discord.Guild):
     fix_words = [r'(https?://\S+)', r'<:\w+:\d+>',r'<a:\w+:\d+>',r'<#[0-9]+>', r'```[\s\S]*?```', f"(ﾟ∀ﾟ)", r'\|\|.*?\|\|']
     fix_end_word = ["URL省略","絵文字","アニメ絵文字","チャンネル省略","コードブロック省略", "", "、"]
-      
+
     if isinstance(content, discord.message.Message):
         fixed_content = content.content
 
@@ -187,7 +187,3 @@ def send_voice(queue, voice_client):
     ## 再生スタートが完了したら時間差でファイルを削除する。
     delete_file_latency(source[0], source[1])
 
-
-
-
-        

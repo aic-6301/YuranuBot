@@ -261,14 +261,17 @@ class yomiage_cmds(commands.Cog):
     )
     async def yomiage_server_speaker(self, interact:discord.Interaction,id:int):
         try:
-            read_type = "vc_speaker"
-            result = save_server_setting(interact.guild.id, read_type, id)
+            if interact.user.guild_permissions.administrator:
+                read_type = "vc_speaker"
+                result = save_server_setting(interact.guild.id, read_type, id)
 
-            if result is None:
-                await interact.response.send_message(f"サーバー話者を変更したのだ！")
-                return
-            
-            await interact.response.send_message("エラーが発生したのだ...")
+                if result is None:
+                    await interact.response.send_message(f"サーバー話者を変更したのだ！")
+                    return
+                
+                await interact.response.send_message("エラーが発生したのだ...")
+            else:
+                await interact.response.send_message("このコマンドは管理者のみ実行できるのだ")
 
         except Exception as e:
             exception_type, exception_object, exception_traceback = sys.exc_info()
