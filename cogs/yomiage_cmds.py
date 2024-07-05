@@ -13,6 +13,7 @@ from modules.vc_process import vc_inout_process
 from modules.settings import db_load, db_init, get_server_setting, save_server_setting, save_user_setting
 from modules.exception import sendException, exception_init
 from modules.vc_dictionary import dictionary_load, delete_dictionary, save_dictionary, get_dictionary
+from modules.speakers import spk_list, user_spk_list
 import modules.lists as Page
 
 
@@ -251,15 +252,9 @@ class yomiage_cmds(commands.Cog):
     @yomi.command(name="server-speaker", description="サーバーの読み上げ話者を設定するのだ")
     @app_commands.rename(id="話者")
     @app_commands.choices(
-        id=[
-            app_commands.Choice(name="ずんだもん",value=3),
-            app_commands.Choice(name="春日部つむぎ",value=8),
-            app_commands.Choice(name="四国めたん",value=2),
-            app_commands.Choice(name="九州そら",value=16),
-            app_commands.Choice(name="雨晴はう", value=10)
-        ]
+        id=spk_list
     )
-    async def yomiage_server_speaker(self, interact:discord.Interaction,id:int):
+    async def change_yomiage_server_speaker(self, interact:discord.Interaction,id:int):
         try:
             if interact.user.guild_permissions.administrator:
                 read_type = "vc_speaker"
@@ -283,16 +278,9 @@ class yomiage_cmds(commands.Cog):
     @yomi.command(name="user-speaker", description="ユーザーの読み上げ話者を設定するのだ(どのサーバーでも同期されるのだ)")
     @app_commands.rename(id="話者")
     @app_commands.choices(
-        id=[
-            app_commands.Choice(name="ずんだもん",value=3),
-            app_commands.Choice(name="春日部つむぎ",value=8),
-            app_commands.Choice(name="四国めたん",value=2),
-            app_commands.Choice(name="九州そら",value=16),
-            app_commands.Choice(name="雨晴はう", value=10),
-            app_commands.Choice(name="サーバーのデフォルト設定を利用する", value=-1)
-        ]
+        id=user_spk_list
     )
-    async def yomiage_user_speaker(self, interact:discord.Interaction,id:int):
+    async def change_yomiage_user_speaker(self, interact:discord.Interaction,id:int):
         try:
             read_type = "vc_speaker"
             result = save_user_setting(interact.user.id, read_type, id)

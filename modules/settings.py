@@ -20,6 +20,8 @@ server_settings = [
 user_settings = [
     ("user_id", "INTEGER"),
     ("vc_speaker", "INTEGER NOT NULL DEFAULT -1")
+    ("conn-msg", "TEXT NOT NULL DEFAULT $user$が入室しました。")
+    ("disconn-msg", "TEXT NOT NULL DEFAULT $user$が退出しました。")
 ]
 
 
