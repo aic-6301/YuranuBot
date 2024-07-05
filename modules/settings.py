@@ -14,14 +14,14 @@ server_settings = [
     ("vc_exit_message", "TEXT DEFAULT がたいせきしました！"),
     ("vc_connect_message", "TEXT DEFAULT せつぞくしました！"),
     ("vc_speaker", "INTEGER NOT NULL DEFAULT 3"),
-    ("vc_user_announce", "INTEGER NOT NULL DEFAULT 1")
+    ("vc_user_announce", "INTEGER NOT NULL DEFAULT 1"),
 ]
 
 user_settings = [
     ("user_id", "INTEGER"),
-    ("vc_speaker", "INTEGER NOT NULL DEFAULT -1")
-    ("conn-msg", "TEXT NOT NULL DEFAULT $user$が入室しました。")
-    ("disconn-msg", "TEXT NOT NULL DEFAULT $user$が退出しました。")
+    ("vc_speaker", "INTEGER NOT NULL DEFAULT -1"),
+    ("conn_msg", "TEXT NOT NULL DEFAULT nan"),
+    ("disconn_msg", "TEXT NOT NULL DEFAULT nan")
 ]
 
 

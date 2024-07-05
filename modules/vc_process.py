@@ -1,9 +1,10 @@
 import discord
 import random
+import re
 
 from modules.messages import conn_message, zunda_conn_message
 from modules.yomiage_main import yomiage
-from modules.settings import get_server_setting
+from modules.settings import get_server_setting, get_user_setting
 
 async def vc_inout_process(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState, bot: discord.Client):
     if (member.bot):##ボットなら無視
@@ -47,20 +48,42 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
                 ##参加時に読み上げる
                 if after.channel is not None:
                     _announce = get_server_setting(after.channel.guild.id, "vc_user_announce")
-                    if _announce == 1:
-                        if (after.channel.id == bot_client.channel.id):
-                            mess = get_server_setting(after.channel.guild.id, "vc_join_message")#==が参加したのだ
+                    mess = get_server_setting(after.channel.guild.id, "vc_join_message")#==が参加したのだ
+
+                    if (after.channel.id == bot_client.channel.id):
+                        if _announce == 2:
+                            user_mess = get_user_setting(member.id, "conn_msg")
+                            
+                            if user_mess == "nan" and mess is not None:
+                                await yomiage(f"{member.display_name}{mess}", member.guild)
+
+                            elif user_mess != None:
+                                user_mess = user_mess.replace("<user>", member.display_name)
+                                await yomiage(user_mess, member.guild)
+                                
+                        elif _announce == 1:
                             if mess is not None:
                                 await yomiage(f"{member.display_name}{mess}", member.guild)
                     
                 ##退席時に読み上げる
                 if before.channel is not None:
                     _announce = get_server_setting(before.channel.guild.id, "vc_user_announce")
-                    if _announce == 1:
-                        if (before.channel.id == bot_client.channel.id):
-                            mess = get_server_setting(before.channel.guild.id, "vc_exit_message")#==が退席したのだ
+                    mess = get_server_setting(before.channel.guild.id, "vc_exit_message")#==が退席したのだ
+
+                    if (before.channel.id == bot_client.channel.id):
+                        if _announce == 2:
+                            user_mess = get_user_setting(member.id, "disconn_msg")
+
+                            if user_mess == "nan" and mess is not None:
+                                await yomiage(f"{member.display_name}{mess}", member.guild)
+
+                            elif user_mess != None:
+                                user_mess = user_mess.replace("<user>", member.display_name)
+                                await yomiage(user_mess, member.guild)
+
+                        elif _announce == 1:
                             if mess is not None:
-                                await yomiage(f"{member.display_name}{mess}", member.guild)       
+                                await yomiage(f"{member.display_name}{mess}", member.guild)
                         
                         
     if member.guild.voice_client:

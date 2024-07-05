@@ -13,7 +13,6 @@ from modules.vc_process import vc_inout_process
 from modules.settings import db_load, db_init, get_server_setting, save_server_setting, save_user_setting
 from modules.exception import sendException, exception_init
 from modules.vc_dictionary import dictionary_load, delete_dictionary, save_dictionary, get_dictionary
-from modules.speakers import spk_list, user_spk_list
 import modules.lists as Page
 
 
@@ -129,8 +128,9 @@ class yomiage_cmds(commands.Cog):
     @app_commands.rename(activate="有効無効")
     @app_commands.choices(
         activate=[
-            app_commands.Choice(name="有効",value=1),
-            app_commands.Choice(name="無効",value=0)
+            app_commands.Choice(name="有効(ユーザー別有効)", value=2),
+            app_commands.Choice(name="有効(ユーザー別無効)",value=1),
+            app_commands.Choice(name="アナウンス無効",value=0)
         ]
     )
     async def yomiage_channel(self, interact: discord.Interaction, activate: int):
@@ -141,7 +141,9 @@ class yomiage_cmds(commands.Cog):
                 if activate == 0:
                     await interact.response.send_message(f"ユーザーの入退出読み上げを**「無効」**にしたのだ！")
                 elif activate == 1:
-                    await interact.response.send_message(f"ユーザーの入退出読み上げを**「有効」**にしたのだ！")
+                    await interact.response.send_message(f"ユーザーの入退出読み上げを**「有効(ユーザー別無効)」**にしたのだ！")
+                elif activate == 2:
+                    await interact.response.send_message(f"ユーザーの入退出読み上げを**「有効(ユーザー別有効)」**にしたのだ！")
                 return
             
             await interact.response.send_message(f"設定に失敗したのだ...")
@@ -252,9 +254,15 @@ class yomiage_cmds(commands.Cog):
     @yomi.command(name="server-speaker", description="サーバーの読み上げ話者を設定するのだ")
     @app_commands.rename(id="話者")
     @app_commands.choices(
-        id=spk_list
+        id=[
+            app_commands.Choice(name="ずんだもん",value=3),
+            app_commands.Choice(name="春日部つむぎ",value=8),
+            app_commands.Choice(name="四国めたん",value=2),
+            app_commands.Choice(name="九州そら",value=16),
+            app_commands.Choice(name="雨晴はう", value=10)
+        ]
     )
-    async def change_yomiage_server_speaker(self, interact:discord.Interaction,id:int):
+    async def yomiage_server_speaker(self, interact:discord.Interaction,id:int):
         try:
             if interact.user.guild_permissions.administrator:
                 read_type = "vc_speaker"
@@ -278,9 +286,16 @@ class yomiage_cmds(commands.Cog):
     @yomi.command(name="user-speaker", description="ユーザーの読み上げ話者を設定するのだ(どのサーバーでも同期されるのだ)")
     @app_commands.rename(id="話者")
     @app_commands.choices(
-        id=user_spk_list
+        id=[
+            app_commands.Choice(name="ずんだもん",value=3),
+            app_commands.Choice(name="春日部つむぎ",value=8),
+            app_commands.Choice(name="四国めたん",value=2),
+            app_commands.Choice(name="九州そら",value=16),
+            app_commands.Choice(name="雨晴はう", value=10),
+            app_commands.Choice(name="サーバーのデフォルト設定を利用する", value=-1)
+        ]
     )
-    async def change_yomiage_user_speaker(self, interact:discord.Interaction,id:int):
+    async def yomiage_user_speaker(self, interact:discord.Interaction,id:int):
         try:
             read_type = "vc_speaker"
             result = save_user_setting(interact.user.id, read_type, id)
@@ -361,12 +376,45 @@ class yomiage_cmds(commands.Cog):
                 return
             
             await interact.response.send_message("設定に失敗したのだ...")
-
         except Exception as e:
             exception_type, exception_object, exception_traceback = sys.exc_info()
             filename = exception_traceback.tb_frame.f_code.co_filename
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
+    
+
+    @yomi.command(name="user-join-message", description="[ユーザー別]参加時の読み上げを設定するのだ！")
+    @app_commands.describe(text="$user$ : ユーザー名")
+    async def change_user_join_message(self, interact: discord.Interaction, text: str):
+        try:
+            res = save_user_setting(interact.user.id, "conn_msg", text)
+            if res is None:
+                await interact.response.send_message("**ユーザー別 参加時の読み上げ内容を変更したのだ！**")
+                return
+            
+            await interact.response.send_message("設定に失敗したのだ...")
+        except Exception as e:
+            exception_type, exception_object, exception_traceback = sys.exc_info()
+            filename = exception_traceback.tb_frame.f_code.co_filename
+            line_no = exception_traceback.tb_lineno
+            await sendException(e, filename, line_no)
+
+    @yomi.command(name="user-exit-message", description="[ユーザー別]退席時の読み上げを設定するのだ！")
+    @app_commands.describe(text="$user$ : ユーザー名")
+    async def change_user_exit_message(self, interact: discord.Interaction, text: str):
+        try:
+            res = save_user_setting(interact.user.id, "disconn_msg", text)
+            if res is None:
+                await interact.response.send_message("**ユーザー別 退出時の読み上げ内容を変更したのだ！**")
+                return
+            
+            await interact.response.send_message("設定に失敗したのだ...")
+        except Exception as e:
+            exception_type, exception_object, exception_traceback = sys.exc_info()
+            filename = exception_traceback.tb_frame.f_code.co_filename
+            line_no = exception_traceback.tb_lineno
+            await sendException(e, filename, line_no)
+
 
     @yomi.command(name="connect-message", description="読み上げ接続時の読み上げ内容を変更するのだ")
     async def change_vc_exit_message(self, interact: discord.Interaction, text: str):

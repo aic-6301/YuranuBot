@@ -30,7 +30,6 @@ class yomi(commands.Cog):
         if (message.channel.id == channel): ##ChannelIDが読み上げ対象のIDと一致しているか
             await yomiage(message, message.guild)##難なくエラーをすり抜けたチャンネルにはもれなく読み上げ
 
-
     @app_commands.command(name="extra-announce")
     @app_commands.choices(
         activate=[
