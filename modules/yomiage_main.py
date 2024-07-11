@@ -21,7 +21,10 @@ from discord import FFmpegOpusAudio
 load_dotenv()
 USE_VOICEVOX_APP = os.getenv("USE_VOICEVOX_APP")
 
-if USE_VOICEVOX_APP == False:
+if USE_VOICEVOX_APP == "True":
+    print("VOICEVOXアプリを使用します")
+else:
+    print("voicevox coreを利用します")
     from voicevox_core import AccelerationMode, AudioQuery, VoicevoxCore
 
     ###読み上げ用のコアをロードし、作成します
@@ -106,7 +109,7 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):
     ##サーバーごとに利用される速度のデータを取得
         speed = get_server_setting(guild.id, "speak_speed")
 
-        if USE_VOICEVOX_APP == True:
+        if USE_VOICEVOX_APP == "True":
             params = (
                 ('text', content),
                 ('speaker', spkID)
