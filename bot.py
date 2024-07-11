@@ -63,7 +63,7 @@ logging.debug("discord.py -> ツリー生成完了")
 @bot.event
 async def on_ready():
     ##cogファイルを読み込む
-    for file in os.listdir("./cogs"):
+    for file in os.listdir(os.path.abspath("cogs")):
         if file.endswith(".py"):
             try:
                 await bot.load_extension(f"cogs.{file[:-3]}")

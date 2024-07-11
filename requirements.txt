@@ -1,6 +1,7 @@
 discord.py
 python-dotenv
 requests
-https://github.com/VOICEVOX/voicevox_core/releases/download/0.15.3/voicevox_core-0.15.3+cpu-cp38-abi3-linux_x86_64.whl
 psutil
 pillow
+pythonnet
+jishaku

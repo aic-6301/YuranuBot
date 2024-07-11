@@ -1,6 +1,8 @@
 import discord
 import platform
+import requests
 import time
+import json
 import wave
 import sys
 import re
@@ -12,20 +14,27 @@ from modules.settings import get_server_setting, get_user_setting
 from modules.exception import sendException
 from modules.vc_dictionary import get_dictionary
 from modules.delete import delete_file_latency
+from dotenv import load_dotenv
 from collections import deque, defaultdict
 from discord import FFmpegOpusAudio
 
-from voicevox_core import AccelerationMode, AudioQuery, VoicevoxCore
+load_dotenv()
+USE_VOICEVOX_APP = os.getenv("USE_VOICEVOX_APP")
 
-###読み上げ用のコアをロードし、作成します
-core = VoicevoxCore(
-    acceleration_mode=AccelerationMode.AUTO,
-    open_jtalk_dict_dir = './voicevox/open_jtalk_dic_utf_8-1.11'
-)
+if USE_VOICEVOX_APP == False:
+    from voicevox_core import AccelerationMode, AudioQuery, VoicevoxCore
+
+    ###読み上げ用のコアをロードし、作成します
+    core = VoicevoxCore(
+        acceleration_mode=AccelerationMode.AUTO,
+        open_jtalk_dict_dir = './voicevox/open_jtalk_dic_utf_8-1.11'
+    )
 
 ## VOICEVOX用の設定
 VC_OUTPUT = "./yomiage_data/"
 FS = 24000
+VC_HOST = "127.0.0.1"
+VC_PORT = 50021
 
 yomiage_serv_list = defaultdict(deque)
 
@@ -97,13 +106,34 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):
     ##サーバーごとに利用される速度のデータを取得
         speed = get_server_setting(guild.id, "speak_speed")
 
-        core.load_model(spkID)
+        if USE_VOICEVOX_APP == True:
+            params = (
+                ('text', content),
+                ('speaker', spkID)
+            )
+            _query = requests.post(
+                f'http://{VC_HOST}:{VC_PORT}/audio_query',
+                params=params
+            )
+            query = _query.json()
+            query["speedScale"] = speed
 
-        audio_query = core.audio_query(content, spkID)
-        audio_query.speed_scale = speed
+            synthesis = requests.post(
+                f'http://{VC_HOST}:{VC_PORT}/synthesis',
+                headers = {"Content-Type": "application/json"},
+                params = params,
+                data = json.dumps(query)
+            )
+            voice_byte = synthesis.content
+
+        elif USE_VOICEVOX_APP == False:
+            core.load_model(spkID)
+
+            audio_query = core.audio_query(content, spkID)
+            audio_query.speed_scale = speed
+            
+            voice_byte = core.synthesis(audio_query, spkID)
         
-        voice_byte = core.synthesis(audio_query, spkID)
-    
         ###作成時間を記録するため、timeを利用する
         wav_time = time.time()
         voice_file = f"{VC_OUTPUT}{guild.id}-{wav_time}.wav"
@@ -125,7 +155,6 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):
         if not guild.voice_client.is_playing():
             send_voice(queue, guild.voice_client)
         return
-            
             
     except Exception as e:
         exception_type, exception_object, exception_traceback = sys.exc_info()
@@ -174,6 +203,10 @@ def search_content(content: discord.message.Message):
             send_content += f"とその他{length-2}ファイル" 
         #語尾もちゃんとつける！
         send_content += "が添付されました、"
+
+        # スタンプがあったら読み上げ
+        if len(content.stickers) >= 1:
+            send_content += "スタンプが送信されました、"
 
         return send_content
 
