@@ -71,8 +71,8 @@ class yomiage_cmds(commands.Cog):
                 inline=False
             )
             embed.add_field(
-                name="読み上げの機能性向上のために、ほかの方にもご協力してもらっています！",
-                value="自然係さん、ぬーんさんありがとうなのだ",
+                name="自然係サーバーにより性能、機能性がアップしました！",
+                value="安定性、機能性向上にご協力いただき本当にありがとうございます！！",
                 inline=False
                 )
             embed.set_footer(text="YuranuBot! | Made by yurq.", icon_url=self.bot.user.avatar.url)

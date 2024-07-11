@@ -129,7 +129,7 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):
             )
             voice_byte = synthesis.content
 
-        elif USE_VOICEVOX_APP == False:
+        elif USE_VOICEVOX_APP == "False":
             core.load_model(spkID)
 
             audio_query = core.audio_query(content, spkID)
@@ -167,17 +167,20 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):
 
 ##コンテンツが添付されている場合の処理
 def search_content(content: discord.message.Message):
-    length = len(content.attachments)
+    send_content = ""
     
-    if length != 0:
-        if length >= 3: ##ファイル数が３つ以上なら
+    attach_length = len(content.attachments)
+    sticker_length = len(content.stickers)
+    
+    if attach_length > 0:
+        if attach_length >= 3: ##ファイル数が３つ以上なら
             _len = 2
             file_count = True
         else:
-            _len = length
+            _len = attach_length
             file_count = False
 
-        send_content = ""
+
         for i in range(_len):
             attachment = content.attachments[i]
 
@@ -203,15 +206,16 @@ def search_content(content: discord.message.Message):
                 send_content += "と"
         #ファイルが多すぎてもこれでおっけ！
         if file_count:
-            send_content += f"とその他{length-2}ファイル" 
+            send_content += f"とその他{attach_length-2}ファイル" 
         #語尾もちゃんとつける！
         send_content += "が添付されました、"
+    
+    if sticker_length > 0:
+        send_content += "スタンプが送信されました、"
+        
+    return send_content
 
-        # スタンプがあったら読み上げ
-        if len(content.stickers) >= 1:
-            send_content += "スタンプが送信されました、"
-
-        return send_content
+        
 
 def send_voice(queue, voice_client):
     if not queue or voice_client.is_playing():
