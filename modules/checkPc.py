@@ -57,19 +57,11 @@ async def pc_status(bot: commands.Bot):
 
             if ("AMD" in cpu_name): ### LibreHardwareMonitorを利用して取得
                 for a in range(0, len(computer.Hardware[hard_id].Sensors)):
-                    if ("Temperature" in str(sensor[a].SensorType) and "Core" in str(sensor[a].Name)):
-                        cpu_Temp = format(sensor[a].Value, ".1f")
-                    elif("Power" in str(sensor[a].SensorType) and "Package" in str(sensor[a].Name)):
-                        cpu_Power = format(sensor[a].Value, ".1f")
-                    elif(("Load" in str(sensor[a].SensorType)) and ("Total" in str(sensor[a].Name))):
+                    if(("Load" in str(sensor[a].SensorType)) and ("Total" in str(sensor[a].Name))):
                         cpu_Load = format(sensor[a].Value, ".1f")
             elif ("Intel" in cpu_name):
                 for a in range(0, len(computer.Hardware[hard_id].Sensors)):
-                    if ("Temperature" in str(sensor[a].SensorType) and "Core Package" in str(sensor[a].Name)):
-                        cpu_Temp = format(sensor[a].Value, ".1f")
-                    elif ("Power" in str(sensor[a].SensorType) and "Package" in str(sensor[a].Name)):
-                        cpu_Power = format(sensor[a].Value, ".1f")
-                    elif ("Load" in str(sensor[a].SensorType) and ("Total" in str(sensor[a].Name))):
+                    if ("Load" in str(sensor[a].SensorType) and ("Total" in str(sensor[a].Name))):
                         cpu_Load = format(sensor[a].Value, ".1f")
 
             if (os_info.system == "Windows"): ### Windowsの場合、表記を変更する
@@ -122,9 +114,7 @@ async def pc_status(bot: commands.Bot):
                         f"> [CPU名] **{cpu_name}**\n"+
                         f"> [コア数] **{cpu_cores} Threads**\n"+
                         f"> [周波数] **{cpu_freq:.2f} GHz**\n"+
-                        f"> [使用率] **{cpu_Load}%**\n"+
-                        f"> [消費電力] **{cpu_Power}W**\n"+
-                        f"> [温度] **{cpu_Temp}\u00B0C**"
+                        f"> [使用率] **{cpu_Load}%**\n"
                         )
         embed.add_field(name="**//メモリ情報//**", value=
                         f"> [使用率] **{(ram_info.used/1024/1024/1024):.2f}/{(ram_info.total/1024/1024/1024):.2f} GB"+
