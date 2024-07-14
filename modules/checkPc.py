@@ -69,7 +69,7 @@ async def pc_status(bot: commands.Bot):
                         cpu_Temp = format(sensor[a].Value, ".1f")
                     elif ("Power" in str(sensor[a].SensorType) and "Package" in str(sensor[a].Name)):
                         cpu_Power = format(sensor[a].Value, ".1f")
-                    elif ("Load" in str(sensor[a].SensorType) and "Total" in str(sensor[a].Name)):
+                    elif ("Load" in str(sensor[a].SensorType) and ("Total" in str(sensor[a].Name))):
                         cpu_Load = format(sensor[a].Value, ".1f")
 
             if (os_info.system == "Windows"): ### Windowsの場合、表記を変更する
