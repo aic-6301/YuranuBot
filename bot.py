@@ -16,7 +16,8 @@ from modules.image_creator import make_welcome_image
 ROOT_DIR = os.path.dirname(__file__)
 SCRSHOT = os.path.join(ROOT_DIR, "scrshot", "scr.png")
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
+
 
 # 管理者権限を確認する。なければ終了する。
 if platform.uname().system == "Windows":
@@ -30,8 +31,8 @@ if platform.uname().system == "Windows":
 ###データベースの読み込み
 db_load("database.db")
 db_data = db_init()
-
 dic_data = dictionary_load("dictionary.db")
+
 
 if db_data==False:
     logging.warning("サーバー「設定」データベースの読み込みに失敗しました")
@@ -63,7 +64,7 @@ logging.debug("discord.py -> ツリー生成完了")
 @bot.event
 async def on_ready():
     ##cogファイルを読み込む
-    for file in os.listdir(os.path.abspath("cogs")):
+    for file in os.listdir(os.path.join(ROOT_DIR, "cogs")):
         if file.endswith(".py"):
             try:
                 await bot.load_extension(f"cogs.{file[:-3]}")
@@ -84,6 +85,7 @@ async def on_ready():
     print("コマンドツリーを同期しました")
             
             
+
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
 

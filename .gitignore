@@ -1,5 +1,6 @@
 .env
 *.db
 *.wav
+*.bat
 __pycache__
 dic_test.py

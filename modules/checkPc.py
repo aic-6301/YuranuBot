@@ -63,6 +63,14 @@ async def pc_status(bot: commands.Bot):
                         cpu_Power = format(sensor[a].Value, ".1f")
                     elif(("Load" in str(sensor[a].SensorType)) and ("Total" in str(sensor[a].Name))):
                         cpu_Load = format(sensor[a].Value, ".1f")
+            elif ("Intel" in cpu_name):
+                for a in range(0, len(computer.Hardware[hard_id].Sensors)):
+                    if ("Temperature" in str(sensor[a].SensorType) and "Core Package" in str(sensor[a].Name)):
+                        cpu_Temp = format(sensor[a].Value, ".1f")
+                    elif ("Power" in str(sensor[a].SensorType) and "Package" in str(sensor[a].Name)):
+                        cpu_Power = format(sensor[a].Value, ".1f")
+                    elif ("Load" in str(sensor[a].SensorType) and "Total" in str(sensor[a].Name)):
+                        cpu_Load = format(sensor[a].Value, ".1f")
 
             if (os_info.system == "Windows"): ### Windowsの場合、表記を変更する
                 win32_edition = platform.win32_edition()
