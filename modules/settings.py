@@ -1,5 +1,6 @@
 import sqlite3
 import logging
+import sys
 ###データベース関連の処理###
 
 ##設定リストの管理
@@ -45,9 +46,15 @@ def db_load(file):
 
         conn = sqlite3.connect(file)
         cursor = conn.cursor()
+        
+        conn.autocommit = True
 
         return True
-    except:
+    except Exception as e:
+        exception_type, exception_object, exception_traceback = sys.exc_info()
+        filename = exception_traceback.tb_frame.f_code.co_filename
+        line_no = exception_traceback.tb_lineno
+        logging.error(f"database -> ({line_no}行目) {e}")
         return False
 
 def db_init():
@@ -86,7 +93,11 @@ def db_init():
         conn.commit()
         return True
     
-    except:
+    except Exception as e:
+        exception_type, exception_object, exception_traceback = sys.exc_info()
+        filename = exception_traceback.tb_frame.f_code.co_filename
+        line_no = exception_traceback.tb_lineno
+        logging.error(f"database -> ({line_no}行目) {e}")
         return False
 
 ##データベースから設定を読み出し、返すやつ
@@ -112,7 +123,6 @@ def get_server_setting(id, type):
         return result[0]
     else:
         cursor.execute(f'INSERT INTO {list_type} ({id_type}) VALUES (?)', (id,))
-        conn.autocommit = True
 
         cursor.execute(f'SELECT {type} FROM {list_type} WHERE {id_type} = {id}')
         result = cursor.fetchone()
@@ -154,7 +164,10 @@ def save_server_setting(id, type, new_value):
     
     
     except Exception as e:
-        return e
+        exception_type, exception_object, exception_traceback = sys.exc_info()
+        filename = exception_traceback.tb_frame.f_code.co_filename
+        line_no = exception_traceback.tb_lineno
+        logging.error(f"database -> ({line_no}行目) {e}")
 
 ##データベースから設定を読み出し、返すやつ
 def get_user_setting(id, type):
@@ -169,22 +182,25 @@ def get_user_setting(id, type):
     Returns:
         Result or None
     """
-
-    list_type = "user_settings"
-    id_type = "user_id"
-
-    cursor.execute(f'SELECT {type} FROM {list_type} WHERE {id_type} = {id}')
-    result = cursor.fetchone()
-    if result:
-        return result[0]
-    else:
-        cursor.execute(f'INSERT INTO {list_type} ({id_type}) VALUES (?)', (id,))
-        conn.commit()
+    try:
+        list_type = "user_settings"
+        id_type = "user_id"
 
         cursor.execute(f'SELECT {type} FROM {list_type} WHERE {id_type} = {id}')
-
         result = cursor.fetchone()
-        return result[0]
+        if result:
+            return result[0]
+        else:
+            cursor.execute(f'INSERT INTO {list_type} ({id_type}) VALUES (?)', (id,))
+            conn.commit()
+
+            cursor.execute(f'SELECT {type} FROM {list_type} WHERE {id_type} = {id}')
+
+            result = cursor.fetchone()
+            return result[0]
+        
+    except Exception as e:
+        logging.error(f"database -> {e}")
     
 ##設定を上書きするやつ
 def save_user_setting(id, type, new_value):
@@ -219,4 +235,7 @@ def save_user_setting(id, type, new_value):
     
     
     except Exception as e:
-        return e
+        exception_type, exception_object, exception_traceback = sys.exc_info()
+        filename = exception_traceback.tb_frame.f_code.co_filename
+        line_no = exception_traceback.tb_lineno
+        logging.error(f"database -> ({line_no}行目) {e}")

@@ -55,14 +55,9 @@ async def pc_status(bot: commands.Bot):
             sensor = computer.Hardware[hard_id].Sensors
             computer.Hardware[hard_id].Update()
 
-            if ("AMD" in cpu_name): ### LibreHardwareMonitorを利用して取得
-                for a in range(0, len(computer.Hardware[hard_id].Sensors)):
-                    if(("Load" in str(sensor[a].SensorType)) and ("Total" in str(sensor[a].Name))):
-                        cpu_Load = format(sensor[a].Value, ".1f")
-            elif ("Intel" in cpu_name):
-                for a in range(0, len(computer.Hardware[hard_id].Sensors)):
-                    if ("Load" in str(sensor[a].SensorType) and ("Total" in str(sensor[a].Name))):
-                        cpu_Load = format(sensor[a].Value, ".1f")
+            for a in range(0, len(computer.Hardware[hard_id].Sensors)):
+                if(("Load" in str(sensor[a].SensorType)) and ("Total" in str(sensor[a].Name))):
+                    cpu_Load = format(sensor[a].Value, ".1f")
 
             if (os_info.system == "Windows"): ### Windowsの場合、表記を変更する
                 win32_edition = platform.win32_edition()

@@ -13,9 +13,14 @@ from modules.exception import exception_init
 from modules.vc_dictionary import dictionary_load
 from modules.image_creator import make_welcome_image
 
+# ディレクトリの取得
 ROOT_DIR = os.path.dirname(__file__)
-SCRSHOT = os.path.join(ROOT_DIR, "scrshot", "scr.png")
 
+# .envから設定値を取得
+load_dotenv()
+TOKEN = os.getenv("TOKEN")
+SETTING_DIR = os.getenv("SETTING_DIR")
+    
 logging.basicConfig(level=logging.DEBUG)
 
 
@@ -29,18 +34,28 @@ if platform.uname().system == "Windows":
         logging.error("管理者権限で実行されていません！")
 
 ###データベースの読み込み
-db_load("database.db")
-db_data = db_init()
-dic_data = dictionary_load("dictionary.db")
+# ディレクトリが設定されている場合はその場所を指定
+if type(SETTING_DIR) is str:
+    db_load(os.path.join(SETTING_DIR, "database.db"))
+    dic_data = dictionary_load(os.path.join(SETTING_DIR, "dictionary.db"))
+# ディレクトリが設定されていない場合はデフォルトの場所
+elif type(SETTING_DIR) is None:
+    db_load("database.db")
+    dic_data = dictionary_load("dictionary.db")
 
+db_data = db_init()
 
 if db_data==False:
     logging.warning("サーバー「設定」データベースの読み込みに失敗しました")
     sys.exit()
+else:
+    logging.debug("Database -> サーバー設定を読み込みました。")
 
 if dic_data==False:
     logging.warning("サーバー「辞書」データベースの読み込みに失敗しました")
     sys.exit()
+else:
+    logging.debug("Database -> サーバー辞書を読み込みました。")
 
 ### インテントの生成
 intents = discord.Intents.default()
@@ -68,30 +83,26 @@ async def on_ready():
         if file.endswith(".py"):
             try:
                 await bot.load_extension(f"cogs.{file[:-3]}")
-                logging.info(f'Loaded cogs: {file[:-3]}')
+                logging.info(f'discord.py -> 読み込み完了: {file[:-3]}')
             except Exception as e:
-                logging.error(f'Failed to load extension {file[:-3]}.')
+                logging.error(f'discord.py -> 読み込み失敗: {file[:-3]}.')
                 logging.error(e)
     try:
         ##jishakuを読み込む
         await bot.load_extension('jishaku')
-        logging.info(f'Loaded cogs: jishaku')
+        logging.info(f'discord.py -> 読み込み完了: jishaku')
     except Exception as e:
-        logging.error(f'Failed to load extension jishaku.')
+        logging.error(f'discord.py -> 読み込み失敗: jishaku.')
         logging.error(e)
 
-    print(f'{bot.user}に接続しました！')
+    print(f'やったのだー！ discord.py -> {bot.user}に接続しました！')
     await tree.sync()
-    print("コマンドツリーを同期しました")
+    print("discord.py -> コマンドツリーを同期しました")
             
-            
-
-load_dotenv()
-TOKEN = os.getenv("TOKEN")
 
 # クライアントの実行
 if type(TOKEN)==str:
     bot.run(TOKEN)
 else:
-    logging.exception("トークンの読み込みに失敗しました。.envファイルがあるか、正しく設定されているか確認してください。")
+    logging.exception("dotenv -> トークンの読み込みに失敗しました。.envファイルがあるか、正しく設定されているか確認してください。")
 
