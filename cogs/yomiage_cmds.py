@@ -71,7 +71,7 @@ class yomiage_cmds(commands.Cog):
                 inline=False
             )
             embed.add_field(
-                name="自然係サーバーにより性能、機能性がアップしました！",
+                name="自然係サーバーの方々により性能、機能性がアップしました！",
                 value="安定性、機能性向上にご協力いただき本当にありがとうございます！！",
                 inline=False
                 )
