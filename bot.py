@@ -40,7 +40,6 @@ if type(DIC_DIR) is str:
     dic_data = dictionary_load(os.path.join(DIC_DIR, "dictionary.db"))
 # ディレクトリが設定されていない場合はデフォルトの場所
 elif type(DIC_DIR) is None:
-    db_load("database.db")
     dic_data = dictionary_load("dictionary.db")
 
 db_load("database.db")

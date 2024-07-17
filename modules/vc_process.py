@@ -21,7 +21,7 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
                 spkID = get_server_setting(member.guild.id, "vc_speaker")
                 if spkID == 3:
                     mess = random.choice(zunda_conn_message)
-                    await yomiage(mess, member.guild.id)
+                    await yomiage(mess, member.guild)
                 else:
                     mess = random.choice(conn_message)
                     await yomiage(mess, member.guild)
