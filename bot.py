@@ -19,7 +19,7 @@ ROOT_DIR = os.path.dirname(__file__)
 # .envから設定値を取得
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
-SETTING_DIR = os.getenv("SETTING_DIR")
+DIC_DIR = os.getenv("DIC_DIR")
     
 logging.basicConfig(level=logging.DEBUG)
 
@@ -34,15 +34,16 @@ if platform.uname().system == "Windows":
         logging.error("管理者権限で実行されていません！")
 
 ###データベースの読み込み
+## サーバー辞書共有用
 # ディレクトリが設定されている場合はその場所を指定
-if type(SETTING_DIR) is str:
-    db_load(os.path.join(SETTING_DIR, "database.db"))
-    dic_data = dictionary_load(os.path.join(SETTING_DIR, "dictionary.db"))
+if type(DIC_DIR) is str:
+    dic_data = dictionary_load(os.path.join(DIC_DIR, "dictionary.db"))
 # ディレクトリが設定されていない場合はデフォルトの場所
-elif type(SETTING_DIR) is None:
+elif type(DIC_DIR) is None:
     db_load("database.db")
     dic_data = dictionary_load("dictionary.db")
 
+db_load("database.db")
 db_data = db_init()
 
 if db_data==False:
