@@ -5,7 +5,7 @@ from discord import app_commands
 import sys
 import logging
 import random
-from modules.vc_speakers import spk_choices, user_spk_choices
+from modules.vc_speakers import spk_choices, user_spk_choices, find_spker
 
 from modules.messages import conn_message, zunda_conn_message
 from modules.checkPc import pc_status
@@ -112,11 +112,13 @@ class yomiage_cmds(commands.Cog):
     async def check_yomi_settings(self, interact: discord.Interaction):
         vc_channel_id = get_server_setting(interact.guild.id, "speak_channel")
         vc_channel = discord.utils.get(interact.guild.channels, id=vc_channel_id)
+
+        spker_id = get_server_setting(interact.guild.id, "vc_speaker")
+        spker_name = find_spker(id=spker_id)
+
         auto_connect = get_server_setting(interact.guild.id, "auto_connect")
         vc_speak_speed = get_server_setting(interact.guild.id, "speak_speed")
         length_limit = get_server_setting(interact.guild.id, "length_limit")
-
-
 
         embed = discord.Embed(
             title="読み上げ関連の設定を表示するのだ！",
@@ -128,8 +130,8 @@ class yomiage_cmds(commands.Cog):
             inline=False
         )
         embed.add_field(
-            name="VC自動接続",
-            value=auto_connect,
+            name="サーバー話者",
+            value=spker_name,
             inline=False
         )
         embed.add_field(
@@ -143,11 +145,11 @@ class yomiage_cmds(commands.Cog):
             inline=False
         )
         embed.add_field(
-            name="読み上げ文字制限",
-            value=f"{length_limit}文字",
+            name="VC自動接続",
+            value=auto_connect,
             inline=False
         )
-
+        await interact.response.send_message(embed=embed)
 
     @yomi.command(name="channel", description="読み上げるチャンネルを変更するのだ")
     async def yomiage_channel(self, interact: discord.Interaction, channel: discord.TextChannel):

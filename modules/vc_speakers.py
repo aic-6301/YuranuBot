@@ -24,3 +24,14 @@ logging.debug(f"vc_speakers -> 話者リスト: {spk_list}")
 user_spk_choices.append(app_commands.Choice(name="サーバーの話者を使用する", value=-1))
 
 logging.debug(f"vc_speakers -> ユーザー話者リスト: {user_spk_choices}")
+
+def find_spker(id=None, name=None):
+    # idで検索する場合
+    if id is not None:
+        for spk_name, spk_id in spk_list:
+            if spk_id == id:
+                return [spk_name, spk_id]
+    elif name is not None:
+        for spk_name, spk_id in spk_list:
+            if spk_name == name:
+                return [spk_name, spk_id]
