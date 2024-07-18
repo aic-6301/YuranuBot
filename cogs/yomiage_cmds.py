@@ -39,6 +39,8 @@ class yomiage_cmds(commands.Cog):
             ##接続を知らせるメッセージを送信
             channel_id = get_server_setting(interact.guild_id, "speak_channel")
             channel = discord.utils.get(interact.guild.channels, id=channel_id)
+            if channel is None:
+                channel = "**チャンネルが未設定です**"
             length_limit = get_server_setting(interact.guild_id, "length_limit")
             yomiage_speed = get_server_setting(interact.guild_id, "speak_speed")
 
@@ -54,16 +56,16 @@ class yomiage_cmds(commands.Cog):
             )
             embed.add_field(
                 name="読み上げるチャンネル",
-                value=channel
+                value=f"> {channel}"
             )
             embed.add_field(
                 name="読み上げ文字数の制限",
-                value=length_limit,
+                value=f"> {length_limit}",
                 inline=False
             )
             embed.add_field(
                 name="読み上げスピード",
-                value=yomiage_speed,
+                value=f"> {yomiage_speed}",
                 inline=False
             )
             embed.add_field(
@@ -81,9 +83,8 @@ class yomiage_cmds(commands.Cog):
             await interact.response.send_message(embed=embed)
 
             ##読み上げるチャンネルが存在しない場合に警告文を送信
-            channel = get_server_setting(interact.guild.id, "speak_channel") 
 
-            if (channel is None):
+            if (channel_id is None):
                 embed = discord.Embed(
                     color=discord.Color.red(),
                     title="読み上げるチャンネルがわからないのだ...",
@@ -112,11 +113,23 @@ class yomiage_cmds(commands.Cog):
     async def check_yomi_settings(self, interact: discord.Interaction):
         vc_channel_id = get_server_setting(interact.guild.id, "speak_channel")
         vc_channel = discord.utils.get(interact.guild.channels, id=vc_channel_id)
+        if vc_channel is None:
+            vc_channel = "チャンネルが未設定"
 
         spker_id = get_server_setting(interact.guild.id, "vc_speaker")
         spker_name = find_spker(id=spker_id)
+        spker_name = spker_name[0]
 
-        auto_connect = get_server_setting(interact.guild.id, "auto_connect")
+        ac_id = get_server_setting(interact.guild.id, "auto_connect")
+        auto_conn_channel = ""
+        if ac_id == 0:
+            auto_conn_channel = "オフ"
+        else:
+            auto_conn_channel = discord.utils.get(interact.guild.channels, id=ac_id)
+
+            if auto_conn_channel == None:
+                auto_conn_channel = "チャンネルが見つからない、または不具合"
+
         vc_speak_speed = get_server_setting(interact.guild.id, "speak_speed")
         length_limit = get_server_setting(interact.guild.id, "length_limit")
 
@@ -126,27 +139,27 @@ class yomiage_cmds(commands.Cog):
         )
         embed.add_field(
             name="読み上げるサーバー",
-            value=vc_channel,
+            value=f"> {vc_channel}",
             inline=False
         )
         embed.add_field(
             name="サーバー話者",
-            value=spker_name,
+            value=f"> {spker_name}",
             inline=False
         )
         embed.add_field(
             name="読み上げ速度",
-            value=vc_speak_speed,
+            value=f"> {vc_speak_speed}",
             inline=False
         )
         embed.add_field(
             name="読み上げ文字制限",
-            value=f"{length_limit}文字",
+            value=f"> {length_limit}文字",
             inline=False
         )
         embed.add_field(
             name="VC自動接続",
-            value=auto_connect,
+            value=f"> {auto_conn_channel}",
             inline=False
         )
         await interact.response.send_message(embed=embed)

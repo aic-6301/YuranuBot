@@ -25,6 +25,7 @@ user_spk_choices.append(app_commands.Choice(name="サーバーの話者を使用
 
 logging.debug(f"vc_speakers -> ユーザー話者リスト: {user_spk_choices}")
 
+# 読み上げ話者を検索する
 def find_spker(id=None, name=None):
     # idで検索する場合
     if id is not None:

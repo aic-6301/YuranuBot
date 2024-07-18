@@ -39,7 +39,7 @@ if platform.uname().system == "Windows":
 if type(DIC_DIR) is str:
     dic_data = dictionary_load(os.path.join(DIC_DIR, "dictionary.db"))
 # ディレクトリが設定されていない場合はデフォルトの場所
-elif type(DIC_DIR) is None:
+else:
     dic_data = dictionary_load("dictionary.db")
 
 db_load("database.db")
@@ -95,7 +95,7 @@ async def on_ready():
         logging.error(f'discord.py -> 読み込み失敗: jishaku.')
         logging.error(e)
 
-    print(f'やったのだー！ discord.py -> {bot.user}に接続しました！')
+    print(f'discord.py -> {bot.user}に接続しました！やったのだー！ ')
     await tree.sync()
     print("discord.py -> コマンドツリーを同期しました")
             
