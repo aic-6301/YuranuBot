@@ -13,9 +13,8 @@ server_settings = [
     ("length_limit", "INTEGER DEFAULT 50"),
     ("vc_join_message", "TEXT DEFAULT がさんかしました！"),
     ("vc_exit_message", "TEXT DEFAULT がたいせきしました！"),
-    ("vc_connect_message", "TEXT DEFAULT せつぞくしました！"),
     ("vc_speaker", "INTEGER NOT NULL DEFAULT 3"),
-    ("vc_user_announce", "INTEGER NOT NULL DEFAULT 1"),
+    ("vc_user_announce", "INTEGER NOT NULL DEFAULT 1")
 ]
 
 user_settings = [

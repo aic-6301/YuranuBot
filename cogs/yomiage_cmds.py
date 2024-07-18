@@ -5,6 +5,7 @@ from discord import app_commands
 import sys
 import logging
 import random
+from modules.vc_speakers import spk_choices, user_spk_choices
 
 from modules.messages import conn_message, zunda_conn_message
 from modules.checkPc import pc_status
@@ -93,6 +94,7 @@ class yomiage_cmds(commands.Cog):
 
             ##参加時の読み上げ
             spkID = get_server_setting(interact.guild.id, "vc_speaker")
+            # もしずんだもんならずんだもん専用の接続メッセージを使用
             if spkID == 3:
                 mess = random.choice(zunda_conn_message)
                 await yomiage(mess, interact.guild)
@@ -105,6 +107,46 @@ class yomiage_cmds(commands.Cog):
             filename = exception_traceback.tb_frame.f_code.co_filename
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
+
+    @yomi.command(name="settings")
+    async def check_yomi_settings(self, interact: discord.Interaction):
+        vc_channel_id = get_server_setting(interact.guild.id, "speak_channel")
+        vc_channel = discord.utils.get(interact.guild.channels, id=vc_channel_id)
+        auto_connect = get_server_setting(interact.guild.id, "auto_connect")
+        vc_speak_speed = get_server_setting(interact.guild.id, "speak_speed")
+        length_limit = get_server_setting(interact.guild.id, "length_limit")
+
+
+
+        embed = discord.Embed(
+            title="読み上げ関連の設定を表示するのだ！",
+            color=discord.Color.green()
+        )
+        embed.add_field(
+            name="読み上げるサーバー",
+            value=vc_channel,
+            inline=False
+        )
+        embed.add_field(
+            name="VC自動接続",
+            value=auto_connect,
+            inline=False
+        )
+        embed.add_field(
+            name="読み上げ速度",
+            value=vc_speak_speed,
+            inline=False
+        )
+        embed.add_field(
+            name="読み上げ文字制限",
+            value=f"{length_limit}文字",
+            inline=False
+        )
+        embed.add_field(
+            name="読み上げ文字制限",
+            value=f"{length_limit}文字",
+            inline=False
+        )
 
 
     @yomi.command(name="channel", description="読み上げるチャンネルを変更するのだ")
@@ -194,7 +236,7 @@ class yomiage_cmds(commands.Cog):
                 embeds = []
                 embed = discord.Embed(
                     title="サーバー辞書の単語を表示するのだ！",
-                    description="サーバー辞書の単語を表示するのだ！",
+                    description="サーバー辞書の単語を表示しています！",
                     color=discord.Color.green()
                 )
                 for i in range(len(result)):
@@ -253,15 +295,7 @@ class yomiage_cmds(commands.Cog):
 
     @yomi.command(name="server-speaker", description="サーバーの読み上げ話者を設定するのだ")
     @app_commands.rename(id="話者")
-    @app_commands.choices(
-        id=[
-            app_commands.Choice(name="ずんだもん",value=3),
-            app_commands.Choice(name="春日部つむぎ",value=8),
-            app_commands.Choice(name="四国めたん",value=2),
-            app_commands.Choice(name="九州そら",value=16),
-            app_commands.Choice(name="雨晴はう", value=10)
-        ]
-    )
+    @app_commands.choices(id=spk_choices)
     async def yomiage_server_speaker(self, interact:discord.Interaction,id:int):
         try:
             if interact.user.guild_permissions.administrator:
@@ -285,16 +319,7 @@ class yomiage_cmds(commands.Cog):
 
     @yomi.command(name="user-speaker", description="ユーザーの読み上げ話者を設定するのだ(どのサーバーでも同期されるのだ)")
     @app_commands.rename(id="話者")
-    @app_commands.choices(
-        id=[
-            app_commands.Choice(name="ずんだもん",value=3),
-            app_commands.Choice(name="春日部つむぎ",value=8),
-            app_commands.Choice(name="四国めたん",value=2),
-            app_commands.Choice(name="九州そら",value=16),
-            app_commands.Choice(name="雨晴はう", value=10),
-            app_commands.Choice(name="サーバーのデフォルト設定を利用する", value=-1)
-        ]
-    )
+    @app_commands.choices(id=user_spk_choices)
     async def yomiage_user_speaker(self, interact:discord.Interaction,id:int):
         try:
             read_type = "vc_speaker"
