@@ -74,7 +74,7 @@ class yomiage_cmds(commands.Cog):
                 inline=False
             )
             embed.add_field(
-                name="自然係サーバーの方々により性能、機能性がアップしました！",
+                name="自然係サーバーの方々によりずんだぼっとがパワーアップしました！",
                 value="安定性、機能性向上にご協力いただき本当にありがとうございます！！",
                 inline=False
                 )
@@ -109,7 +109,7 @@ class yomiage_cmds(commands.Cog):
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
 
-    @yomi.command(name="settings")
+    @yomi.command(name="settings", description="サーバーの読み上げ設定を表示するのだ")
     async def check_yomi_settings(self, interact: discord.Interaction):
         vc_channel_id = get_server_setting(interact.guild.id, "speak_channel")
         vc_channel = discord.utils.get(interact.guild.channels, id=vc_channel_id)
