@@ -35,7 +35,7 @@ class yomiage_cmds(commands.Cog):
                 return
             
             await interact.user.voice.channel.connect()
-            
+
             ##接続を知らせるメッセージを送信
             channel_id = get_server_setting(interact.guild_id, "speak_channel")
             channel = discord.utils.get(interact.guild.channels, id=channel_id)
@@ -78,9 +78,11 @@ class yomiage_cmds(commands.Cog):
                 value="安定性、機能性向上にご協力いただき本当にありがとうございます！！",
                 inline=False
                 )
+            file = discord.File(R"images\connect.png", filename="connect.png")
+            embed.set_image(url=f"attachment://connect.png")
             embed.set_footer(text="YuranuBot! | Made by yurq.", icon_url=self.bot.user.avatar.url)
 
-            await interact.response.send_message(embed=embed)
+            await interact.response.send_message(embed=embed, file=file)
 
             ##読み上げるチャンネルが存在しない場合に警告文を送信
 
@@ -108,6 +110,7 @@ class yomiage_cmds(commands.Cog):
             filename = exception_traceback.tb_frame.f_code.co_filename
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
+
 
     @yomi.command(name="settings", description="サーバーの読み上げ設定を表示するのだ")
     async def check_yomi_settings(self, interact: discord.Interaction):
@@ -158,7 +161,7 @@ class yomiage_cmds(commands.Cog):
             inline=False
         )
         embed.add_field(
-            name="VC自動接続",
+            name="VCへの自動接続",
             value=f"> {auto_conn_channel}",
             inline=False
         )
