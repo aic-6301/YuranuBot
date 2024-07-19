@@ -42,8 +42,6 @@ async def pc_status(bot: commands.Bot):
         
         ping = bot.latency * 1000
 
-        cpu_Temp = "Not Available    "
-        cpu_Power = "Not Available    "
         cpu_Load = "Not Available    "
 
         if os_info.system == "Windows":
@@ -109,7 +107,7 @@ async def pc_status(bot: commands.Bot):
                         f"> [CPU名] **{cpu_name}**\n"+
                         f"> [コア数] **{cpu_cores} Threads**\n"+
                         f"> [周波数] **{cpu_freq:.2f} GHz**\n"+
-                        f"> [使用率] **{cpu_Load}%**\n"
+                        f"> [使用率] **{cpu_Load} %**\n"
                         )
         embed.add_field(name="**//メモリ情報//**", value=
                         f"> [使用率] **{(ram_info.used/1024/1024/1024):.2f}/{(ram_info.total/1024/1024/1024):.2f} GB"+
