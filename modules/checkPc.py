@@ -29,6 +29,8 @@ if platform.uname().system == "Windows":
 
     computer.Open()
 
+
+
 async def pc_status(bot: commands.Bot):
     try:
         os_info = platform.uname()
@@ -99,8 +101,9 @@ async def pc_status(bot: commands.Bot):
                         f"> **Python情報**\n"+
                         f"> [バージョン] **{py_version}**\n"+
                         f"> [ビルド日時] **{py_buildDate}**\n> \n"+
-                        f"> **Discord情報**\n"+
-                        f"> [Discord.py] **Version {discord.__version__}**\n"
+                        
+                        f"> **Discord.py情報**\n"+
+                        f"> [バージョン] ** {discord.__version__}**\n"
                         f"> [Ping値] **{ping:.1f}ms**\n"
                         ) # フィールドを追加。
         embed.add_field(name="**//CPU情報//**", inline=False, value=
