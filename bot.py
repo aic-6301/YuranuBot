@@ -8,9 +8,9 @@ import time
 from discord.ext import commands
 from dotenv import load_dotenv
 from modules.delete import delete_file_latency
-from modules.settings import db_load, db_init, get_server_setting
+from modules.db_settings import db_load, db_init, get_server_setting
 from modules.exception import exception_init
-from modules.vc_dictionary import dictionary_load
+from modules.db_vc_dictionary import dictionary_load
 from modules.image_creator import make_welcome_image
 
 # ディレクトリの取得

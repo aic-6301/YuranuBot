@@ -2,7 +2,7 @@ import discord
 
 from discord.ext import commands
 from modules.delete import delete_file_latency
-from modules.settings import get_server_setting
+from modules.db_settings import get_server_setting
 from modules.image_creator import make_welcome_image
 
 class Welcome(commands.Cog):

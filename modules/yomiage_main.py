@@ -10,9 +10,9 @@ import os
 
 os_name = platform.uname().system
 
-from modules.settings import get_server_setting, get_user_setting
+from modules.db_settings import get_server_setting, get_user_setting
 from modules.exception import sendException
-from modules.vc_dictionary import get_dictionary
+from modules.db_vc_dictionary import get_dictionary
 from modules.delete import delete_file_latency
 from dotenv import load_dotenv
 from collections import deque, defaultdict

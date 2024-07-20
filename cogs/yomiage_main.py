@@ -4,8 +4,8 @@ from discord.ext import commands
 from discord import app_commands
 
 from modules.yomiage_main import yomiage
-from modules.vc_process import vc_inout_process
-from modules.settings import get_server_setting
+from modules.vc_events import vc_inout_process
+from modules.db_settings import get_server_setting
 
 
 class yomi(commands.Cog):
@@ -30,25 +30,6 @@ class yomi(commands.Cog):
         if (message.channel.id == channel): ##ChannelIDが読み上げ対象のIDと一致しているか
             await yomiage(message, message.guild)##難なくエラーをすり抜けたチャンネルにはもれなく読み上げ
 
-    @app_commands.command(name="extra-announce")
-    @app_commands.choices(
-        activate=[
-            discord.app_commands.Choice(name="shizen",value=1),
-            discord.app_commands.Choice(name="test serv",value=2)
-        ])
-    async def announce_cmd(self, interact: discord.Interaction, announce: str, activate: int):
-        if interact.user.id == 1080043118000361542:
-            
-            if activate == 1:
-                activate == 867677146260439050
-            elif activate == 2:
-                activate == 1222881358704152629
-            
-            guild = self.bot.get_guild(activate)
 
-            if guild is not None and guild.voice_client is not None:
-                await yomiage(announce, guild)
-
-        
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(yomi(bot))

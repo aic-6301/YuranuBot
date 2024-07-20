@@ -4,7 +4,7 @@ import re
 
 from modules.messages import conn_message, zunda_conn_message
 from modules.yomiage_main import yomiage
-from modules.settings import get_server_setting, get_user_setting
+from modules.db_settings import get_server_setting, get_user_setting
 
 async def vc_inout_process(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState, bot: discord.Client):
     if (member.bot):##ボットなら無視

@@ -9,16 +9,16 @@ from modules.vc_speakers import spk_choices, user_spk_choices, find_spker
 
 from modules.messages import conn_message, zunda_conn_message
 from modules.checkPc import pc_status
-from modules.yomiage_main import yomiage
-from modules.vc_process import vc_inout_process
-from modules.settings import db_load, db_init, get_server_setting, save_server_setting, save_user_setting
+from modules.yomiage_main import yomiage, queue_yomiage
+from modules.vc_events import vc_inout_process
+from modules.db_settings import db_load, db_init, get_server_setting, save_server_setting, save_user_setting
 from modules.exception import sendException, exception_init
-from modules.vc_dictionary import dictionary_load, delete_dictionary, save_dictionary, get_dictionary
+from modules.db_vc_dictionary import dictionary_load, delete_dictionary, save_dictionary, get_dictionary
 import modules.lists as Page
 
 
 class yomiage_cmds(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
     
     yomi = app_commands.Group(name="yomiage", description="読み上げ関連のコマンドを実行するのだ")
@@ -321,7 +321,8 @@ class yomiage_cmds(commands.Cog):
                 result = save_server_setting(interact.guild.id, read_type, id)
 
                 if result is None:
-                    await interact.response.send_message(f"サーバー話者を変更したのだ！")
+                    spker_name = find_spker(id=id)
+                    await interact.response.send_message(f"サーバー話者を**{spker_name[0]}**に変更したのだ！")
                     return
                 
                 await interact.response.send_message("エラーが発生したのだ...")
@@ -344,7 +345,8 @@ class yomiage_cmds(commands.Cog):
             result = save_user_setting(interact.user.id, read_type, id)
 
             if result is None:
-                await interact.response.send_message(f"ユーザー話者を変更したのだ！")
+                spker_name = find_spker(id=id)
+                await interact.response.send_message(f"サーバー話者を**{spker_name[0]}**に変更したのだ！")
                 return
             
             await interact.response.send_message("エラーが発生したのだ...")
