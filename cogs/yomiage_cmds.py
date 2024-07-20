@@ -346,7 +346,7 @@ class yomiage_cmds(commands.Cog):
 
             if result is None:
                 spker_name = find_spker(id=id)
-                await interact.response.send_message(f"サーバー話者を**{spker_name[0]}**に変更したのだ！")
+                await interact.response.send_message(f"ユーザー話者を**{spker_name[0]}**に変更したのだ！")
                 return
             
             await interact.response.send_message("エラーが発生したのだ...")
