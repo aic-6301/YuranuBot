@@ -11,7 +11,7 @@
 
 # requirements.txtについて
 `pip install -r requirements.txt` を実行すると、必要なモジュールをインストールできます。<br>
-YuranuBotのディレクトリで実行して下さい。
+ZundaBotのディレクトリで実行して下さい。
 
 # 内臓フォントについて
 Koruri Semibold, Koruri Boldを使用しています。<br>
