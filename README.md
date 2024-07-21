@@ -1,4 +1,4 @@
-# YuranuBotForWindows/Linux
+# ZundaBotForWindows/Linux
 **読み上げにはvoicevox_coreを使用しています。**<br>
 詳しくはこちら：https://github.com/VOICEVOX/voicevox_core
 
