@@ -112,7 +112,62 @@ class yomiage_cmds(commands.Cog):
             await sendException(e, filename, line_no)
 
 
-    @yomi.command(name="settings", description="サーバーの読み上げ設定を表示するのだ")
+    @yomi.command(name="server-settings", description="サーバーの読み上げ設定を表示するのだ")
+    async def check_yomi_settings(self, interact: discord.Interaction):
+        vc_channel_id = get_server_setting(interact.guild.id, "speak_channel")
+        vc_channel = discord.utils.get(interact.guild.channels, id=vc_channel_id)
+        if vc_channel is None:
+            vc_channel = "チャンネルが未設定"
+
+        spker_id = get_server_setting(interact.guild.id, "vc_speaker")
+        spker_name = find_spker(id=spker_id)
+        spker_name = spker_name[0]
+
+        ac_id = get_server_setting(interact.guild.id, "auto_connect")
+        auto_conn_channel = ""
+        if ac_id == 0:
+            auto_conn_channel = "オフ"
+        else:
+            auto_conn_channel = discord.utils.get(interact.guild.channels, id=ac_id)
+
+            if auto_conn_channel == None:
+                auto_conn_channel = "チャンネルが見つからない、または不具合"
+
+        vc_speak_speed = get_server_setting(interact.guild.id, "speak_speed")
+        length_limit = get_server_setting(interact.guild.id, "length_limit")
+
+        embed = discord.Embed(
+            title="読み上げ関連の設定を表示するのだ！",
+            color=discord.Color.green()
+        )
+        embed.add_field(
+            name="読み上げるサーバー",
+            value=f"> {vc_channel}",
+            inline=False
+        )
+        embed.add_field(
+            name="サーバー話者",
+            value=f"> {spker_name}",
+            inline=False
+        )
+        embed.add_field(
+            name="読み上げ速度",
+            value=f"> {vc_speak_speed}",
+            inline=False
+        )
+        embed.add_field(
+            name="読み上げ文字制限",
+            value=f"> {length_limit}文字",
+            inline=False
+        )
+        embed.add_field(
+            name="VCへの自動接続",
+            value=f"> {auto_conn_channel}",
+            inline=False
+        )
+        await interact.response.send_message(embed=embed)
+
+@yomi.command(name="user-settings", description="ユーザーの読み上げ設定を表示するのだ")
     async def check_yomi_settings(self, interact: discord.Interaction):
         vc_channel_id = get_server_setting(interact.guild.id, "speak_channel")
         vc_channel = discord.utils.get(interact.guild.channels, id=vc_channel_id)
@@ -429,7 +484,7 @@ class yomiage_cmds(commands.Cog):
     
 
     @yomi.command(name="user-join-message", description="[ユーザー別]参加時の読み上げを設定するのだ！")
-    @app_commands.describe(text="$user$ : ユーザー名")
+    @app_commands.describe(text="<user> : ユーザー名")
     async def change_user_join_message(self, interact: discord.Interaction, text: str):
         try:
             res = save_user_setting(interact.user.id, "conn_msg", text)
@@ -445,7 +500,7 @@ class yomiage_cmds(commands.Cog):
             await sendException(e, filename, line_no)
 
     @yomi.command(name="user-exit-message", description="[ユーザー別]退席時の読み上げを設定するのだ！")
-    @app_commands.describe(text="$user$ : ユーザー名")
+    @app_commands.describe(text="<user>: ユーザー名")
     async def change_user_exit_message(self, interact: discord.Interaction, text: str):
         try:
             res = save_user_setting(interact.user.id, "disconn_msg", text)
