@@ -11,7 +11,7 @@ from modules.messages import conn_message, zunda_conn_message
 from modules.checkPc import pc_status
 from modules.yomiage_main import yomiage, queue_yomiage
 from modules.vc_events import vc_inout_process
-from modules.db_settings import db_load, db_init, get_server_setting, save_server_setting, save_user_setting
+from modules.db_settings import db_load, db_init, get_server_setting, get_user_setting, save_server_setting, save_user_setting
 from modules.exception import sendException, exception_init
 from modules.db_vc_dictionary import dictionary_load, delete_dictionary, save_dictionary, get_dictionary
 import modules.lists as Page
@@ -137,7 +137,7 @@ class yomiage_cmds(commands.Cog):
         length_limit = get_server_setting(interact.guild.id, "length_limit")
 
         embed = discord.Embed(
-            title="読み上げ関連の設定を表示するのだ！",
+            title="サーバーの読み上げ設定を表示するのだ！",
             color=discord.Color.green()
         )
         embed.add_field(
@@ -146,7 +146,7 @@ class yomiage_cmds(commands.Cog):
             inline=False
         )
         embed.add_field(
-            name="サーバー話者",
+            name="読み上げ話者",
             value=f"> {spker_name}",
             inline=False
         )
@@ -167,57 +167,38 @@ class yomiage_cmds(commands.Cog):
         )
         await interact.response.send_message(embed=embed)
 
-@yomi.command(name="user-settings", description="ユーザーの読み上げ設定を表示するのだ")
-    async def check_yomi_settings(self, interact: discord.Interaction):
-        vc_channel_id = get_server_setting(interact.guild.id, "speak_channel")
-        vc_channel = discord.utils.get(interact.guild.channels, id=vc_channel_id)
-        if vc_channel is None:
-            vc_channel = "チャンネルが未設定"
+    @yomi.command(name="user-settings", description="ユーザーの読み上げ設定を表示するのだ")
+    async def check_user_yomi_settings(self, interact: discord.Interaction):
 
-        spker_id = get_server_setting(interact.guild.id, "vc_speaker")
-        spker_name = find_spker(id=spker_id)
-        spker_name = spker_name[0]
-
-        ac_id = get_server_setting(interact.guild.id, "auto_connect")
-        auto_conn_channel = ""
-        if ac_id == 0:
-            auto_conn_channel = "オフ"
-        else:
-            auto_conn_channel = discord.utils.get(interact.guild.channels, id=ac_id)
-
-            if auto_conn_channel == None:
-                auto_conn_channel = "チャンネルが見つからない、または不具合"
-
-        vc_speak_speed = get_server_setting(interact.guild.id, "speak_speed")
-        length_limit = get_server_setting(interact.guild.id, "length_limit")
-
+        # ユーザー設定の取得
+        spk_id = get_user_setting(interact.user.id, "vc_speaker")
+        #話者IDから名前を取得
+        spk_name = find_spker(id=spk_id)
+        #Noneの場合はエラー表示に
+        if spk_name is None:
+            spk_name = "**話者検索時にエラーが発生**"
+        
+        connect_msg = get_user_setting(interact.user.id, "conn_msg")
+        disconnect_msg = get_user_setting(interact.user.id, "disconn_msg")
+        
+        # Embedに設定内容を表示
         embed = discord.Embed(
-            title="読み上げ関連の設定を表示するのだ！",
+            title="ユーザーの読み上げ設定を表示するのだ！",
             color=discord.Color.green()
         )
         embed.add_field(
-            name="読み上げるサーバー",
-            value=f"> {vc_channel}",
+            name="読み上げ話者",
+            value=f"> {spk_name}",
             inline=False
         )
         embed.add_field(
-            name="サーバー話者",
-            value=f"> {spker_name}",
+            name="接続メッセージ",
+            value=f"> {connect_msg}",
             inline=False
         )
         embed.add_field(
-            name="読み上げ速度",
-            value=f"> {vc_speak_speed}",
-            inline=False
-        )
-        embed.add_field(
-            name="読み上げ文字制限",
-            value=f"> {length_limit}文字",
-            inline=False
-        )
-        embed.add_field(
-            name="VCへの自動接続",
-            value=f"> {auto_conn_channel}",
+            name="切断メッセージ",
+            value=f"> {disconnect_msg}",
             inline=False
         )
         await interact.response.send_message(embed=embed)
