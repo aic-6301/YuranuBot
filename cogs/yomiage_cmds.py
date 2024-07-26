@@ -37,10 +37,9 @@ class yomiage_cmds(commands.Cog):
             await interact.user.voice.channel.connect()
 
             ##接続を知らせるメッセージを送信
-            channel_id = get_server_setting(interact.guild_id, "speak_channel")
-            channel = discord.utils.get(interact.guild.channels, id=channel_id)
-            if channel is None:
-                channel = "**チャンネルが未設定です**"
+            channel = get_server_setting(interact.guild_id, "speak_channel")
+            if channel is None: channel = "**チャンネルが未設定です**"
+            else: channel = f"<#{channel}>"
             length_limit = get_server_setting(interact.guild_id, "length_limit")
             yomiage_speed = get_server_setting(interact.guild_id, "speak_speed")
 
@@ -86,7 +85,7 @@ class yomiage_cmds(commands.Cog):
 
             ##読み上げるチャンネルが存在しない場合に警告文を送信
 
-            if (channel_id is None):
+            if (channel is None):
                 embed = discord.Embed(
                     color=discord.Color.red(),
                     title="読み上げるチャンネルがわからないのだ...",
@@ -115,10 +114,9 @@ class yomiage_cmds(commands.Cog):
 
     @yomi.command(name="server-settings", description="サーバーの読み上げ設定を表示するのだ")
     async def check_yomi_settings(self, interact: discord.Interaction):
-        vc_channel_id = get_server_setting(interact.guild.id, "speak_channel")
-        vc_channel = discord.utils.get(interact.guild.channels, id=vc_channel_id)
-        if vc_channel is None:
-            vc_channel = "チャンネルが未設定"
+        vc_channel = get_server_setting(interact.guild.id, "speak_channel")
+        if vc_channel is None: vc_channel = "チャンネルが未設定"
+        else: vc_channel = f"<#{vc_channel}>"
 
         spker_id = get_server_setting(interact.guild.id, "vc_speaker")
         spker_name = find_spker(id=spker_id)
