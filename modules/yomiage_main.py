@@ -1,5 +1,6 @@
 import discord
 import platform
+import logging
 import requests
 import time
 import json
@@ -88,26 +89,33 @@ async def yomiage(content, guild: discord.Guild):
     if (speak_content != fixed_content):
         speak_content = speak_content + "、省略"
 
+    #ユーザ読み上げ速度がある場合はそっちを優先
+    speed = get_server_setting(guild.id, "speak_speed")
+
+    usr_speed = None
+    if (type(content) == discord.message.Message):
+        usr_speed = get_user_setting(content.author.id, "speak_speed")
+
+    if usr_speed != 0 and usr_speed is not None:
+        speed = usr_speed
+
+    ##サーバー話者を取得する
+    spkID = get_server_setting(guild.id, "vc_speaker")  
+
     ##読み上げ内容がメっセージの場合はユーザー話者を取得する
     spkID_usr = None
     if (type(content)==discord.message.Message):
         spkID_usr = get_user_setting(content.author.id, "vc_speaker")
 
-    ##サーバー話者を取得する
-    spkID = get_server_setting(guild.id, "vc_speaker")  
-
     ##ユーザー話者がない場合はサーバー話者を利用する
-    if spkID_usr == -1 or spkID_usr is None:
-        await queue_yomiage(speak_content, guild, spkID)
-        return
-    
-    ##ユーザー話者が設定されている場合はそっちを利用する。
-    await queue_yomiage(speak_content, guild, spkID_usr)
+    if spkID_usr != -1 and spkID_usr is not None:
+        spkID = spkID_usr
 
-async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):    
+    await queue_yomiage(speak_content, guild, spkID, speed)
+
+async def queue_yomiage(content: str, guild: discord.Guild, spkID: int, speed: float = 1):    
     try:
-    ##サーバーごとに利用される速度のデータを取得
-        speed = get_server_setting(guild.id, "speak_speed")
+        logging.debug(f'"{content}" 速度: {speed}, 話者ID: {spkID}')
 
         if USE_VOICEVOX_APP == "True":
             params = (
@@ -141,8 +149,11 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int):
         wav_time = time.time()
         voice_file = f"{VC_OUTPUT}{guild.id}-{wav_time}.wav"
 
-        with open(voice_file, "wb") as f:
-            f.write(voice_byte)
+        if synthesis.status_code == 200:
+            with open(voice_file, "wb") as f:
+                f.write(voice_byte)
+        else:
+            ConnectionError()
 
         with wave.open(voice_file,  'rb') as f:
             # 情報取得

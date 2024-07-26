@@ -21,7 +21,8 @@ user_settings = [
     ("user_id", "INTEGER"),
     ("vc_speaker", "INTEGER NOT NULL DEFAULT -1"),
     ("conn_msg", "TEXT NOT NULL DEFAULT nan"),
-    ("disconn_msg", "TEXT NOT NULL DEFAULT nan")
+    ("disconn_msg", "TEXT NOT NULL DEFAULT nan"),
+    ("speak_speed", "REAL NOT NULL DEFAULT 0")
 ]
 
 

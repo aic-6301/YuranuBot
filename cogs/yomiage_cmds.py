@@ -172,15 +172,20 @@ class yomiage_cmds(commands.Cog):
 
     @yomi.command(name="user-settings", description="ユーザーの読み上げ設定を表示するのだ")
     async def check_user_yomi_settings(self, interact: discord.Interaction):
-
         # ユーザー設定の取得
         spk_id = get_user_setting(interact.user.id, "vc_speaker")
         #話者IDから名前を取得
-        spk_name = find_spker(id=spk_id)
+        spk_info = find_spker(id=spk_id)
         #Noneの場合はエラー表示に
-        if spk_name is None:
+        if spk_id == -1:
+            spk_name="サーバー設定を使用"
+        elif spk_info is None:
             spk_name = "**話者検索時にエラーが発生**"
+        else:
+            spk_name = spk_info[0]
         
+        user_speed = get_user_setting(interact.user.id, "speak_speed")
+        if user_speed == 0: user_speed = "サーバー設定を使用"
         connect_msg = get_user_setting(interact.user.id, "conn_msg")
         if connect_msg == "nan": connect_msg = "デフォルト設定"
         disconnect_msg = get_user_setting(interact.user.id, "disconn_msg")
@@ -193,8 +198,12 @@ class yomiage_cmds(commands.Cog):
         )
         embed.add_field(
             name="読み上げ話者",
-            value=f"> {spk_name[0]}",
+            value=f"> {spk_name}",
             inline=False
+        )
+        embed.add_field(
+            name="読み上げ速度",
+            value=f"> {user_speed}"
         )
         embed.add_field(
             name="接続メッセージ",
@@ -361,7 +370,7 @@ class yomiage_cmds(commands.Cog):
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
 
-    @yomi.command(name="server-speaker", description="サーバーの読み上げ話者を設定するのだ")
+    @yomi.command(name="speaker", description="サーバーの読み上げ話者を設定するのだ")
     @app_commands.rename(id="話者")
     @app_commands.choices(id=spk_choices)
     async def yomiage_server_speaker(self, interact:discord.Interaction,id:int):
@@ -395,10 +404,13 @@ class yomiage_cmds(commands.Cog):
             result = save_user_setting(interact.user.id, read_type, id)
 
             if result is None:
-                spker_name = find_spker(id=id)
-                await interact.response.send_message(f"ユーザー話者を**{spker_name[0]}**に変更したのだ！")
-                return
-            
+                if id == 1:
+                    await interact.response.send_message(f"ユーザー話者を**サーバー設定を使用**に変更したのだ！")
+                else:
+                    spker_name = find_spker(id=id)
+                    await interact.response.send_message(f"ユーザー話者を**{spker_name[0]}**に変更したのだ！")
+                    return
+                
             await interact.response.send_message("エラーが発生したのだ...")
 
         except Exception as e:
@@ -410,14 +422,48 @@ class yomiage_cmds(commands.Cog):
 
     @yomi.command(name="speed", description="読み上げの速度を変更するのだ")
     @app_commands.rename(speed="速度")
+    @app_commands.describe(speed="0.5~2.0")
     async def yomiage_speed(self, interact: discord.Interaction, speed: float):
         try:
-            read_type = "speak_speed"
-            result = save_server_setting(interact.guild.id, read_type, speed)
+            if speed >= 0.5 or speed <=2.0:
+                read_type = "speak_speed"
+                result = save_server_setting(interact.guild.id, read_type, speed)
+            else:
+                interact.response.send_message(f"0.5~2.0の間で設定するのだ！")
+                return
 
             if result is None:
                 await interact.response.send_message(f"読み上げ速度を**「{speed}」**に変更したのだ！")
                 return
+            
+            await interact.response.send_message("エラーが発生したのだ...")
+
+        except Exception as e:
+            exception_type, exception_object, exception_traceback = sys.exc_info()
+            filename = exception_traceback.tb_frame.f_code.co_filename
+            line_no = exception_traceback.tb_lineno
+            await sendException(e, filename, line_no)
+
+
+    @yomi.command(name="user-speed", description="ユーザー読み上げ速度を変更するのだ")
+    @app_commands.rename(speed="速度")
+    @app_commands.describe(speed="0.5~2.0 (0: サーバー設定を使用する)")
+    async def user_speed(self, interact: discord.Interaction, speed: float):
+        try:
+            if speed >= 0.5 or speed <=2.0 or speed == 0:
+                read_type = "speak_speed"
+                result = save_user_setting(interact.user.id, read_type, speed)
+            else:
+                interact.response.send_message(f"0.5~2.0の間で設定するのだ！")
+                return
+
+            if result is None:
+                if speed == 0:
+                    await interact.response.send_message(f"ユーザー読み上げ速度を**サーバー読み上げ速度**に変更したのだ！")
+                else:
+                    await interact.response.send_message(f"ユーザー読み上げ速度を**「{speed}」**に変更したのだ！")
+
+                return 
             
             await interact.response.send_message("エラーが発生したのだ...")
 
