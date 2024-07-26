@@ -24,16 +24,6 @@ DIC_DIR = os.getenv("DIC_DIR")
     
 logging.basicConfig(level=logging.DEBUG)
 
-
-# 管理者権限を確認する。なければ終了する。
-if platform.uname().system == "Windows":
-    import ctypes
-    is_admin = ctypes.windll.shell32.IsUserAnAdmin()
-    if (is_admin):
-        logging.debug("管理者権限を確認しました")
-    else:
-        logging.info("管理者権限で実行されていません！")
-
 ###データベースの読み込み
 ## サーバー辞書共有用
 # ディレクトリが設定されている場合はその場所を指定
