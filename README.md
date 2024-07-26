@@ -2,6 +2,8 @@
 **読み上げにはvoicevox_coreを使用しています。**<br>
 詳しくはこちら：https://github.com/VOICEVOX/voicevox_core
 
+(VOICEVOXアプリを使用することもできます)
+
 # Special Thanks
 ・S-Server Developersの皆様 (アドバイスなど)<br>
 ・自然係サーバーの皆様 (ボットの試験利用など)<br>
