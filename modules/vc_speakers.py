@@ -55,7 +55,6 @@ user_spk_choices = []
 #設定を取得
 load_dotenv()
 USE_VOICEVOX_APP = os.getenv("USE_VOICEVOX_APP") 
-print(USE_VOICEVOX_APP)
 
 #VOICEVOXアプリの場合はGET/speakersから利用可能な音声をすべて登録
 if USE_VOICEVOX_APP == "True":

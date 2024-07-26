@@ -80,7 +80,7 @@ class yomiage_cmds(commands.Cog):
                 )
             file = discord.File(R"images\connect.png", filename="connect.png")
             embed.set_image(url=f"attachment://connect.png")
-            embed.set_footer(text="YuranuBot! | Made by yurq.", icon_url=self.bot.user.avatar.url)
+            embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
 
             await interact.response.send_message(embed=embed, file=file)
 
@@ -92,6 +92,7 @@ class yomiage_cmds(commands.Cog):
                     title="読み上げるチャンネルがわからないのだ...",
                     description="読み上げを開始するには読み上げるチャンネルを設定してください！"
                 )
+                embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
 
                 await interact.channel.send(embed=embed)
 
@@ -165,6 +166,8 @@ class yomiage_cmds(commands.Cog):
             value=f"> {auto_conn_channel}",
             inline=False
         )
+        embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
+
         await interact.response.send_message(embed=embed)
 
     @yomi.command(name="user-settings", description="ユーザーの読み上げ設定を表示するのだ")
@@ -179,7 +182,9 @@ class yomiage_cmds(commands.Cog):
             spk_name = "**話者検索時にエラーが発生**"
         
         connect_msg = get_user_setting(interact.user.id, "conn_msg")
+        if connect_msg == "nan": connect_msg = "デフォルト設定"
         disconnect_msg = get_user_setting(interact.user.id, "disconn_msg")
+        if disconnect_msg == "nan": disconnect_msg = "デフォルト設定"
         
         # Embedに設定内容を表示
         embed = discord.Embed(
@@ -188,7 +193,7 @@ class yomiage_cmds(commands.Cog):
         )
         embed.add_field(
             name="読み上げ話者",
-            value=f"> {spk_name}",
+            value=f"> {spk_name[0]}",
             inline=False
         )
         embed.add_field(
@@ -201,6 +206,8 @@ class yomiage_cmds(commands.Cog):
             value=f"> {disconnect_msg}",
             inline=False
         )
+        embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
+
         await interact.response.send_message(embed=embed)
 
     @yomi.command(name="channel", description="読み上げるチャンネルを変更するのだ")
@@ -270,6 +277,8 @@ class yomiage_cmds(commands.Cog):
                     name="読み仮名",
                     value=reading
                 )
+                embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
+
                 await interact.response.send_message(embed=embed)
                 return
             
@@ -298,6 +307,8 @@ class yomiage_cmds(commands.Cog):
                         name=f"単語{i+1}",
                         value=f"単語: {result[i][0]}\n読み仮名: {result[i][1]}\n登録者: <@{result[i][2]}>"
                     )
+                    embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
+
                     if (i+1) % 10 == 0:  # Create a new embed every 10 words
                         embeds.append(embed)
                         embed = discord.Embed(
@@ -305,6 +316,8 @@ class yomiage_cmds(commands.Cog):
                             description="サーバー辞書の単語を表示するのだ！",
                             color=discord.Color.green()
                         )
+                        embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
+
                 if len(embed.fields) > 0:  # Add the last embed if there are remaining fields
                     embeds.append(embed)
 
@@ -335,6 +348,7 @@ class yomiage_cmds(commands.Cog):
                     name="削除した単語",
                     value=text
                 )
+                embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
 
                 await interact.response.send_message(embed=embed)
                 return

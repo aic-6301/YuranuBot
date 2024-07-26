@@ -25,7 +25,7 @@ class Welcome(commands.Cog):
                                         color= discord.Color.green(),
                                         )
                     embed.set_image(url=f"attachment://{path[1]}")
-                    embed.set_footer(text="YuranuBot! | Made by yurq.", icon_url=self.bot.user.avatar.url)
+                    embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
 
                     await chn.send(file=file, embed=embed)
 
