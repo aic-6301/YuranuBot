@@ -35,7 +35,7 @@ def load_from_voicevox_app():
         #jsonから話者名とidを取得
         for des_spk in des_spks:
             for style in des_spk["styles"]:
-                if style["name"] in ("ノーマル","ふつう") :
+                if style["name"] in ("ノーマル","ふつう", "人間ver.") :
                     name=des_spk["name"]
                     spk_id=style["id"]
                     
