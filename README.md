@@ -8,7 +8,7 @@
 ・S-Server Developersの皆様 (アドバイスなど)<br>
 ・自然係サーバーの皆様 (ボットの試験利用など)<br>
 ・自然係様 (運営用のサーバーの提供、デバッグなど)<br>
-・ぬーん様 (YuranuAPIの作成、デバッグなど)<br>
+・ぬーん様 (KurosukeAPIの作成、デバッグなど)<br>
 ・あきかき様 (Webダッシュボードの作成など)<br>
 
 # requirements.txtについて
