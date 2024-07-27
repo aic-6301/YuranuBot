@@ -7,7 +7,7 @@ import platform
 from discord.ext import commands
 from discord import app_commands
 
-from modules.checkPc import pc_status
+from modules.pc_status_cmd import pc_status
 from modules.db_settings import save_server_setting
 from modules.exception import sendException
 from modules.delete import delete_file_latency
