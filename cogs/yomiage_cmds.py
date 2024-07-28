@@ -8,7 +8,7 @@ import random
 from modules.vc_speakers import spk_choices, user_spk_choices, find_spker
 
 from modules.messages import conn_message, zunda_conn_message
-from modules.checkPc import pc_status
+from modules.pc_status_cmd import pc_status
 from modules.yomiage_main import yomiage, queue_yomiage
 from modules.vc_events import vc_inout_process
 from modules.db_settings import db_load, db_init, get_server_setting, get_user_setting, save_server_setting, save_user_setting
@@ -122,15 +122,9 @@ class yomiage_cmds(commands.Cog):
         spker_name = find_spker(id=spker_id)
         spker_name = spker_name[0]
 
-        ac_id = get_server_setting(interact.guild.id, "auto_connect")
-        auto_conn_channel = ""
-        if ac_id == 0:
-            auto_conn_channel = "オフ"
-        else:
-            auto_conn_channel = discord.utils.get(interact.guild.channels, id=ac_id)
-
-            if auto_conn_channel == None:
-                auto_conn_channel = "チャンネルが見つからない、または不具合"
+        auto_conn_channel = get_server_setting(interact.guild.id, "auto_connect")
+        if auto_conn_channel == 0 or auto_conn_channel is None: auto_conn_channel = "オフ"
+        else: auto_conn_channel = f"<#{auto_conn_channel}>"
 
         vc_speak_speed = get_server_setting(interact.guild.id, "speak_speed")
         length_limit = get_server_setting(interact.guild.id, "length_limit")
@@ -222,7 +216,7 @@ class yomiage_cmds(commands.Cog):
         try:
             result = save_server_setting(interact.guild_id, "speak_channel", channel.id)
             if result is None:
-                await interact.response.send_message(f"☑**「{channel}」**を読み上げるのだ！")
+                await interact.response.send_message(f"☑**「<#{channel.id}>」**を読み上げるのだ！")
                 return
             
             await interact.response.send_message(f"設定に失敗したのだ...")
@@ -234,7 +228,7 @@ class yomiage_cmds(commands.Cog):
             await sendException(e, filename, line_no)
         
     
-    @yomi.command(name="user-announce1", description="ユーザーの入退出を読み上げするのだ")
+    @yomi.command(name="announcement", description="ユーザーの入退出を読み上げするのだ")
     @app_commands.rename(activate="有効無効")
     @app_commands.choices(
         activate=[
@@ -368,7 +362,7 @@ class yomiage_cmds(commands.Cog):
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
 
-    @yomi.command(name="speaker", description="サーバーの読み上げ話者を設定するのだ")
+    @yomi.command(name="server-speaker", description="サーバーの読み上げ話者を設定するのだ")
     @app_commands.rename(id="話者")
     @app_commands.choices(id=spk_choices)
     async def yomiage_server_speaker(self, interact:discord.Interaction,id:int):
@@ -418,7 +412,7 @@ class yomiage_cmds(commands.Cog):
             await sendException(e, filename, line_no)
 
 
-    @yomi.command(name="speed", description="読み上げの速度を変更するのだ")
+    @yomi.command(name="server-speed", description="サーバーの読み上げ速度を変更するのだ")
     @app_commands.rename(speed="速度")
     @app_commands.describe(speed="0.5~2.0")
     async def yomiage_speed(self, interact: discord.Interaction, speed: float):
@@ -578,8 +572,9 @@ class yomiage_cmds(commands.Cog):
     async def auto_connect(self, interact: discord.Interaction, bool: bool):
         try:
             if bool is True:
+                vc_id = interact.user.voice.channel.id
                 if interact.user.voice is not None: ##設定するユーザーがチャンネルに入っていることを確認するのだ
-                    res = save_server_setting(interact.guild_id, "auto_connect", interact.user.voice.channel.id)
+                    res = save_server_setting(interact.guild_id, "auto_connect", vc_id)
                 
                 else: ##ユーザーがボイスチャットに入っていない場合
                     await interact.response.send_message("自動接続したいチャンネルに入ってから実行するのだ！")
@@ -589,7 +584,7 @@ class yomiage_cmds(commands.Cog):
                 await interact.response.send_message("自動接続を無効化したのだ！")
                 return
 
-            await interact.response.send_message(f"「{interact.user.voice.channel.name}」に自動接続を設定したのだ！")
+            await interact.response.send_message(f"「<#{vc_id}>」に自動接続を設定したのだ！")
             
         except Exception as e:
             exception_type, exception_object, exception_traceback = sys.exc_info()
