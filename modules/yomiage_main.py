@@ -137,7 +137,7 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int, speed: f
             )
             voice_byte = synthesis.content
 
-        elif USE_VOICEVOX_APP == "False":
+        elif USE_VOICEVOX_APP == "False" or USE_VOICEVOX_APP is None:
             core.load_model(spkID)
 
             audio_query = core.audio_query(content, spkID)

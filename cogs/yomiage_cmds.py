@@ -258,7 +258,6 @@ class yomiage_cmds(commands.Cog):
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
 
-
     @yomi.command(name="dictionary-add", description="サーバー辞書に単語を追加するのだ")
     @app_commands.rename(text="単語", reading="かな")
     async def vc_dictionary(self, interact: discord.Interaction, text: str, reading: str):
