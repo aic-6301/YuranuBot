@@ -48,8 +48,8 @@ if (not os.path.isdir(VC_OUTPUT)):
 
 ##読み上げのキューに入れる前に特定ワードを変換します
 async def yomiage(content, guild: discord.Guild):
-    fix_words = [r'(https?://\S+)', r'<:\w+:\d+>',r'<a:\w+:\d+>',r'<#[0-9]+>', r'```[\s\S]*?```', f"(ﾟ∀ﾟ)", r'\|\|.*?\|\|', "-", "+"]
-    fix_end_word = ["URL省略","絵文字","アニメ絵文字","チャンネル省略","コードブロック省略", "", "、", "マイナス", "プラス"]
+    fix_words = [r'(https?://\S+)', r'<:\w+:\d+>',r'<a:\w+:\d+>',r'<#[0-9]+>', r'```[\s\S]*?```', f"(ﾟ∀ﾟ)", r'\|\|.*?\|\|']
+    fix_end_word = ["URL省略","絵文字","アニメ絵文字","チャンネル省略","コードブロック省略", "", "、"]
 
     if isinstance(content, discord.message.Message):
         fixed_content = content.content
