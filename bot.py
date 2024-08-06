@@ -105,7 +105,7 @@ async def show_content(interact: discord.Interaction, message: discord.Message):
         description=f"```{message}```"
     )
 
-    interact.response.send_message(embed=embed)
+    await interact.response.send_message(embed=embed)
     
 # クライアントの実行
 if type(TOKEN)==str:
