@@ -65,16 +65,7 @@ class utils(commands.Cog):
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
 
-    # 文章をすべて文字で表現(正規表現確認用)
-    @app_commands.context_menu(name="装飾前の本文確認")
-    async def show_content(interact: discord.Interaction, message: discord.Message):
-        embed = discord.Embed(
-            color=discord.Color.green(),
-            title="メッセージは全部お見通しなのだ！",
-            description=f"```{message}```"
-        )
 
-        interact.response.send_message(embed=embed)
     
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(utils(bot))
