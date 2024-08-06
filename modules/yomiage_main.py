@@ -53,7 +53,6 @@ async def yomiage(content, guild: discord.Guild):
         r'<:\w+:\d+>',
         r'<a:\w+:\d+>',
         r'```[\s\S]*?```',
-        f"(ﾟ∀ﾟ)",
         r'\|\|.*?\|\|'
     ]
 
@@ -62,7 +61,6 @@ async def yomiage(content, guild: discord.Guild):
         "絵文字",
         "アニメ絵文字",
         "コードブロック省略",
-        "",
         "、"
     ]
 
