@@ -48,16 +48,38 @@ if (not os.path.isdir(VC_OUTPUT)):
 
 ##読み上げのキューに入れる前に特定ワードを変換します
 async def yomiage(content, guild: discord.Guild):
-    fix_words = [r'(https?://\S+)', r'<:\w+:\d+>',r'<a:\w+:\d+>',r'<#[0-9]+>', r'```[\s\S]*?```', f"(ﾟ∀ﾟ)", r'\|\|.*?\|\|']
-    fix_end_word = ["URL省略","絵文字","アニメ絵文字","チャンネル省略","コードブロック省略", "", "、"]
+    fix_words = [
+        r'(https?://\S+)', 
+        r'<:\w+:\d+>',
+        r'<a:\w+:\d+>',
+        r'```[\s\S]*?```',
+        f"(ﾟ∀ﾟ)",
+        r'\|\|.*?\|\|'
+    ]
 
-    if isinstance(content, discord.message.Message):
+    fix_end_word = [
+        "URL省略",
+        "絵文字",
+        "アニメ絵文字",
+        "コードブロック省略",
+        "",
+        "、"
+    ]
+
+    if type(content) == discord.message.Message:
         fixed_content = content.content
 
-        ##メンションされたユーザーのIDを名前に変換  
+        ## メンションされたユーザーのIDを名前に変換  
         for mention in content.mentions:
             fixed_content = fixed_content.replace(f'<@{mention.id}>', "@"+mention.display_name)
         
+        ## チャンネルIDをチャンネル名に置き換える
+        channel_mentions = re.findall(r'<#([0-9]+)>', fixed_content)
+        for channel_id in channel_mentions:
+            channel = discord.utils.get(content.guild.channels, id=int(channel_id))
+            if channel:
+                fixed_content = fixed_content.replace(f'<#{channel_id}>', f'{channel.name}')
+
         ##コンテンツ関連の文章を生成する
         files_content = search_content(content)
 
@@ -65,12 +87,12 @@ async def yomiage(content, guild: discord.Guild):
         if files_content != None:
             fixed_content = files_content + fixed_content
 
-    elif isinstance(content, str):
+    elif type(content) == str:
         fixed_content = content
         
     ##fix_wordに含まれたワードをfix_end_wordに変換する
     for i in range(len(fix_words)): 
-        fixed_content = re.sub(fix_words[i].lower(), fix_end_word[i].lower(), fixed_content, flags=re.IGNORECASE)
+        fixed_content = re.sub(fix_words[i], fix_end_word[i], fixed_content, flags=re.IGNORECASE)
     
     ##サーバー辞書に登録された内容で置き換える
     dicts = get_dictionary(guild.id)
