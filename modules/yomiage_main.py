@@ -70,13 +70,13 @@ async def yomiage(content, guild: discord.Guild):
         
     ##fix_wordに含まれたワードをfix_end_wordに変換する
     for i in range(len(fix_words)): 
-        fixed_content.replace(fix_words[i].lower(), fix_end_word[i].lower())
+        fixed_content = fixed_content.replace(fix_words[i].lower(), fix_end_word[i].lower())
     
     ##サーバー辞書に登録された内容で置き換える
     dicts = get_dictionary(guild.id)
     if dicts != None:
         for text, reading, user in dicts:
-            fixed_content.replace(text.lower(), reading.lower())
+            fixed_content = fixed_content.replace(text.lower(), reading.lower())
 
     ##文字制限の設定を取得する
     length_limit = get_server_setting(guild.id, "length_limit")
