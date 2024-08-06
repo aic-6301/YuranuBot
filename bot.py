@@ -102,7 +102,7 @@ async def show_content(interact: discord.Interaction, message: discord.Message):
     embed = discord.Embed(
         color=discord.Color.green(),
         title="メッセージは全部お見通しなのだ！",
-        description=f"```{message}```"
+        description=f"```{message.content}```"
     )
 
     await interact.response.send_message(embed=embed)
