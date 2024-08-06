@@ -70,7 +70,7 @@ async def yomiage(content, guild: discord.Guild):
         
     ##fix_wordに含まれたワードをfix_end_wordに変換する
     for i in range(len(fix_words)): 
-        fixed_content = fixed_content.replace(fix_words[i].lower(), fix_end_word[i].lower())
+        fixed_content = re.sub(fix_words[i].lower(), fix_end_word[i].lower(), fixed_content, flags=re.IGNORECASE)
     
     ##サーバー辞書に登録された内容で置き換える
     dicts = get_dictionary(guild.id)
