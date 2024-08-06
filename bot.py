@@ -2,6 +2,7 @@ import discord
 import os
 import logging
 import platform
+import emoji
 import subprocess
 import sys
 import time
@@ -103,6 +104,19 @@ async def show_content(interact: discord.Interaction, message: discord.Message):
         color=discord.Color.green(),
         title="メッセージは全部お見通しなのだ！",
         description=f"```{message.content}```"
+    )
+
+    await interact.response.send_message(embed=embed)
+
+# 文章をすべて文字で表現(絵文字変換後)
+@bot.tree.context_menu(name="装飾前の本文確認(絵文字変換後)")
+async def show_content(interact: discord.Interaction, message: discord.Message):
+    content = emoji.demojize(message.content)
+
+    embed = discord.Embed(
+        color=discord.Color.green(),
+        title="メッセージは全部お見通しなのだ！",
+        description=f"```{content}```"
     )
 
     await interact.response.send_message(embed=embed)
