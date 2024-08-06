@@ -51,8 +51,8 @@ if (not os.path.isdir(VC_OUTPUT)):
 async def yomiage(content, guild: discord.Guild):
     fix_words = [
         [r'(https?://\S+)', "URL省略"],
-        [r':\w+:', "絵文字"],
         [r'<:\w+:\d+>', "絵文字"],
+        [r':\w+:', "絵文字"],
         [r'<a:\w+:\d+>', "アニメ絵文字"],
         [r'```[\s\S]*?```', "コードブロック省略"],
         [r'\|\|.*?\|\|', "、"]
