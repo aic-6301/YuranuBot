@@ -333,8 +333,6 @@ class yomiage_cmds(commands.Cog):
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
 
-    @yomi.command(name="")
-
 
     @yomi.command(name="dictionary-delete", description="サーバー辞書の単語を削除するのだ")
     async def vc_dictionary(self, interact: discord.Interaction, text: str):
