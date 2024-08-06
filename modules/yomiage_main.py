@@ -50,9 +50,9 @@ if (not os.path.isdir(VC_OUTPUT)):
 ##読み上げのキューに入れる前に特定ワードを変換します
 async def yomiage(content, guild: discord.Guild):
     fix_words = [
-        r'(https?://\S+)', 
+        r'(https?://\S+)',
+        r':\w+:' 
         r'<:\w+:\d+>',
-        r''
         r'<a:\w+:\d+>',
         r'```[\s\S]*?```',
         r'\|\|.*?\|\|'
@@ -60,6 +60,7 @@ async def yomiage(content, guild: discord.Guild):
 
     fix_end_word = [
         "URL省略",
+        "絵文字",
         "絵文字",
         "アニメ絵文字",
         "コードブロック省略",
