@@ -2,6 +2,7 @@ import discord
 import platform
 import logging
 import requests
+import emoji
 import time
 import json
 import wave
@@ -51,6 +52,7 @@ async def yomiage(content, guild: discord.Guild):
     fix_words = [
         r'(https?://\S+)', 
         r'<:\w+:\d+>',
+        r''
         r'<a:\w+:\d+>',
         r'```[\s\S]*?```',
         r'\|\|.*?\|\|'
@@ -66,6 +68,9 @@ async def yomiage(content, guild: discord.Guild):
 
     if type(content) == discord.message.Message:
         fixed_content = content.content
+        
+        ## 絵文字を文字に変換
+        fixed_content = emoji.demojize(fixed_content)
 
         ## メンションされたユーザーのIDを名前に変換  
         for mention in content.mentions:
