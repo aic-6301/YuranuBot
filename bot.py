@@ -95,16 +95,17 @@ async def on_ready():
     await tree.sync()
     logging.debug("discord.py -> コマンドツリーを同期しました")
         
-    # 文章をすべて文字で表現(正規表現確認用)
-    @bot.tree.context_menu(name="装飾前の本文確認")
-    async def show_content(interact: discord.Interaction, message: discord.Message):
-        embed = discord.Embed(
-            color=discord.Color.green(),
-            title="メッセージは全部お見通しなのだ！",
-            description=f"```{message}```"
-        )
 
-        interact.response.send_message(embed=embed)
+# 文章をすべて文字で表現(正規表現確認用)
+@bot.tree.context_menu(name="装飾前の本文確認")
+async def show_content(interact: discord.Interaction, message: discord.Message):
+    embed = discord.Embed(
+        color=discord.Color.green(),
+        title="メッセージは全部お見通しなのだ！",
+        description=f"```{message}```"
+    )
+
+    interact.response.send_message(embed=embed)
     
 # クライアントの実行
 if type(TOKEN)==str:
