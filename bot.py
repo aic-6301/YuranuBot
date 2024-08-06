@@ -118,7 +118,6 @@ async def show_content(interact: discord.Interaction, message: discord.Message):
         title="メッセージは全部お見通しなのだ！",
         description=f"```{content}```"
     )
-
     await interact.response.send_message(embed=embed)
     
 # クライアントの実行

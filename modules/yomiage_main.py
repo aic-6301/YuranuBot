@@ -50,21 +50,12 @@ if (not os.path.isdir(VC_OUTPUT)):
 ##読み上げのキューに入れる前に特定ワードを変換します
 async def yomiage(content, guild: discord.Guild):
     fix_words = [
-        r'(https?://\S+)',
-        r':\w+:' 
-        r'<:\w+:\d+>',
-        r'<a:\w+:\d+>',
-        r'```[\s\S]*?```',
-        r'\|\|.*?\|\|'
-    ]
-
-    fix_end_word = [
-        "URL省略",
-        "絵文字",
-        "絵文字",
-        "アニメ絵文字",
-        "コードブロック省略",
-        "、"
+        [r'(https?://\S+)', "URL省略"],
+        [r':\w+:', "絵文字"],
+        [r'<:\w+:\d+>', "絵文字"],
+        [r'<a:\w+:\d+>', "アニメ絵文字"],
+        [r'```[\s\S]*?```', "コードブロック省略"],
+        [r'\|\|.*?\|\|', "、"]
     ]
 
     if type(content) == discord.message.Message:
@@ -96,7 +87,7 @@ async def yomiage(content, guild: discord.Guild):
         
     ##fix_wordに含まれたワードをfix_end_wordに変換する
     for i in range(len(fix_words)): 
-        fixed_content = re.sub(fix_words[i], fix_end_word[i], fixed_content)
+        fixed_content = re.sub(fix_words[i][0], fix_words[i][1], fixed_content, flags=re.IGNORECASE)
     
     ##サーバー辞書に登録された内容で置き換える
     dicts = get_dictionary(guild.id)
