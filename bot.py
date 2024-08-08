@@ -84,12 +84,12 @@ async def on_ready():
         logging.error(f'discord.py -> 読み込み失敗: jishaku')
         logging.error(e)
 
-    # try:
-    #     # APIを起動
-    #     logging.info(f'api.py -> APIサーバーを起動')
-    #     subprocess.Popen(R"python modules\api.py", shell=True)
-    # except:
-    #     logging.exception(f'api.py -> APIサーバーの起動に失敗')
+    try:
+        # APIを起動
+        logging.info(f'api.py -> APIサーバーを起動')
+        subprocess.Popen(R"python modules\api.py", shell=True)
+    except:
+        logging.exception(f'api.py -> APIサーバーの起動に失敗')
 
     logging.info(f'discord.py -> {bot.user}に接続しました！やったのだー！ ')
     await tree.sync()
