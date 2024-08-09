@@ -1,10 +1,7 @@
 from fastapi import FastAPI
-<<<<<<< HEAD
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-=======
 from fastapi.responses import JSONResponse, Response
->>>>>>> 89be82e542803b6779d6117d73f1672d0c88d589
 
 import uvicorn
 
