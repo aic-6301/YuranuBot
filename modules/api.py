@@ -36,8 +36,7 @@ class dictionary_post(BaseModel):
     user: int
 
 app = FastAPI()
-
-app.add_middleware(CORSMiddleware, allow_headers=["*"])
+app.add_middleware(CORSMiddleware, allow_origins=["*"])
 
 db_load("database.db")
 dictionary_load("dictionary.db")
