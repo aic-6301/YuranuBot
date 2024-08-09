@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 import uvicorn
 
@@ -22,6 +23,9 @@ class posttdata(BaseModel):
     vc_speaker: Optional[int]
 
 app = FastAPI()
+
+app.add_middleware(CORSMiddleware, allow_headers=["*"])
+
 db_load("database.db")
 dictionary_load("dictionary.db")
 
