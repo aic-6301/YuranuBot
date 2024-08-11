@@ -2,6 +2,7 @@ import discord
 import os
 import logging
 import platform
+import emoji
 import subprocess
 import sys
 import time
@@ -84,17 +85,41 @@ async def on_ready():
         logging.error(f'discord.py -> 読み込み失敗: jishaku')
         logging.error(e)
 
-    # try:
-    #     # APIを起動
-    #     logging.info(f'api.py -> APIサーバーを起動')
-    #     subprocess.Popen(R"python modules\api.py", shell=True)
-    # except:
-    #     logging.exception(f'api.py -> APIサーバーの起動に失敗')
+    try:
+        # APIを起動
+        logging.info(f'api.py -> APIサーバーを起動')
+        subprocess.Popen(R"python modules\api.py", shell=True)
+    except:
+        logging.exception(f'api.py -> APIサーバーの起動に失敗')
 
     logging.info(f'discord.py -> {bot.user}に接続しました！やったのだー！ ')
     await tree.sync()
     logging.debug("discord.py -> コマンドツリーを同期しました")
-            
+        
+
+# 文章をすべて文字で表現(正規表現確認用)
+@bot.tree.context_menu(name="装飾前の本文確認")
+async def show_content(interact: discord.Interaction, message: discord.Message):
+    embed = discord.Embed(
+        color=discord.Color.green(),
+        title="メッセージは全部お見通しなのだ！",
+        description=f"```{message.content}```"
+    )
+
+    await interact.response.send_message(embed=embed)
+
+# 文章をすべて文字で表現(絵文字変換後)
+@bot.tree.context_menu(name="装飾前の本文確認(絵文字変換後)")
+async def show_content(interact: discord.Interaction, message: discord.Message):
+    content = emoji.demojize(message.content)
+
+    embed = discord.Embed(
+        color=discord.Color.green(),
+        title="メッセージは全部お見通しなのだ！",
+        description=f"```{content}```"
+    )
+    await interact.response.send_message(embed=embed)
+    
 # クライアントの実行
 if type(TOKEN)==str:
     bot.run(TOKEN)

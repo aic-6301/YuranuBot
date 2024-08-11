@@ -58,6 +58,9 @@ async def pc_status(bot: commands.Bot):
             for a in range(0, len(computer.Hardware[hard_id].Sensors)):
                 if(("Load" in str(sensor[a].SensorType)) and ("Total" in str(sensor[a].Name))):
                     cpu_Load = format(sensor[a].Value, ".1f")
+                if(("Clocks" in str(sensor[a].SensorType)) and ("Core" in str(sensor[a].Name))):
+                    cpu_freq = format(sensor[a].Value, ".1f")
+                    
 
             if (os_info.system == "Windows"): ### Windowsの場合、表記を変更する
                 win32_edition = platform.win32_edition()
@@ -117,7 +120,7 @@ async def pc_status(bot: commands.Bot):
                         f" ({ram_info.percent}%)**"
                         ) # フィールドを追加。
         
-        embed.set_footer(text="YuranuBot! | Made by yurq_",
+        embed.set_footer(text="YuranuBot! | Made by yurq.",
                     icon_url=bot.user.avatar.url)
 
         return embed

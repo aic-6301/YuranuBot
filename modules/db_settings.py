@@ -231,6 +231,39 @@ def get_user_setting(id, type):
     except Exception as e:
         logging.error(f"database -> {e}")
     
+##データベースから設定を読み出し、返すやつ
+def get_user_all_settings(id):
+    """
+    データベースのサーバー設定を取得します
+
+    Args:
+        cursor: SQLite3で取得したカーソル
+        server_id: discordのユーザーID
+        type: 設定内容
+
+    Returns:
+        Result or None
+    """
+    try:
+        list_type = "user_settings"
+        id_type = "user_id"
+
+        cursor.execute(f'SELECT * FROM {list_type} WHERE {id_type} = {id}')
+        result = cursor.fetchone()
+        if result:
+            return result
+        else:
+            cursor.execute(f'INSERT INTO {list_type} ({id_type}) VALUES (?)', (id,))
+            conn.commit()
+
+            cursor.execute(f'SELECT * FROM {list_type} WHERE {id_type} = {id}')
+
+            result = cursor.fetchone()
+            return result
+        
+    except Exception as e:
+        logging.error(f"database -> {e}")
+    
 ##設定を上書きするやつ
 def save_user_setting(id, type, new_value):
     """

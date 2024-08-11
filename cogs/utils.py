@@ -65,6 +65,5 @@ class utils(commands.Cog):
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
     
-    
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(utils(bot))

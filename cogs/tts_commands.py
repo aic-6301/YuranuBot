@@ -14,7 +14,7 @@ from modules.vc_events import vc_inout_process
 from modules.db_settings import db_load, db_init, get_server_setting, get_user_setting, save_server_setting, save_user_setting
 from modules.exception import sendException, exception_init
 from modules.db_vc_dictionary import dictionary_load, delete_dictionary, save_dictionary, get_dictionary
-import modules.lists as Page
+import modules.pages as Page
 
 
 class yomiage_cmds(commands.Cog):

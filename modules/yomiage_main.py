@@ -2,6 +2,7 @@ import discord
 import platform
 import logging
 import requests
+import emoji
 import time
 import json
 import wave
@@ -48,16 +49,32 @@ if (not os.path.isdir(VC_OUTPUT)):
 
 ##読み上げのキューに入れる前に特定ワードを変換します
 async def yomiage(content, guild: discord.Guild):
-    fix_words = [r'(https?://\S+)', r'<:\w+:\d+>',r'<a:\w+:\d+>',r'<#[0-9]+>', r'```[\s\S]*?```', f"(ﾟ∀ﾟ)", r'\|\|.*?\|\|']
-    fix_end_word = ["URL省略","絵文字","アニメ絵文字","チャンネル省略","コードブロック省略", "", "、"]
+    fix_words = [
+        [r'(https?://\S+)', "URL省略 "],
+        [r'<a:\w+:\d+>', "アニメ絵文字 "],
+        [r'<:\w+:\d+>', "絵文字 "],
+        [r':\w+:', "絵文字 "],
+        [r'```[\s\S]*?```', "コードブロック省略"],
+        [r'\|\|.*?\|\|', "、"]
+    ]
 
-    if isinstance(content, discord.message.Message):
+    if type(content) == discord.message.Message:
         fixed_content = content.content
+        
+        ## 絵文字を文字に変換
+        fixed_content = emoji.demojize(fixed_content)
 
-        ##メンションされたユーザーのIDを名前に変換  
+        ## メンションされたユーザーのIDを名前に変換  
         for mention in content.mentions:
             fixed_content = fixed_content.replace(f'<@{mention.id}>', "@"+mention.display_name)
         
+        ## チャンネルIDをチャンネル名に置き換える
+        channel_mentions = re.findall(r'<#([0-9]+)>', fixed_content)
+        for channel_id in channel_mentions:
+            channel = discord.utils.get(content.guild.channels, id=int(channel_id))
+            if channel:
+                fixed_content = fixed_content.replace(f'<#{channel_id}>', f'{channel.name}')
+
         ##コンテンツ関連の文章を生成する
         files_content = search_content(content)
 
@@ -65,18 +82,18 @@ async def yomiage(content, guild: discord.Guild):
         if files_content != None:
             fixed_content = files_content + fixed_content
 
-    elif isinstance(content, str):
+    elif type(content) == str:
         fixed_content = content
         
     ##fix_wordに含まれたワードをfix_end_wordに変換する
     for i in range(len(fix_words)): 
-        fixed_content = re.sub(fix_words[i], fix_end_word[i], fixed_content)
+        fixed_content = re.sub(fix_words[i][0], fix_words[i][1], fixed_content, flags=re.IGNORECASE)
     
-    ##ユーザー辞書に登録された内容で置き換える
+    ##サーバー辞書に登録された内容で置き換える
     dicts = get_dictionary(guild.id)
     if dicts != None:
         for text, reading, user in dicts:
-            fixed_content = re.sub(text.lower(), reading.lower(), fixed_content, flags=re.IGNORECASE)
+            fixed_content = fixed_content.replace(text.lower(), reading.lower())
 
     ##文字制限の設定を取得する
     length_limit = get_server_setting(guild.id, "length_limit")
