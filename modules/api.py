@@ -20,17 +20,17 @@ class posttdata(BaseModel):
     auto_connect: Optional[int] = None
     speak_speed: Optional[int] = None
     length_limit: Optional[int] = None
-    join_message: Optional[str] = None
-    exit_message: Optional[str] = None
+    vc_join_message: Optional[str] = None
+    vc_exit_message: Optional[str] = None
     connect_message: Optional[str] = None
     vc_speaker: Optional[int] = None
     
 
 class user_posttdata(BaseModel):
     vc_speaker: Optional[int] = None
-    connect_msg: Optional[str] = None
-    disconnect_msg: Optional[str] = None
-    speak_speed: Optional[int] = None
+    vc_join_message: Optional[str] = None
+    vc_exit_message: Optional[str] = None
+    speak_speed: Optional[float] = None
 
 class dictionary_post(BaseModel):
     word: str
@@ -157,8 +157,8 @@ async def get_guild_settings(user_id: int, type: str = None):
             data = {
                 "user_id": str(result[0]),
                 "vc_speaker": f"{result[1]}",
-                "connnect_msg": f"{result[2]}",
-                "disconnect_msg": f"{result[3]}",
+                "join_message": f"{result[2]}",
+                "exit_message": f"{result[3]}",
                 "speak_speed": f"{result[4]}",
             }
             return JSONResponse(content=data)

@@ -179,11 +179,14 @@ def save_server_setting(id, type, new_value):
     try:
         result = cursor.execute(f'SELECT "{type}" FROM {list_type} WHERE {id_type} = {id}').fetchone()
         if result is None:
-            cursor.execute(f'INSERT INTO {list_type} ({id_type}, "{type}") VALUES ({id}, {new_value})')
-            conn.commit()
-            
-            logging.info(f"{list_type} '{id}' was created ({type}: {new_value})")
-            return
+            if type in server_settings:
+                cursor.execute(f'INSERT INTO {list_type} ({id_type}, "{type}") VALUES ({id}, {new_value})')
+                conn.commit()
+                
+                logging.info(f"{list_type} '{id}' was created ({type}: {new_value})")
+                return
+            else:
+                return 1
     
         cursor.execute(f'UPDATE {list_type} SET "{type}" = "{new_value}" WHERE {id_type} = {id}')
         conn.commit()
@@ -275,7 +278,7 @@ def save_user_setting(id, type, new_value):
         new_value: 変更する設定の値
 
     Returns:
-        正常に完了: None, 異常: Exception
+        正常に完了: None, 異常: エラー
     """
     list_type = "user_settings"
     id_type = "user_id"
@@ -283,11 +286,14 @@ def save_user_setting(id, type, new_value):
     try:
         result = cursor.execute(f'SELECT "{type}" FROM {list_type} WHERE {id_type} = {id}').fetchone()
         if result is None:
-            cursor.execute(f'INSERT INTO {list_type} ({id_type}, "{type}") VALUES ({id}, {new_value})')
-            conn.commit()
-            
-            logging.debug(f"{list_type} '{id}' was created ({type}: {new_value})")
-            return
+            if type in server_settings:
+                cursor.execute(f'INSERT INTO {list_type} ({id_type}, "{type}") VALUES ({id}, {new_value})')
+                conn.commit()
+                
+                logging.debug(f"{list_type} '{id}' was created ({type}: {new_value})")
+                return
+            else:
+                return 1
     
         cursor.execute(f'UPDATE {list_type} SET "{type}" = "{new_value}" WHERE {id_type} = {id}')
         conn.commit()
