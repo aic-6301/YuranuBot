@@ -4,12 +4,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 
 import uvicorn
+import os
 
 from pydantic import BaseModel
 from typing import Optional, Union
 
 from db_settings import get_server_all_setting, db_load, save_server_setting, get_user_all_settings, save_user_setting
 from db_vc_dictionary import dictionary_load, get_dictionary, save_dictionary
+from dotenv import load_dotenv
 
 
 class posttdata(BaseModel):
@@ -38,8 +40,20 @@ class dictionary_post(BaseModel):
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"])
 
+# .envから設定値を取得
+load_dotenv()
+DIC_DIR = os.getenv("DIC_DIR")
+
+###データベースの読み込み
 db_load("database.db")
-dictionary_load("dictionary.db")
+
+## サーバー辞書共有用
+# ディレクトリが設定されている場合はその場所を指定
+if type(DIC_DIR) is str:
+    dic_data = dictionary_load(os.path.join(DIC_DIR, "dictionary.db"))
+# ディレクトリが設定されていない場合はデフォルトの場所
+else:
+    dic_data = dictionary_load("dictionary.db")
 
 @app.get("/")
 def root():
@@ -104,12 +118,12 @@ async def get_guild_dictionary(guild_id: int, limit:int = 10 ):
             limit = int(limit)
         if result:
             data = []
-            for i in range(min(limit, len(result))):
+            for page in result:
                 data.append(
                     {
-                        "word": result[i][0],
-                        "reading": result[i][1],
-                        "user": result[i][2]
+                        "word": page[0],
+                        "reading": page[1],
+                        "user": page[2]
                     }
                 )
             return JSONResponse(content={"message": "OK", "data": data})

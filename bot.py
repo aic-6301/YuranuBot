@@ -13,6 +13,8 @@ from modules.db_settings import db_load, db_init
 from modules.exception import exception_init
 from modules.db_vc_dictionary import dictionary_load
 
+logging.basicConfig(level=logging.DEBUG)
+
 # ディレクトリの取得
 ROOT_DIR = os.path.dirname(__file__)
 
@@ -20,8 +22,6 @@ ROOT_DIR = os.path.dirname(__file__)
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
 DIC_DIR = os.getenv("DIC_DIR")
-    
-logging.basicConfig(level=logging.DEBUG)
 
 ###データベースの読み込み
 ## サーバー辞書共有用
