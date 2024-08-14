@@ -286,7 +286,10 @@ def send_voice(queue, voice_client, volume=1):
     directry = source[0]
     latency = source[1]
     
-    voice_client.play(PCMVolumeTransformer(FFmpegPCMAudio(directry), volume=volume), after=lambda e:send_voice(queue, voice_client))
+    pcmaudio = FFmpegPCMAudio(directry)
+    pcmaudio_fixed = PCMVolumeTransformer(pcmaudio, volume=volume)
+
+    voice_client.play(pcmaudio_fixed, after=lambda e:send_voice(queue, voice_client))
 
     if latency != -1:
         ## 再生スタートが完了したら時間差でファイルを削除する。
