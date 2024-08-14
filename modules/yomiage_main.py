@@ -86,7 +86,7 @@ async def yomiage(content, guild: discord.Guild):
                     send_voice(queue, guild.voice_client, volume)
 
                 if reply_url is not None:
-                    content.reply(reply_url)
+                    await content.reply(reply_url)
 
                 return
 
