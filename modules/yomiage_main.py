@@ -54,9 +54,9 @@ fix_words = [
 
 # (例: "あ", "example.mp3", *volume*, *返信メッセージなど*
 sound_effects = [
-    ["自然係のPC", "explosion.mp3", 0.3, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
-    ["まだだめだ", "madadameda.mp3", 0.3, None],
-    ["ばばんばばん", "ace.mp3", 0.3, None],
+    ["自然係のPC", "explosion.mp3", 0.2, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
+    ["まだだめだ", "madadameda.mp3", 0.2, None],
+    ["ばばんばばん", "ace.mp3", 0.2, None],
     # ["(スパイク設置)", "valorant-spike-plant.mp3", 1, None]
 ]
 
