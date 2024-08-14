@@ -61,7 +61,7 @@ async def yomiage(content, guild: discord.Guild):
     ]
 
     sound_effects = [
-        ["自然係のPC", "explosion.mp3", 0.3]
+        ["自然係のPC", "explosion.mp3", 0.1]
     ]
 
     # サウンドボード
