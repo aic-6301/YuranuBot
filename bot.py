@@ -68,6 +68,8 @@ logging.debug("discord.py -> ツリー生成完了")
 
 @bot.event
 async def on_ready():
+    exceptions = False
+
     ##cogファイルを読み込む
     for file in os.listdir(os.path.join(ROOT_DIR, "cogs")):
         if file.endswith(".py"):
@@ -77,6 +79,8 @@ async def on_ready():
             except Exception as e:
                 logging.exception(f'discord.py -> 読み込み失敗: {file[:-3]}')
                 logging.exception(e)
+                exceptons = True
+                
     try:
         ##jishakuを読み込む
         await bot.load_extension('jishaku')
@@ -84,7 +88,7 @@ async def on_ready():
     except Exception as e:
         logging.error(f'discord.py -> 読み込み失敗: jishaku')
         logging.error(e)
-
+        exceptons = True
     try:
         # APIを起動
         logging.info(f'api.py -> APIサーバーを起動')
@@ -95,6 +99,14 @@ async def on_ready():
     logging.info(f'discord.py -> {bot.user}に接続しました！やったのだー！ ')
     await tree.sync()
     logging.debug("discord.py -> コマンドツリーを同期しました")
+
+    channel_myserv = bot.get_channel(1222923566379696190)
+    
+    if exceptions == True:
+        channel_myserv.send("botは起動しました！\n⚠一部のcogファイルにエラー発生⚠")
+    else:
+        channel_myserv.send("botは起動しました！")
+
         
 
 # 文章をすべて文字で表現(正規表現確認用)
