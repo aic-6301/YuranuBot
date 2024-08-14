@@ -55,16 +55,19 @@ fix_words = [
 # (例: "あ", "example.mp3", *volume*, *返信メッセージなど*
 sound_effects = [
     ["自然係のPC", "explosion.mp3", 0.2, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
+    ["どっかぁん", "explosion.mp3", 0.2, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"]
     ["まだだめだ", "madadameda.mp3", 0.2, None],
     ["ばばんばばん", "ace.mp3", 0.2, None],
     ["俺はハンターだ！！", "im a hunter.mp3", 0.5, None],
     ["消えてもらおうか！！", "kietemoraouka.mp3", 0.6, None],
     ["私はすべての場所に", "ULT-OMEN.mp3", 0.5, None],
-    ["南部EQ", "nanbueq.mp3", 0.7, None]
+    ["南部EQ", "nanbueq.mp3", 0.7, None],
+    ["ちるんうると", ""]
     # ["(スパイク設置)", "valorant-spike-plant.mp3", 1, None]
 ]
 
 yomiage_serv_list = defaultdict(deque)
+ace_left = 0
 
 ##ディレクトリがない場合は作成する
 if (not os.path.isdir(VC_OUTPUT)):
@@ -76,6 +79,16 @@ async def yomiage(content, guild: discord.Guild):
     if type(content) == discord.message.Message:
         for sound in sound_effects:
             if content.content == sound[0]:
+                global ace_left
+                if sound[1] == "explosion.mp3":
+                    ace_left += 1
+                    
+                    if ace_left >= 5:
+                        sound[1] == "explosion2.mp3"
+
+                else:
+                    ace_left = 0
+                
                 logging.debug(f"サウンドボードの単語を検出: {content.content}")
 
                 word = sound[0]
