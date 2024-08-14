@@ -87,8 +87,6 @@ async def yomiage(content, guild: discord.Guild):
             reply_url = sound[3]
 
             if content.content == sound[0]:
-                global ace_left
-
                 if sound[1] == "explosion.mp3":
                     ace_left += 1
                     
