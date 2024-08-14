@@ -81,12 +81,12 @@ async def yomiage(content, guild: discord.Guild):
 
                 sound_file = f"{SOUNDBOARD_DIR}{sound_dir}"
 
-                file_list = [sound_file, -1]
+                file_list = [sound_file, -1, volume]
                 queue = yomiage_serv_list[guild.id]
                 queue.append(file_list)
 
                 if not guild.voice_client.is_playing():
-                    send_voice(queue, guild.voice_client, volume)
+                    send_voice(queue, guild.voice_client)
 
                 if reply_url is not None:
                     await content.reply(reply_url)
@@ -213,7 +213,7 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int, speed: f
             fn = f.getnframes()
             length = fn / fr
 
-        file_list = [voice_file, length]
+        file_list = [voice_file, length, 1]
 
         queue = yomiage_serv_list[guild.id]
         queue.append(file_list)
@@ -280,7 +280,7 @@ def search_content(content: discord.message.Message):
 
 
 
-def send_voice(queue, voice_client, volume=1):
+def send_voice(queue, voice_client):
     if not queue or voice_client.is_playing():
         return
 
@@ -288,9 +288,9 @@ def send_voice(queue, voice_client, volume=1):
 
     directry = source[0]
     latency = source[1]
+    volume = source[2]
 
-    pcmaudio = FFmpegPCMAudio(directry)
-    pcmaudio_fixed = PCMVolumeTransformer(pcmaudio)
+    pcmaudio_fixed = PCMVolumeTransformer(FFmpegPCMAudio(directry))
     pcmaudio_fixed.volume = volume
 
     voice_client.play(pcmaudio_fixed, after=lambda e:send_voice(queue, voice_client))
