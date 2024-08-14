@@ -79,7 +79,6 @@ async def on_ready():
             except Exception as e:
                 logging.exception(f'discord.py -> 読み込み失敗: {file[:-3]}')
                 logging.exception(e)
-                exceptons = True
                 
     try:
         ##jishakuを読み込む
@@ -88,13 +87,14 @@ async def on_ready():
     except Exception as e:
         logging.error(f'discord.py -> 読み込み失敗: jishaku')
         logging.error(e)
-        exceptons = True
+
     try:
         # APIを起動
         logging.info(f'api.py -> APIサーバーを起動')
         subprocess.Popen(R"python modules\api.py", shell=True)
     except:
         logging.exception(f'api.py -> APIサーバーの起動に失敗')
+
 
     logging.info(f'discord.py -> {bot.user}に接続しました！やったのだー！ ')
     await tree.sync()
@@ -105,7 +105,7 @@ async def on_ready():
     if exceptions == True:
         channel_myserv.send("botは起動しました！\n⚠一部のcogファイルにエラー発生⚠")
     else:
-        channel_myserv.send("botは起動しました！")
+        await channel_myserv.send("botは起動しました！")
 
         
 
