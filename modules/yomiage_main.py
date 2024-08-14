@@ -57,6 +57,7 @@ sound_effects = [
     ["自然係のPC", "explosion.mp3", 0.2, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
     ["まだだめだ", "madadameda.mp3", 0.2, None],
     ["ばばんばばん", "ace.mp3", 0.2, None],
+    ["俺はハンターだ！！", "im a hunter.mp3", 0.2, None]
     # ["(スパイク設置)", "valorant-spike-plant.mp3", 1, None]
 ]
 
