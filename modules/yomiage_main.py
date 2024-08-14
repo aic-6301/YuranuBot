@@ -59,7 +59,7 @@ sound_effects = [
     ["まだだめだ", "madadameda.mp3", 0.2, None],
     ["ばばんばばん", "ace.mp3", 0.2, None],
     ["俺はハンターだ！！", "im a hunter.mp3", 0.5, None],
-    ["消えてもらおうか！！", "kietemoraouka.mp3", 0.6, None],
+    ["消えてもらおうか！！", "kietemorwdaouka.mp3", 0.6, None],
     ["私はすべての場所に", "ULT-OMEN.mp3", 0.5, None],
     ["南部EQ", "nanbueq.mp3", 0.7, None]
     # ["(スパイク設置)", "valorant-spike-plant.mp3", 1, None]
@@ -77,23 +77,25 @@ async def yomiage(content, guild: discord.Guild):
     # サウンドボード
     if type(content) == discord.message.Message:
         for sound in sound_effects:
+            
+            word = sound[0]
+            sound_dir = sound[1]
+            volume = sound[2]
+            reply_url = sound[3]
+
             if content.content == sound[0]:
                 global ace_left
+
                 if sound[1] == "explosion.mp3":
                     ace_left += 1
                     
                     if ace_left >= 5:
-                        sound[1] == "explosion2.mp3"
-
+                        sound_dir = "explosion2.mp3"
+                        
                 else:
                     ace_left = 0
                 
                 logging.debug(f"サウンドボードの単語を検出: {content.content}")
-
-                word = sound[0]
-                sound_dir = sound[1]
-                volume = sound[2]
-                reply_url = sound[3]
 
                 sound_file = f"{SOUNDBOARD_DIR}{sound_dir}"
 
