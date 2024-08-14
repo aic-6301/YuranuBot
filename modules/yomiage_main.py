@@ -43,6 +43,23 @@ VC_PORT = 50021
 
 SOUNDBOARD_DIR = "./sounds/"
 
+fix_words = [
+    [r'(https?://\S+)', "URL省略 "],
+    [r'<a:\w+:\d+>', "アニメ絵文字 "],
+    [r'<:\w+:\d+>', "絵文字 "],
+    [r':\w+:', "絵文字 "],
+    [r'```[\s\S]*?```', "コードブロック省略"],
+    [r'\|\|.*?\|\|', "、"]
+]
+
+# (例: "あ", "example.mp3", *volume*, *返信メッセージなど*
+sound_effects = [
+    ["自然係のPC", "explosion.mp3", 0.3, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
+    ["まだだめだ", "madadameda.mp3", 1, None],
+    ["ばばんばばん", "ace.mp3", 1, None],
+    ["*スパイク設置*", "valorant-spike-plant.mp3", 1, None]
+]
+
 yomiage_serv_list = defaultdict(deque)
 
 ##ディレクトリがない場合は作成する
@@ -51,23 +68,6 @@ if (not os.path.isdir(VC_OUTPUT)):
 
 ##読み上げのキューに入れる前に特定ワードを変換します
 async def yomiage(content, guild: discord.Guild):
-    fix_words = [
-        [r'(https?://\S+)', "URL省略 "],
-        [r'<a:\w+:\d+>', "アニメ絵文字 "],
-        [r'<:\w+:\d+>', "絵文字 "],
-        [r':\w+:', "絵文字 "],
-        [r'```[\s\S]*?```', "コードブロック省略"],
-        [r'\|\|.*?\|\|', "、"]
-    ]
-
-    # (例: "あ", "example.mp3", *volume*, *返信メッセージなど*
-    sound_effects = [
-        ["自然係のPC", "explosion.mp3", 0.3, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
-        ["まだだめだ", "madadameda.mp3", 1, None],
-        ["ばばんばばん", "ace.mp3", 1, None],
-        ["*スパイク設置*", "valorant-spike-plant.mp3", 1, None]
-    ]
-
     # サウンドボード
     if type(content) == discord.message.Message:
         for sound in sound_effects:
