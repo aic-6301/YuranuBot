@@ -116,7 +116,6 @@ async def yomiage(content, guild: discord.Guild):
                 return
 
     if type(content) == discord.message.Message:
-            global ace_left
             ace_left == 0
 
             fixed_content = content.content
