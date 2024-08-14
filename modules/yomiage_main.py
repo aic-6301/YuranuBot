@@ -54,14 +54,17 @@ fix_words = [
 
 # (例: "あ", "example.mp3", *volume*, *返信メッセージなど*
 sound_effects = [
-    ["自然係のPC", "explosion.mp3", 0.2, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
-    ["どっかぁん", "explosion.mp3", 0.2, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
+    ["自然係のPC", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
+    ["どっかぁん", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
+
     ["まだだめだ", "madadameda.mp3", 0.2, None],
     ["ばばんばばん", "ace.mp3", 0.2, None],
     ["俺はハンターだ！！", "im a hunter.mp3", 0.5, None],
-    ["消えてもらおうか！！", "kietemorwdaouka.mp3", 0.6, None],
+    ["消えてもらおうか！！", "kietemoraouka.mp3", 0.6, None],
     ["私はすべての場所に", "ULT-OMEN.mp3", 0.5, None],
-    ["南部EQ", "nanbueq.mp3", 0.7, None]
+    ["ようこそ私の世界へ", "ULT-VIPER.mp3", 0.5, None]
+
+    ["南部EQ", "nanbueq.mp3", 0.7, None],
     # ["(スパイク設置)", "valorant-spike-plant.mp3", 1, None]
 ]
 
@@ -112,6 +115,9 @@ async def yomiage(content, guild: discord.Guild):
                 return
 
     if type(content) == discord.message.Message:
+            global ace_left
+            ace_left == 0
+
             fixed_content = content.content
 
             ## 絵文字を文字に変換
