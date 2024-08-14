@@ -56,6 +56,7 @@ fix_words = [
 sound_effects = [
     ["自然係のPC", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
     ["どっかぁん", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
+    ["サ終", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
 
     ["まだだめだ", "madadameda.mp3", 0.2, None],
     ["ばばんばばん", "ace.mp3", 0.2, None],
@@ -64,12 +65,12 @@ sound_effects = [
     ["私はすべての場所に", "ULT-OMEN.mp3", 0.5, None],
     ["ようこそ私の世界へ", "ULT-VIPER.mp3", 0.5, None],
     ["狩りの時間よ！", "ULT-REYNA.mp3", 0.5, None],
+    ["見てなよ！", "ULT-JETT.mp3", 0.6, None],
 
     ["南部EQ", "nanbueq.mp3", 0.7, None],
     ["あｂ", "abababa.mp3", 0.5, None],
     ["あばばばば", "abababa.mp3", 0.5, None],
     ["あばばっば", "abababba.mp3", 0.5, None],
-    ["見てなよ！", "ULT-JETT.mp3", 0.6, None]
     # ["(スパイク設置)", "valorant-spike-plant.mp3", 1, None]
 ]
 
