@@ -302,12 +302,13 @@ class yomiage_cmds(commands.Cog):
                     description="サーバー辞書の単語を表示しています！",
                     color=discord.Color.green()
                 )
+                embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
+
                 for i in range(len(result)):
                     embed.add_field(
                         name=f"単語{i+1}",
                         value=f"単語: {result[i][0]}\n読み仮名: {result[i][1]}\n登録者: <@{result[i][2]}>"
                     )
-                    embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
 
                     if (i+1) % 10 == 0:  # Create a new embed every 10 words
                         embeds.append(embed)
@@ -349,7 +350,7 @@ class yomiage_cmds(commands.Cog):
                 for i in range(len(result)):
                     embed.add_field(
                         name=f"サウンドテキスト{i+1}",
-                        value=f"単語: {result[i][0]}"
+                        value=f"{result[i][0]}"
                     )
 
                     if (i+1) % 10 == 0:  # Create a new embed every 10 words
