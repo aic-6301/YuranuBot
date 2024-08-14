@@ -41,6 +41,8 @@ FS = 24000
 VC_HOST = "127.0.0.1"
 VC_PORT = 50021
 
+SOUNDBOARD_DIR = "./sounds/"
+
 yomiage_serv_list = defaultdict(deque)
 
 ##ディレクトリがない場合は作成する
@@ -58,29 +60,47 @@ async def yomiage(content, guild: discord.Guild):
         [r'\|\|.*?\|\|', "、"]
     ]
 
+    sound_effects = [
+        ["自然係のPC", "explosion.mp3"]
+    ]
+
+    # サウンドボード
     if type(content) == discord.message.Message:
-        fixed_content = content.content
-        
-        ## 絵文字を文字に変換
-        fixed_content = emoji.demojize(fixed_content)
+        for sound in sound_effects:
+            if content.content == sound[0]:
+                sound_file = f"{SOUNDBOARD_DIR}{sound[1]}"
 
-        ## メンションされたユーザーのIDを名前に変換  
-        for mention in content.mentions:
-            fixed_content = fixed_content.replace(f'<@{mention.id}>', "@"+mention.display_name)
-        
-        ## チャンネルIDをチャンネル名に置き換える
-        channel_mentions = re.findall(r'<#([0-9]+)>', fixed_content)
-        for channel_id in channel_mentions:
-            channel = discord.utils.get(content.guild.channels, id=int(channel_id))
-            if channel:
-                fixed_content = fixed_content.replace(f'<#{channel_id}>', f'{channel.name}')
+                file_list = [sound_file, -1]
+                queue = yomiage_serv_list[guild.id]
+                queue.append(file_list)
 
-        ##コンテンツ関連の文章を生成する
-        files_content = search_content(content)
+                if not guild.voice_client.is_playing():
+                    send_voice(queue, guild.voice_client)
+                
 
-        ##コンテンツ  +　文章
-        if files_content != None:
-            fixed_content = files_content + fixed_content
+    if type(content) == discord.message.Message:
+            fixed_content = content.content
+            
+            ## 絵文字を文字に変換
+            fixed_content = emoji.demojize(fixed_content)
+
+            ## メンションされたユーザーのIDを名前に変換  
+            for mention in content.mentions:
+                fixed_content = fixed_content.replace(f'<@{mention.id}>', "@"+mention.display_name)
+            
+            ## チャンネルIDをチャンネル名に置き換える
+            channel_mentions = re.findall(r'<#([0-9]+)>', fixed_content)
+            for channel_id in channel_mentions:
+                channel = discord.utils.get(content.guild.channels, id=int(channel_id))
+                if channel:
+                    fixed_content = fixed_content.replace(f'<#{channel_id}>', f'{channel.name}')
+
+            ##コンテンツ関連の文章を生成する
+            files_content = search_content(content)
+
+            ##コンテンツ  +　文章
+            if files_content != None:
+                fixed_content = files_content + fixed_content
 
     elif type(content) == str:
         fixed_content = content
@@ -249,9 +269,14 @@ def send_voice(queue, voice_client):
     if not queue or voice_client.is_playing():
         return
     
-    source = queue.popleft()
-    voice_client.play(FFmpegOpusAudio(source[0]), after=lambda e:send_voice(queue, voice_client))
+    directry = source[0]
+    latency = source[1]
 
-    ## 再生スタートが完了したら時間差でファイルを削除する。
-    delete_file_latency(source[0], source[1])
+
+    source = queue.popleft()
+    voice_client.play(FFmpegOpusAudio(directry), after=lambda e:send_voice(queue, voice_client))
+
+    if latency != -1:
+        ## 再生スタートが完了したら時間差でファイルを削除する。
+        delete_file_latency(directry, latency)
 
