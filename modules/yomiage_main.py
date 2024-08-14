@@ -80,6 +80,8 @@ if (not os.path.isdir(VC_OUTPUT)):
 async def yomiage(content, guild: discord.Guild):
     # サウンドボード
     if type(content) == discord.message.Message:
+        global ace_left
+
         for sound in sound_effects:
             
             word = sound[0]
@@ -114,6 +116,7 @@ async def yomiage(content, guild: discord.Guild):
                 return
 
     if type(content) == discord.message.Message:
+            global ace_left
             ace_left == 0
 
             fixed_content = content.content
