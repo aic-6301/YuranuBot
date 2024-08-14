@@ -79,8 +79,10 @@ if (not os.path.isdir(VC_OUTPUT)):
 ##読み上げのキューに入れる前に特定ワードを変換します
 async def yomiage(content, guild: discord.Guild):
     # サウンドボード
+    
+    global ace_left
     if type(content) == discord.message.Message:
-        global ace_left
+        
 
         for sound in sound_effects:
             
