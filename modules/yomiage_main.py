@@ -60,7 +60,7 @@ sound_effects = [
     ["俺はハンターだ！！", "im a hunter.mp3", 0.5, None],
     ["消えてもらおうか！！", "kietemoraouka.mp3", 0.6, None],
     ["私はすべての場所に", "ULT-OMEN.mp3", 0.5, None],
-    ["これだから南部いーきゅーさーびすは", "nanbueq.mp3", 0.7, None]
+    ["南部EQ", "nanbueq.mp3", 0.7, None]
     # ["(スパイク設置)", "valorant-spike-plant.mp3", 1, None]
 ]
 
