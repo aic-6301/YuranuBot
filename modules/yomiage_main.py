@@ -290,7 +290,8 @@ def send_voice(queue, voice_client, volume=1):
     latency = source[1]
 
     pcmaudio = FFmpegPCMAudio(directry)
-    pcmaudio_fixed = PCMVolumeTransformer(pcmaudio, volume=volume)
+    pcmaudio_fixed = PCMVolumeTransformer(pcmaudio)
+    pcmaudio_fixed.volume = volume
 
     voice_client.play(pcmaudio_fixed, after=lambda e:send_voice(queue, voice_client))
 
