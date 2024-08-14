@@ -57,7 +57,7 @@ sound_effects = [
     ["自然係のPC", "explosion.mp3", 0.3, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
     ["まだだめだ", "madadameda.mp3", 1, None],
     ["ばばんばばん", "ace.mp3", 1, None],
-    ["*スパイク設置*", "valorant-spike-plant.mp3", 1, None]
+    ["(スパイク設置)", "valorant-spike-plant.mp3", 1, None]
 ]
 
 yomiage_serv_list = defaultdict(deque)
