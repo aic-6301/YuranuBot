@@ -68,6 +68,7 @@ sound_effects = [
     ["南部EQ", "nanbueq.mp3", 0.7, None],
     ["あｂ", "abababa.mp3", 0.5, None],
     ["あばばばば", "abababa.mp3", 0.5, None],
+    ["あばばっば", "abababba.mp3", 0.5, None],
     # ["(スパイク設置)", "valorant-spike-plant.mp3", 1, None]
 ]
 
@@ -84,7 +85,6 @@ async def yomiage(content, guild: discord.Guild):
     
     global ace_left
     if type(content) == discord.message.Message:
-        
 
         for sound in sound_effects:
             
