@@ -66,6 +66,7 @@ sound_effects = [
     ["狩りの時間よ！", "ULT-REYNA.mp3", 0.5, None],
 
     ["南部EQ", "nanbueq.mp3", 0.7, None],
+    ["あばばばば", "abababa.mp3", 0.5, None],
     # ["(スパイク設置)", "valorant-spike-plant.mp3", 1, None]
 ]
 
