@@ -60,8 +60,9 @@ async def yomiage(content, guild: discord.Guild):
         [r'\|\|.*?\|\|', "、"]
     ]
 
+    # (例: "あ", "example.mp3", *volume*, *返信メッセージなど*
     sound_effects = [
-        ["自然係のPC", "explosion.mp3", 0.1]
+        ["自然係のPC", "explosion.mp3", 0.3, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"]
     ]
 
     # サウンドボード
@@ -73,6 +74,7 @@ async def yomiage(content, guild: discord.Guild):
                 word = sound[0]
                 sound_dir = sound[1]
                 volume = sound[2]
+                reply_url = sound[3]
 
                 sound_file = f"{SOUNDBOARD_DIR}{sound_dir}"
 
@@ -82,6 +84,9 @@ async def yomiage(content, guild: discord.Guild):
 
                 if not guild.voice_client.is_playing():
                     send_voice(queue, guild.voice_client, volume)
+
+                if reply_url is not None:
+                    content.reply(reply_url)
 
                 return
 
