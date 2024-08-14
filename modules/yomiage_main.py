@@ -18,7 +18,7 @@ from modules.db_vc_dictionary import get_dictionary
 from modules.delete import delete_file_latency
 from dotenv import load_dotenv
 from collections import deque, defaultdict
-from discord import FFmpegOpusAudio
+from discord import FFmpegPCMAudio, PCMVolumeTransformer
 
 load_dotenv()
 USE_VOICEVOX_APP = os.getenv("USE_VOICEVOX_APP")
@@ -61,22 +61,29 @@ async def yomiage(content, guild: discord.Guild):
     ]
 
     sound_effects = [
-        ["自然係のPC", "explosion.mp3"]
+        ["自然係のPC", "explosion.mp3", 0.3]
     ]
 
     # サウンドボード
     if type(content) == discord.message.Message:
         for sound in sound_effects:
             if content.content == sound[0]:
-                sound_file = f"{SOUNDBOARD_DIR}{sound[1]}"
+                logging.debug(f"サウンドボードの単語を検出: {content.content}")
+
+                word = sound[0]
+                sound_dir = sound[1]
+                volume = sound[2]
+
+                sound_file = f"{SOUNDBOARD_DIR}{sound_dir}"
 
                 file_list = [sound_file, -1]
                 queue = yomiage_serv_list[guild.id]
                 queue.append(file_list)
 
                 if not guild.voice_client.is_playing():
-                    send_voice(queue, guild.voice_client)
-                
+                    send_voice(queue, guild.voice_client, volume)
+
+                return
 
     if type(content) == discord.message.Message:
             fixed_content = content.content
@@ -265,16 +272,16 @@ def search_content(content: discord.message.Message):
 
         
 
-def send_voice(queue, voice_client):
+def send_voice(queue, voice_client, volume=1):
     if not queue or voice_client.is_playing():
         return
-    
-    directry = source[0]
-    latency = source[1]
-
 
     source = queue.popleft()
-    voice_client.play(FFmpegOpusAudio(directry), after=lambda e:send_voice(queue, voice_client))
+
+    directry = source[0]
+    latency = source[1]
+    
+    voice_client.play(PCMVolumeTransformer(FFmpegPCMAudio(directry), volume=volume), after=lambda e:send_voice(queue, voice_client))
 
     if latency != -1:
         ## 再生スタートが完了したら時間差でファイルを削除する。
