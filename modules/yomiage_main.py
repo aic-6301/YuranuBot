@@ -57,7 +57,7 @@ sound_effects = [
     ["自然係のPC", "explosion.mp3", 0.3, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
     ["まだだめだ", "madadameda.mp3", 0.5, None],
     ["ばばんばばん", "ace.mp3", 0.5, None],
-    ["(スパイク設置)", "valorant-spike-plant.mp3", 1, None]
+    # ["(スパイク設置)", "valorant-spike-plant.mp3", 1, None]
 ]
 
 yomiage_serv_list = defaultdict(deque)
@@ -95,14 +95,14 @@ async def yomiage(content, guild: discord.Guild):
 
     if type(content) == discord.message.Message:
             fixed_content = content.content
-            
+
             ## 絵文字を文字に変換
             fixed_content = emoji.demojize(fixed_content)
 
-            ## メンションされたユーザーのIDを名前に変換  
+            ## メンションされたユーザーのIDを名前に変換
             for mention in content.mentions:
                 fixed_content = fixed_content.replace(f'<@{mention.id}>', "@"+mention.display_name)
-            
+
             ## チャンネルIDをチャンネル名に置き換える
             channel_mentions = re.findall(r'<#([0-9]+)>', fixed_content)
             for channel_id in channel_mentions:
@@ -119,11 +119,11 @@ async def yomiage(content, guild: discord.Guild):
 
     elif type(content) == str:
         fixed_content = content
-        
+
     ##fix_wordに含まれたワードをfix_end_wordに変換する
-    for i in range(len(fix_words)): 
+    for i in range(len(fix_words)):
         fixed_content = re.sub(fix_words[i][0], fix_words[i][1], fixed_content, flags=re.IGNORECASE)
-    
+
     ##サーバー辞書に登録された内容で置き換える
     dicts = get_dictionary(guild.id)
     if dicts != None:
@@ -152,7 +152,7 @@ async def yomiage(content, guild: discord.Guild):
         speed = usr_speed
 
     ##サーバー話者を取得する
-    spkID = get_server_setting(guild.id, "vc_speaker")  
+    spkID = get_server_setting(guild.id, "vc_speaker")
 
     ##読み上げ内容がメっセージの場合はユーザー話者を取得する
     spkID_usr = None
@@ -165,7 +165,7 @@ async def yomiage(content, guild: discord.Guild):
 
     await queue_yomiage(speak_content, guild, spkID, speed)
 
-async def queue_yomiage(content: str, guild: discord.Guild, spkID: int, speed: float = 1):    
+async def queue_yomiage(content: str, guild: discord.Guild, spkID: int, speed: float = 1):
     try:
         logging.debug(f'"{content}" 速度: {speed}, 話者ID: {spkID}')
 
@@ -194,9 +194,9 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int, speed: f
 
             audio_query = core.audio_query(content, spkID)
             audio_query.speed_scale = speed
-            
+
             voice_byte = core.synthesis(audio_query, spkID)
-        
+
         ###作成時間を記録するため、timeを利用する
         wav_time = time.time()
         voice_file = f"{VC_OUTPUT}{guild.id}-{wav_time}.wav"
@@ -221,7 +221,7 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int, speed: f
         if not guild.voice_client.is_playing():
             send_voice(queue, guild.voice_client)
         return
-            
+
     except Exception as e:
         exception_type, exception_object, exception_traceback = sys.exc_info()
         filename = exception_traceback.tb_frame.f_code.co_filename
@@ -231,10 +231,10 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int, speed: f
 ##コンテンツが添付されている場合の処理
 def search_content(content: discord.message.Message):
     send_content = ""
-    
+
     attach_length = len(content.attachments)
     sticker_length = len(content.stickers)
-    
+
     if attach_length > 0:
         if attach_length >= 3: ##ファイル数が３つ以上なら
             _len = 2
@@ -269,16 +269,16 @@ def search_content(content: discord.message.Message):
                 send_content += "と"
         #ファイルが多すぎてもこれでおっけ！
         if file_count:
-            send_content += f"とその他{attach_length-2}ファイル" 
+            send_content += f"とその他{attach_length-2}ファイル"
         #語尾もちゃんとつける！
         send_content += "が添付されました、"
-    
+
     if sticker_length > 0:
         send_content += "スタンプが送信されました、"
-        
+
     return send_content
 
-        
+
 
 def send_voice(queue, voice_client, volume=1):
     if not queue or voice_client.is_playing():
@@ -288,7 +288,7 @@ def send_voice(queue, voice_client, volume=1):
 
     directry = source[0]
     latency = source[1]
-    
+
     pcmaudio = FFmpegPCMAudio(directry)
     pcmaudio_fixed = PCMVolumeTransformer(pcmaudio, volume=volume)
 
