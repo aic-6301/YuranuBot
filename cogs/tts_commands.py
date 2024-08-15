@@ -426,7 +426,7 @@ class yomiage_cmds(commands.Cog):
                 else:
                     mode_str = "無効"
                     
-                    await interact.response.send_message(f"サウンドテキスト機能を**「{mode_str}」**にしたのだ！")
+                await interact.response.send_message(f"サウンドテキスト機能を**「{mode_str}」**にしたのだ！")
                 return
             
             await interact.response.send_message(f"設定に失敗したのだ...")
