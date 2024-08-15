@@ -89,15 +89,7 @@ async def yomiage(content, guild: discord.Guild):
     if type(content) == discord.Message:
         soundtext_mode = get_server_setting(guild.id, "soundtext_mode")
 
-        if soundtext_mode == 1:
-            embed = discord.Embed(
-                title="ちょっと待つのだ！",
-                description="ゲームモードが有効です！VCの状況を確認してみよう。",
-                color=discord.Colour.orange()
-            )
-            await content.reply(embed=embed)
-
-        elif soundtext_mode == 2:
+        if soundtext_mode != 0:
             for sound in sound_effects:
                 
                 word = sound[0]
@@ -106,14 +98,22 @@ async def yomiage(content, guild: discord.Guild):
                 reply_url = sound[3]
 
                 if content.content == sound[0]:
-                    if sound[1] == "explosion.mp3":
-                        ace_left += 1
-                        
-                        if ace_left >= 5:
-                            sound_dir = "explosion2.mp3"
-                            
+                    if soundtext_mode == 1:
+                        embed = discord.Embed(
+                            title="ちょっと待つのだ！",
+                            description="ゲームモードが有効です！VCの状況を確認してみよう。",
+                            color=discord.Colour.orange()
+                        )
+                        await content.reply(embed=embed)
                     else:
-                        ace_left = 0
+                        if sound[1] == "explosion.mp3":
+                            ace_left += 1
+                            
+                            if ace_left >= 5:
+                                sound_dir = "explosion2.mp3"
+                                
+                        else:
+                            ace_left = 0
                     
                     logging.debug(f"サウンドボードの単語を検出: {content.content}")
 
