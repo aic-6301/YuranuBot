@@ -425,7 +425,7 @@ class yomiage_cmds(commands.Cog):
     )
     async def soundtext_mode(self, interact: discord.Interaction, mode: int):
         try:
-            result = save_server_setting(interact.guild_id, "speak_channel", mode)
+            result = save_server_setting(interact.guild_id, "soundtext_mode", mode)
             if result is None:
                 mode_str: str = None
 
