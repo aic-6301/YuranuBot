@@ -129,6 +129,12 @@ class yomiage_cmds(commands.Cog):
         vc_speak_speed = get_server_setting(interact.guild.id, "speak_speed")
         length_limit = get_server_setting(interact.guild.id, "length_limit")
 
+        soundtextMode_ = get_server_setting(interact.guild.id, "soundtext_mode")
+        if soundtextMode_ == 2: soundtextMode = "有効"
+        elif soundtextMode_ == 1: soundtextMode = "ゲームモード"
+        elif soundtextMode_ == 0: soundtextMode = "無効"
+        else: soundtextMode = "設定取得時にエラー発生" 
+
         embed = discord.Embed(
             title="サーバーの読み上げ設定を表示するのだ！",
             color=discord.Color.green()
@@ -157,6 +163,10 @@ class yomiage_cmds(commands.Cog):
             name="VCへの自動接続",
             value=f"> {auto_conn_channel}",
             inline=False
+        )
+        embed.add_field(
+            name="サウンドテキスト機能",
+            value=soundtextMode
         )
         embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
 
