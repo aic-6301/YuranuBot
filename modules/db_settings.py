@@ -14,7 +14,8 @@ server_settings = [
     ("vc_join_message", "TEXT DEFAULT がさんかしました！"),
     ("vc_exit_message", "TEXT DEFAULT がたいせきしました！"),
     ("vc_speaker", "INTEGER NOT NULL DEFAULT 3"),
-    ("vc_user_announce", "INTEGER NOT NULL DEFAULT 1")
+    ("vc_user_announce", "INTEGER NOT NULL DEFAULT 1"),
+    ("soundtext_mode", "INTEGER NOT NULL DEFAULT 2"),
 ]
 
 user_settings = [

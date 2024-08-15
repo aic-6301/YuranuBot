@@ -6,6 +6,21 @@ import sys
 from modules.exception import sendException
 from discord.ext import commands
 
+class PCStatus():
+    os_name: str = None
+
+    cpu_name: str = None
+    cpu_load: float = None
+    cpu_freq: float = None
+
+    ram_use: float = None
+    ram_total: float = None
+    ram_percent: float = None
+
+    gpu_name: str = None
+    gpu_load: float = None
+    gpu_mem_use: float = None
+
 ##Windowsの場合の処理
 if platform.uname().system == "Windows":
     ### LibreHardwareMonitorのライブラリをロード
@@ -20,7 +35,7 @@ if platform.uname().system == "Windows":
 
     ###LibreHardwareMonitorの設定を格納する
     computer.IsCpuEnabled = True
-    # computer.IsGpuEnabled = True
+    computer.IsGpuEnabled = True
     # computer.IsMemoryEnabled = True
     # computer.IsMotherboardEnabled = True
     # computer.IsControllerEnabled = True
@@ -29,101 +44,39 @@ if platform.uname().system == "Windows":
 
     computer.Open()
 
-
-
-async def pc_status(bot: commands.Bot):
+async def pc_status():
     try:
         os_info = platform.uname()
-        os_bit = platform.architecture()[1]
-
-        cpu_freq = psutil.cpu_freq().current / 1000
-        cpu_cores = psutil.cpu_count()
         ram_info = psutil.virtual_memory()
-        py_version = platform.python_version()
-        py_buildDate = platform.python_build()[1]
         
-        ping = bot.latency * 1000
-
-        cpu_Load = "Not Available    "
+        pc = PCStatus()
 
         if os_info.system == "Windows":
+            for hard in computer.Hardware:
+                if hard.HardwareType == "Cpu":
+                    pc.cpu_name = hard.Name
+                if "Gpu" in hard.HardwareType:
+                    pc.gpu_name = hard.Name
 
-            cpu_name = computer.Hardware[0].Name
-
-            hard_id = 0
-
-            sensor = computer.Hardware[hard_id].Sensors
-            computer.Hardware[hard_id].Update()
-
-            for a in range(0, len(computer.Hardware[hard_id].Sensors)):
-                if(("Load" in str(sensor[a].SensorType)) and ("Total" in str(sensor[a].Name))):
-                    cpu_Load = format(sensor[a].Value, ".1f")
-                if(("Clocks" in str(sensor[a].SensorType)) and ("Core" in str(sensor[a].Name))):
-                    cpu_freq = format(sensor[a].Value, ".1f")
+                for sensor in hard.Sensors:
+                    if sensor.Name == "CPU Total":
+                        pc.cpu_load = sensor.Value
+                    if sensor.Name == "GPU Core":
+                        pc.gpu_load = sensor.Value
+                    if sensor.Name == "D3D Dedicated Memory Used":
+                        pc.gpu_mem_use = sensor.Value
                     
-
-            if (os_info.system == "Windows"): ### Windowsの場合、表記を変更する
-                win32_edition = platform.win32_edition()
-                win32_ver = os_info.release
-
-                if (win32_edition == "Professional"):
-                    win32_edition = "Pro"
-                
-                os_name = f"{os_info.system} {win32_ver} {win32_edition}"
-
         elif os_info.system == "Linux":
-            os_name = platform.uname().system
-            cpu_name = platform.processor()
+            pc.cpu_name = platform.processor()
+            pc.cpu_load = psutil.cpu_percent(percpu=False)
 
-            cpu_Load = psutil.cpu_percent(percpu=False)
-            
-            temp_ = psutil.sensors_temperatures()
-            if "coretemp" in temp_:
-                for entry in temp_["coretemp"]:
-                    if entry.label == "Package id 0":
-                        cpu_Temp = f"{entry.current}"
+        pc.os_name = os_info.system
+        pc.cpu_freq = psutil.cpu_freq().current / 1000
+        pc.ram_use = ram_info.used/1024/1024/1024
+        pc.ram_total = ram_info.total/1024/1024/1024
+        pc.ram_percent = ram_info.percent
 
-        embed = discord.Embed( ### Embedを定義する
-                        title="よしっ、調査完了っと！これが結果なのだ！",# タイトル
-                        color=0x00ff00, # フレーム色指定(今回は緑)
-                        description=f"「{bot.user}が、PCの情報をかき集めてくれたようです。」", # Embedの説明文 必要に応じて
-                        )
-        
-        embed.set_author(name=bot.user, # Botのユーザー名
-                    icon_url=bot.user.avatar.url
-                    )
-
-        embed.set_thumbnail(url="https://www.iconsdb.com/icons/download/white/ok-128.png") # サムネイルとして小さい画像を設定できる
-    
-
-        embed.add_field(name="**//一般情報//**", inline=False, value=
-                        f"> ** OS情報**\n"+
-                        f"> [OS名] **{os_name}**\n"+
-                        f"> [Architecture] **{os_info.machine}**\n> \n"+
-                        
-                        f"> **Python情報**\n"+
-                        f"> [バージョン] **{py_version}**\n"+
-                        f"> [ビルド日時] **{py_buildDate}**\n> \n"+
-                        
-                        f"> **Discord.py情報**\n"+
-                        f"> [バージョン] ** {discord.__version__}**\n"
-                        f"> [Ping値] **{ping:.1f}ms**\n"
-                        ) # フィールドを追加。
-        embed.add_field(name="**//CPU情報//**", inline=False, value=
-                        f"> [CPU名] **{cpu_name}**\n"+
-                        f"> [コア数] **{cpu_cores} Threads**\n"+
-                        f"> [周波数] **{cpu_freq:.2f} GHz**\n"+
-                        f"> [使用率] **{cpu_Load} %**\n"
-                        )
-        embed.add_field(name="**//メモリ情報//**", value=
-                        f"> [使用率] **{(ram_info.used/1024/1024/1024):.2f}/{(ram_info.total/1024/1024/1024):.2f} GB"+
-                        f" ({ram_info.percent}%)**"
-                        ) # フィールドを追加。
-        
-        embed.set_footer(text="YuranuBot! | Made by yurq.",
-                    icon_url=bot.user.avatar.url)
-
-        return embed
+        return pc
     
     except Exception as e:
         exception_type, exception_object, exception_traceback = sys.exc_info()

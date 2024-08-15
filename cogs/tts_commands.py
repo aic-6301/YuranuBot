@@ -334,6 +334,33 @@ class yomiage_cmds(commands.Cog):
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
 
+    @yomi.command(name="dictionary-delete", description="サーバー辞書の単語を削除するのだ")
+    async def vc_dictionary(self, interact: discord.Interaction, text: str):
+        try:
+            result = delete_dictionary(interact.guild.id, text)
+            if result is None:
+                embed = discord.Embed(
+                    title="正常に削除したのだ！",
+                    description="サーバー辞書の単語を削除しました！",
+                    color=discord.Color.green()
+                )
+                embed.add_field(
+                    name="削除した単語",
+                    value=text
+                )
+                embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
+
+                await interact.response.send_message(embed=embed)
+                return
+            
+            await interact.response.send_message(f"設定に失敗したのだ...")
+
+        except Exception as e:
+            exception_type, exception_object, exception_traceback = sys.exc_info()
+            filename = exception_traceback.tb_frame.f_code.co_filename
+            line_no = exception_traceback.tb_lineno
+            await sendException(e, filename, line_no)
+
     @yomi.command(name="soundtext-list", description="サーバー辞書の単語を表示するのだ")
     async def soundboard_list(self, interact: discord.Interaction):
         try:
@@ -377,24 +404,29 @@ class yomiage_cmds(commands.Cog):
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
 
-
-    @yomi.command(name="dictionary-delete", description="サーバー辞書の単語を削除するのだ")
-    async def vc_dictionary(self, interact: discord.Interaction, text: str):
+    @yomi.command(name="soundtext-mode", description="サウンドテキスト機能を変更するのだ")
+    @app_commands.rename(mode="モード")
+    @app_commands.choices(
+        mode=[
+            app_commands.Choice(name="有効", value=2),
+            app_commands.Choice(name="ゲームモード",value=1),
+            app_commands.Choice(name="無効",value=0)
+        ]
+    )
+    async def yomiage_channel(self, interact: discord.Interaction, mode: int):
         try:
-            result = delete_dictionary(interact.guild.id, text)
+            result = save_server_setting(interact.guild_id, "speak_channel", mode)
             if result is None:
-                embed = discord.Embed(
-                    title="正常に削除したのだ！",
-                    description="サーバー辞書の単語を削除しました！",
-                    color=discord.Color.green()
-                )
-                embed.add_field(
-                    name="削除した単語",
-                    value=text
-                )
-                embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
+                mode_str: str = None
 
-                await interact.response.send_message(embed=embed)
+                if mode == 2:
+                    mode_str = "有効"
+                elif mode == 1:
+                    mode_str = "ゲームモード"
+                else:
+                    mode_str = "無効"
+                    
+                    await interact.response.send_message(f"サウンドテキスト機能を**「{mode_str}」**にしたのだ！")
                 return
             
             await interact.response.send_message(f"設定に失敗したのだ...")

@@ -87,39 +87,49 @@ async def yomiage(content, guild: discord.Guild):
     
     global ace_left
     if type(content) == discord.message.Message:
+        soundtext_mode = get_server_setting(guild.id, "soundtext_mode")
 
-        for sound in sound_effects:
+        if soundtext_mode == 1:
+            embed = discord.Embed(
+                title="ちょっと待つのだ！",
+                description="ゲームモードが有効です！VCの状況を確認してみよう。",
+                color=discord.Colour.orange()
+            )
+            content.reply(embed=embed)
             
-            word = sound[0]
-            sound_dir = sound[1]
-            volume = sound[2]
-            reply_url = sound[3]
-
-            if content.content == sound[0]:
-                if sound[1] == "explosion.mp3":
-                    ace_left += 1
-                    
-                    if ace_left >= 5:
-                        sound_dir = "explosion2.mp3"
-                        
-                else:
-                    ace_left = 0
+        elif soundtext_mode == 2:
+            for sound in sound_effects:
                 
-                logging.debug(f"サウンドボードの単語を検出: {content.content}")
+                word = sound[0]
+                sound_dir = sound[1]
+                volume = sound[2]
+                reply_url = sound[3]
 
-                sound_file = f"{SOUNDBOARD_DIR}{sound_dir}"
+                if content.content == sound[0]:
+                    if sound[1] == "explosion.mp3":
+                        ace_left += 1
+                        
+                        if ace_left >= 5:
+                            sound_dir = "explosion2.mp3"
+                            
+                    else:
+                        ace_left = 0
+                    
+                    logging.debug(f"サウンドボードの単語を検出: {content.content}")
 
-                file_list = [sound_file, -1, volume]
-                queue = yomiage_serv_list[guild.id]
-                queue.append(file_list)
+                    sound_file = f"{SOUNDBOARD_DIR}{sound_dir}"
 
-                if not guild.voice_client.is_playing():
-                    send_voice(queue, guild.voice_client)
+                    file_list = [sound_file, -1, volume]
+                    queue = yomiage_serv_list[guild.id]
+                    queue.append(file_list)
 
-                if reply_url is not None:
-                    await content.reply(reply_url)
+                    if not guild.voice_client.is_playing():
+                        send_voice(queue, guild.voice_client)
 
-                return
+                    if reply_url is not None:
+                        await content.reply(reply_url)
+
+                    return
 
     if type(content) == discord.message.Message:
             ace_left == 0

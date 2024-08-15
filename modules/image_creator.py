@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from discord.ext import commands
 from io import BytesIO
+from modules.pc_status_cmd import PCStatus
 import os
 import time
 import requests
@@ -106,3 +107,6 @@ def make_welcome_image(user: discord.Member, guild: discord.Guild):
     base.save(output_path)
 
     return output_path, name
+
+def make_pc_status(pc: PCStatus):
+    
