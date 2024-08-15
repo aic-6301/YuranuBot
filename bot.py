@@ -63,6 +63,7 @@ if PREFIX == str:
     logging.debug("discord.py -> クライアント生成完了")
 else:
     logging.error("dotenv -> .envに「PREFIX」が設定されていません！")
+    sys.exit()
 
 ##sendExceptionが利用できるようにする
 exception_init(bot)
