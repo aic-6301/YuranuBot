@@ -166,7 +166,7 @@ class yomiage_cmds(commands.Cog):
         )
         embed.add_field(
             name="サウンドテキスト機能",
-            value=soundtextMode
+            value=f"> {soundtextMode}"
         )
         embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
 
