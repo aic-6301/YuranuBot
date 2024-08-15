@@ -58,7 +58,7 @@ logging.debug("discord.py -> インテント生成完了")
 ### クライアントの生成
 # bot = discord.Client(intents=intents, activity=discord.Game(name="起きようとしています..."))
 
-if PREFIX == str:
+if type(PREFIX) == str:
     bot = commands.Bot(command_prefix=PREFIX, intents=intents)
     logging.debug("discord.py -> クライアント生成完了")
 else:
