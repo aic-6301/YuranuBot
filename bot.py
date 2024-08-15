@@ -22,6 +22,7 @@ ROOT_DIR = os.path.dirname(__file__)
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
 DIC_DIR = os.getenv("DIC_DIR")
+PREFIX = os.getenv("PREFIX")
 
 ###データベースの読み込み
 ## サーバー辞書共有用
@@ -56,8 +57,12 @@ logging.debug("discord.py -> インテント生成完了")
 
 ### クライアントの生成
 # bot = discord.Client(intents=intents, activity=discord.Game(name="起きようとしています..."))
-bot = commands.Bot(command_prefix='yr!', intents=intents)
-logging.debug("discord.py -> クライアント生成完了")
+
+if PREFIX == str:
+    bot = commands.Bot(command_prefix=PREFIX, intents=intents)
+    logging.debug("discord.py -> クライアント生成完了")
+else:
+    logging.error("dotenv -> .envに「PREFIX」が設定されていません！")
 
 ##sendExceptionが利用できるようにする
 exception_init(bot)
@@ -136,5 +141,5 @@ async def show_content(interact: discord.Interaction, message: discord.Message):
 if type(TOKEN)==str:
     bot.run(TOKEN)
 else:
-    logging.exception("dotenv -> トークンの読み込みに失敗しました。.envファイルがあるか、正しく設定されているか確認してください。")
+    logging.error("dotenv -> トークンの読み込みに失敗しました。.envファイルがあるか、正しく設定されているか確認してください。")
 
