@@ -86,7 +86,7 @@ async def yomiage(content, guild: discord.Guild):
     # サウンドボード
     
     global ace_left
-    if type(content) == discord.message.Message:
+    if type(content) == discord.Message:
         soundtext_mode = get_server_setting(guild.id, "soundtext_mode")
 
         if soundtext_mode == 1:
