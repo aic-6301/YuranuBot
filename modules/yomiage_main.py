@@ -95,8 +95,8 @@ async def yomiage(content, guild: discord.Guild):
                 description="ゲームモードが有効です！VCの状況を確認してみよう。",
                 color=discord.Colour.orange()
             )
-            content.reply(embed=embed)
-            
+            await content.reply(embed=embed)
+
         elif soundtext_mode == 2:
             for sound in sound_effects:
                 
