@@ -413,7 +413,7 @@ class yomiage_cmds(commands.Cog):
             app_commands.Choice(name="無効",value=0)
         ]
     )
-    async def yomiage_channel(self, interact: discord.Interaction, mode: int):
+    async def soundtext_mode(self, interact: discord.Interaction, mode: int):
         try:
             result = save_server_setting(interact.guild_id, "speak_channel", mode)
             if result is None:
