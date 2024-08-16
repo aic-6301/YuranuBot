@@ -44,7 +44,7 @@ class utils(commands.Cog):
                 if activate == 1:
                     result = save_server_setting(interact.guild.id, read_type, channel.id)
                     if result is None:
-                        await interact.response.send_message(f"**「{channel.name}」に参加メッセージを設定したのだ！**")
+                        await interact.response.send_message(f"**<#{channel.id}>に参加メッセージを設定したのだ！**")
                         return
                     
                 elif activate == 0:
