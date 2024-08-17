@@ -73,6 +73,8 @@ sound_effects = [
     ["あｂ", "abababa.mp3", 0.5, None],
     ["あばばばば", "abababa.mp3", 0.5, None],
     ["あばばっば", "abababba.mp3", 0.5, None],
+
+    ["しかのこ", "sikanoko.mp3", 0.5, None],
     # ["(スパイク設置)", "valorant-spike-plant.mp3", 1, None]
 ]
 
