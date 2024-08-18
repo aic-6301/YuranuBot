@@ -69,6 +69,10 @@ class utils(commands.Cog):
     async def sbc_command(self, interact:discord.Interaction):
         await interact.response.send_message('**～ドライバーの腕が生かせる最高職場～　Shizen Black Company** https://black.shizen.lol')
 
+    @app_commands.command(name="dashboard", description="ダッシュボードについてなのだ")
+    async def dashboard(self, interact: discord.Interaction):
+        await interact.response.send_message("ZundaCordのダッシュボード「ZunDash」\nhttps://bot.yuranu.net/")
+
     @app_commands.command(name="status",description="Botを稼働しているPCの状態を表示するのだ")#PCの状態
     async def status(self, interact: discord.Interaction):
         # PCの状態を取得

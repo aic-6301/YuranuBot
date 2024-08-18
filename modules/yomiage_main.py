@@ -71,6 +71,7 @@ sound_effects = [
     ["見てなよ！", "ULT-JETT.mp3", 0.6, None],
 
     ["南部EQ", "nanbueq.mp3", 0.7, None],
+    ["あきかきEQ", "Akikaki_EQ.mp3", 0.2, None],
 
     ["あｂ", "abababa.mp3", 0.5, None],
     ["あばばばば", "abababa.mp3", 0.5, None],
@@ -78,7 +79,6 @@ sound_effects = [
 
     ["まげちゃーん！", "maggechaaan.mp3", 0.5, None],
     ["ぬーぶ", "You are noob.mp3", 0.2, None],
-    
 
     ["しかのこ", "sikanoko.mp3", 0.5, None],
     ["ういびーむ", "uibeam.mp3", 0.1, None],
