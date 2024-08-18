@@ -1,12 +1,13 @@
 import subprocess
 import discord
+import time
 import sys
 import os
 import platform
 
+from bot import start_time
 from discord.ext import commands
 from discord import app_commands
-
 from modules.pc_status_cmd import pc_status
 from modules.db_settings import save_server_setting
 from modules.exception import sendException
@@ -20,11 +21,48 @@ class utils(commands.Cog):
     async def sbc_command(self, interact:discord.Interaction):
         await interact.response.send_message('**～ドライバーの腕が生かせる最高職場～　Shizen Black Company** https://black.shizen.lol')
 
-    # @app_commands.command(name="status",description="Botを稼働しているPCの状態を表示するのだ")#PCの状態
-    # async def status(self, interact: discord.Interaction):
-    #     ##PCのステータスを送信
+    @app_commands.command(name="status",description="Botを稼働しているPCの状態を表示するのだ")#PCの状態
+    async def status(self, interact: discord.Interaction):
+        # PCの状態を取得
+        pc = await pc_status()
+        #Uptimeを計算するために時間を取得
+        curr_time = time.time()
+        #稼働時間を計算
+        elapsed = curr_time - start_time
+        #時分秒に変換
+        hours, remainder = divmod(elapsed, 3600)
+        minutes, seconds = divmod(remainder, 60)
+
+        if start_time is None:
+            uptime = "計算時にエラー"
+        else:
+            uptime = f"{int(hours)}h {int(minutes)}m {int(seconds)}s"
+
+        embed = discord.Embed(
+            title="サーバーの稼働状況なのだ！",
+            color=discord.Color.green()
+        )
+        embed.add_field(name="Server Detail",
+                        value=f"・OS: {pc.os_name}\n"+
+                              f"・Uptime: {uptime}")
         
+        embed.add_field(name=f"> CPU ({pc.cpu_name})",
+                        value=f"・Usage: {pc.cpu_load}%\n"+
+                              f"・Freq: {pc.cpu_freq}GHz",
+                        inline=False)
         
+        embed.add_field(name=f"> GPU ({pc.gpu_name})",
+                        value=f"・Usage: {pc.gpu_load}%\n"+
+                              f"・Mem: {pc.gpu_mem_use}MB",
+                        inline=False)
+        
+        embed.add_field(name="> RAM",
+                        value=f"・Usage: {pc.ram_use}GB\n"+
+                              f"・Total: {pc.ram_total}GB\n"+
+                              f"({pc.ram_percent}%)",
+                        inline=False)
+        
+        await interact.response.send_message(embed=embed)
 
     @app_commands.command(name="serv-join-message", description="サーバー参加者へメッセージを送信するチャンネルを設定するのだ！")
     @app_commands.rename(activate="メッセージ送信のオンオフ")

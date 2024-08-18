@@ -15,6 +15,9 @@ from modules.db_vc_dictionary import dictionary_load
 
 logging.basicConfig(level=logging.DEBUG)
 
+#起動した時間を保存する変数
+start_time: int = None
+
 # ディレクトリの取得
 ROOT_DIR = os.path.dirname(__file__)
 
@@ -74,6 +77,8 @@ logging.debug("discord.py -> ツリー生成完了")
 
 @bot.event
 async def on_ready():
+    global start_time
+
     exceptions = False
 
     ##cogファイルを読み込む
@@ -101,6 +106,8 @@ async def on_ready():
     except:
         logging.exception(f'api.py -> APIサーバーの起動に失敗')
 
+    #稼働時間を表示するために保存する
+    start_time = time.time()
 
     logging.info(f'discord.py -> {bot.user}に接続しました！やったのだー！ ')
     await tree.sync()
