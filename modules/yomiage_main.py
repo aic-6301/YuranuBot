@@ -50,6 +50,7 @@ fix_words = [
     [r':\w+:', "絵文字 "],
     [r'```[\s\S]*?```', "コードブロック省略"],
     [r'\|\|.*?\|\|', "、"]
+    ["～", "ー"]
 ]
 
 # (例: "あ", "example.mp3", *volume*, *返信メッセージなど*
@@ -98,13 +99,14 @@ async def yomiage(content, guild: discord.Guild):
 
         if soundtext_mode != 0:
             for sound in sound_effects:
-                
                 word = sound[0]
                 sound_dir = sound[1]
                 volume = sound[2]
                 reply_url = sound[3]
 
-                if content.content == sound[0]:
+                fixed = content.content.replace("～", "ー")
+
+                if fixed == sound[0]:
                     if soundtext_mode == 1:
                         embed = discord.Embed(
                             title="ちょっと待つのだ！",
@@ -169,15 +171,15 @@ async def yomiage(content, guild: discord.Guild):
     elif type(content) == str:
         fixed_content = content
 
-    ##fix_wordに含まれたワードをfix_end_wordに変換する
-    for i in range(len(fix_words)):
-        fixed_content = re.sub(fix_words[i][0], fix_words[i][1], fixed_content, flags=re.IGNORECASE)
-
     ##サーバー辞書に登録された内容で置き換える
     dicts = get_dictionary(guild.id)
     if dicts != None:
         for text, reading, user in dicts:
             fixed_content = fixed_content.replace(text.lower(), reading.lower())
+
+    ##fix_wordに含まれたワードをfix_end_wordに変換する
+    for word in fix_words:
+        fixed_content = re.sub(word[0], word[1], fixed_content, flags=re.IGNORECASE)
 
     ##文字制限の設定を取得する
     length_limit = get_server_setting(guild.id, "length_limit")
