@@ -97,7 +97,7 @@ class utils(commands.Cog):
             color=discord.Color.green()
         )
         embed.add_field(name="> Bot Detail",
-                        value=f"{guild_count}Guilds | {user_count}Users\n"+
+                        value=f"・{guild_count}Guilds | {user_count}Users\n"+
                               f"・Python {py_version}\n"+
                               f"・Discord.py {discord.__version__}",
                         inline=False)
