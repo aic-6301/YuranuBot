@@ -40,22 +40,22 @@ class utils(commands.Cog):
             hours, remainder = divmod(remainder, 3600)
             minutes, seconds = divmod(remainder, 60)
 
-            status_message = f"{int(days)}d {int(hours)}h {int(minutes)}m {int(seconds)}s"
+            status_message = f"Uptime: {int(days)}d {int(hours)}h {int(minutes)}m"
 
         elif self.rpc_mode == 2:
             pc = await pc_status()
 
-            status_message = f"CPU {pc.cpu_load}% | GPU {pc.gpu_load} %"
+            status_message = f"CPU: {pc.cpu_load}% | GPU: {pc.gpu_load} %"
 
         elif self.rpc_mode == 3:
             pc = await pc_status()
 
-            status_message = f"RAM {pc.ram_use}/{pc.ram_total}GB ({pc.ram_percent})%"
+            status_message = f"RAM: {pc.ram_use}/{pc.ram_total}GB ({pc.ram_percent})%"
 
         elif self.rpc_mode == 4:
             pc = await pc_status()
 
-            status_message = f"GPUMem {pc.gpu_mem_use}GB"
+            status_message = f"GPUMem: {pc.gpu_mem_use}GB"
             self.rpc_mode = 0
 
         await self.bot.change_presence(activity=discord.Game(name=status_message))
