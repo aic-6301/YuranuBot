@@ -110,7 +110,7 @@ async def yomiage(content, guild: discord.Guild):
                             color=discord.Colour.orange()
                         )
                         await content.reply(embed=embed)
-                        await content.delete(5)
+                        await content.delete(delay=4)
 
                     if sound[1] == "explosion.mp3":
                         ace_left += 1
