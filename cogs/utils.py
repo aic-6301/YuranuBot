@@ -88,13 +88,24 @@ class utils(commands.Cog):
 
             uptime = f"{int(days)}d {int(hours)}h {int(minutes)}m {int(seconds)}s"
 
+        py_version = platform.python_version()
+        guild_count = len(self.bot.guilds)
+        user_count = sum(len(guild.members) for guild in self.bot.guilds)
+
         embed = discord.Embed(
             title="サーバーの稼働状況なのだ！",
             color=discord.Color.green()
         )
+        embed.add_field(name="> Bot Detail",
+                        value=f"{guild_count}Guilds | {user_count}Users\n"+
+                              f"・Python {py_version}\n"+
+                              f"・Discord.py {discord.__version__}",
+                        inline=False)
+        
         embed.add_field(name="> Server Detail",
                         value=f"・OS: {pc.os_name}\n"+
-                              f"・Uptime: {uptime}")
+                              f"・Uptime: {uptime}",
+                        inline=False)
         
         embed.add_field(name=f"> CPU ({pc.cpu_name})",
                         value=f"・Usage: {pc.cpu_load}%\n"+
