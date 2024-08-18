@@ -50,7 +50,7 @@ class utils(commands.Cog):
         elif self.rpc_mode == 3:
             pc = await pc_status()
 
-            status_message = f"RAM: {pc.ram_use}/{pc.ram_total}GB ({pc.ram_percent})%"
+            status_message = f"RAM: {pc.ram_use}/{pc.ram_total}GB ({pc.ram_percent}%)"
 
         elif self.rpc_mode == 4:
             pc = await pc_status()
@@ -58,7 +58,7 @@ class utils(commands.Cog):
             status_message = f"GPUMem: {pc.gpu_mem_use}GB"
             self.rpc_mode = 0
 
-        await self.bot.change_presence(activity=discord.Game(name=status_message))
+        await self.bot.change_presence(activity=discord.Game(name=status_message)) 
         self.rpc_mode += 1
 
     @app_commands.command(name="sbc",description="Shizen Black Companyの説明資料なのだ")#Shizen Black Companyの宣伝

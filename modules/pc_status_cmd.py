@@ -67,7 +67,7 @@ async def pc_status():
                 if str(sensor.Name) == "GPU Core":
                     pc.gpu_load = format(sensor.Value, ".1f")
                 if str(sensor.Name) == "D3D Dedicated Memory Used":
-                    pc.gpu_mem_use = format(sensor.Value, ".1f")
+                    pc.gpu_mem_use = format(sensor.Value/1024, ".2f")
                 
     elif os_info.system == "Linux":
         pc.cpu_name = platform.processor()
