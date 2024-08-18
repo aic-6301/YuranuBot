@@ -70,9 +70,11 @@ sound_effects = [
     ["見てなよ！", "ULT-JETT.mp3", 0.6, None],
 
     ["南部EQ", "nanbueq.mp3", 0.7, None],
+
     ["あｂ", "abababa.mp3", 0.5, None],
     ["あばばばば", "abababa.mp3", 0.5, None],
     ["あばばっば", "abababba.mp3", 0.5, None],
+    ["まげちゃーん！", "maggechaaan.mp3", 0.5, None],
 
     ["しかのこ", "sikanoko.mp3", 0.5, None],
     ["ういびーむ", "uibeam.mp3", 0.1, None],
@@ -109,8 +111,8 @@ async def yomiage(content, guild: discord.Guild):
                             description="ゲームモードが有効です！VCの状況を確認してみよう。",
                             color=discord.Colour.orange()
                         )
-                        await content.reply(embed=embed)
-                        await content.delete(delay=4.0)
+                        message = content.reply(embed=embed)
+                        await message.delete(delay=4.0)
                         return
 
                     if sound[1] == "explosion.mp3":
