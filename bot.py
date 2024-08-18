@@ -56,6 +56,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.voice_states = True
 intents.members = True
+intents.guilds = True
 logging.debug("discord.py -> インテント生成完了")
 
 ### クライアントの生成
@@ -77,8 +78,6 @@ logging.debug("discord.py -> ツリー生成完了")
 
 @bot.event
 async def on_ready():
-    global start_time
-
     exceptions = False
 
     ##cogファイルを読み込む
@@ -107,7 +106,7 @@ async def on_ready():
         logging.exception(f'api.py -> APIサーバーの起動に失敗')
 
     #稼働時間を表示するために保存する
-    start_time = time.time()
+    bot.start_time = time.time()
 
     logging.info(f'discord.py -> {bot.user}に接続しました！やったのだー！ ')
     await tree.sync()
