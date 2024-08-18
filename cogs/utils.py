@@ -5,7 +5,6 @@ import sys
 import os
 import platform
 
-from bot import start_time
 from discord.ext import commands
 from discord import app_commands
 from modules.pc_status_cmd import pc_status
@@ -25,17 +24,18 @@ class utils(commands.Cog):
     async def status(self, interact: discord.Interaction):
         # PCの状態を取得
         pc = await pc_status()
-        #Uptimeを計算するために時間を取得
-        curr_time = time.time()
-        #稼働時間を計算
-        elapsed = curr_time - start_time
-        #時分秒に変換
-        hours, remainder = divmod(elapsed, 3600)
-        minutes, seconds = divmod(remainder, 60)
 
-        if start_time is None:
+        if self.bot.start_time is None:
             uptime = "計算時にエラー"
         else:
+            #Uptimeを計算するために時間を取得
+            curr_time = time.time()
+            #稼働時間を計算
+            elapsed = curr_time - start_time = self.bot.start_time
+            #時分秒に変換
+            hours, remainder = divmod(elapsed, 3600)
+            minutes, seconds = divmod(remainder, 60)
+
             uptime = f"{int(hours)}h {int(minutes)}m {int(seconds)}s"
 
         embed = discord.Embed(
