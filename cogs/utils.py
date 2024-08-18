@@ -99,7 +99,8 @@ class utils(commands.Cog):
         embed.add_field(name="> Bot Detail",
                         value=f"・{guild_count}Guilds | {user_count}Users\n"+
                               f"・Python {py_version}\n"+
-                              f"・Discord.py {discord.__version__}",
+                              f"・Discord.py {discord.__version__}\n"+
+                              f"・Ping: {(self.bot.latency*1000):.1f}ms",
                         inline=False)
         
         embed.add_field(name="> Server Detail",
