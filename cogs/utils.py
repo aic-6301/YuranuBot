@@ -18,7 +18,7 @@ from modules.delete import delete_file_latency
 class utils(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.rpc_mode = 0
+        self.rpc_mode = 1
         if os.getenv("USE_RPC") == "True":
             self.rpc_loop.start()
 
@@ -97,10 +97,10 @@ class utils(commands.Cog):
             color=discord.Color.green()
         )
         embed.add_field(name="> Bot Detail",
-                        value=f"・{guild_count}Guilds | {user_count}Users\n"+
-                              f"・Python {py_version}\n"+
-                              f"・Discord.py {discord.__version__}\n"+
-                              f"・Ping: {(self.bot.latency*1000):.1f}ms",
+                        value=f"・{guild_count} Guilds  |  {user_count} Users\n"+
+                              f"・Ping: {(self.bot.latency*1000):.1f}ms\n"+
+                              f"・Python: Version{py_version}\n"+
+                              f"・Discord.py: Version{discord.__version__}\n",
                         inline=False)
         
         embed.add_field(name="> Server Detail",
