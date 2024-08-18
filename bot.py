@@ -15,9 +15,6 @@ from modules.db_vc_dictionary import dictionary_load
 
 logging.basicConfig(level=logging.DEBUG)
 
-#起動した時間を保存する変数
-start_time: int = None
-
 # ディレクトリの取得
 ROOT_DIR = os.path.dirname(__file__)
 
@@ -68,6 +65,9 @@ if type(PREFIX) == str:
 else:
     logging.error("dotenv -> .envに「PREFIX」が設定されていません！")
     sys.exit()
+
+#スタート時間を作成
+bot.start_time = None
 
 ##sendExceptionが利用できるようにする
 exception_init(bot)

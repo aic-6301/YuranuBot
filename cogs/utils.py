@@ -14,52 +14,56 @@ from modules.db_settings import save_server_setting
 from modules.exception import sendException
 from modules.delete import delete_file_latency
 
+
 class utils(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.rpc_mode = 0
-        self.rpc_loop.start()
+        if os.getenv("USE_RPC") == "True":
+            self.rpc_loop.start()
 
-    @tasks.loop(seconds=7)
-    async def rpc_loop(self):
-        pc = PCStatus
+    if os.getenv("USE_RPC") == "True":
+        @tasks.loop(seconds=7)
+        async def rpc_loop(self):
 
-        if self.rpc_mode == 0:
-            guild_count = len(self.bot.guilds)
-            user_count = sum(len(guild.members) for guild in self.bot.guilds)
+            pc = PCStatus
 
-            status_message = f"{guild_count}Guilds | {user_count}Users"
+            if self.rpc_mode == 0:
+                guild_count = len(self.bot.guilds)
+                user_count = sum(len(guild.members) for guild in self.bot.guilds)
 
-        elif self.rpc_mode == 1:
-            #Uptimeを計算するために時間を取得
-            curr_time = time.time()
-            #稼働時間を計算
-            elapsed = curr_time - self.bot.start_time
-            #時分秒に変換
-            days, remainder = divmod(elapsed, 86400)
-            hours, remainder = divmod(remainder, 3600)
-            minutes, seconds = divmod(remainder, 60)
+                status_message = f"{guild_count}Guilds | {user_count}Users"
 
-            status_message = f"Uptime: {int(days)}d {int(hours)}h {int(minutes)}m"
+            elif self.rpc_mode == 1:
+                #Uptimeを計算するために時間を取得
+                curr_time = time.time()
+                #稼働時間を計算
+                elapsed = curr_time - self.bot.start_time
+                #時分秒に変換
+                days, remainder = divmod(elapsed, 86400)
+                hours, remainder = divmod(remainder, 3600)
+                minutes, seconds = divmod(remainder, 60)
 
-        elif self.rpc_mode == 2:
-            pc = await pc_status()
+                status_message = f"Uptime: {int(days)}d {int(hours)}h {int(minutes)}m"
 
-            status_message = f"CPU: {pc.cpu_load}% | GPU: {pc.gpu_load}%"
+            elif self.rpc_mode == 2:
+                pc = await pc_status()
 
-        elif self.rpc_mode == 3:
-            pc = await pc_status()
+                status_message = f"CPU: {pc.cpu_load}% | GPU: {pc.gpu_load}%"
 
-            status_message = f"RAM: {pc.ram_use}/{pc.ram_total}GB ({pc.ram_percent}%)"
+            elif self.rpc_mode == 3:
+                pc = await pc_status()
 
-        elif self.rpc_mode == 4:
-            pc = await pc_status()
+                status_message = f"RAM: {pc.ram_use}/{pc.ram_total}GB ({pc.ram_percent}%)"
 
-            status_message = f"GPUMem: {pc.gpu_mem_use}GB"
-            self.rpc_mode = 0
+            elif self.rpc_mode == 4:
+                pc = await pc_status()
 
-        await self.bot.change_presence(activity=discord.Game(name=status_message)) 
-        self.rpc_mode += 1
+                status_message = f"GPUMem: {pc.gpu_mem_use}GB"
+                self.rpc_mode = 0
+
+            await self.bot.change_presence(activity=discord.Game(name=status_message)) 
+            self.rpc_mode += 1
 
     @app_commands.command(name="sbc",description="Shizen Black Companyの説明資料なのだ")#Shizen Black Companyの宣伝
     async def sbc_command(self, interact:discord.Interaction):
