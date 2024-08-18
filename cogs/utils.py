@@ -32,7 +32,7 @@ class utils(commands.Cog):
                 guild_count = len(self.bot.guilds)
                 user_count = sum(len(guild.members) for guild in self.bot.guilds)
 
-                status_message = f"{guild_count}Guilds | {user_count}Users"
+                status_message = f"{guild_count} Guilds | {user_count} Users"
 
             elif self.rpc_mode == 1:
                 #Uptimeを計算するために時間を取得
@@ -60,7 +60,7 @@ class utils(commands.Cog):
                 pc = await pc_status()
 
                 status_message = f"GPUMem: {pc.gpu_mem_use}GB"
-                self.rpc_mode = 0
+                self.rpc_mode = -1
 
             await self.bot.change_presence(activity=discord.Game(name=status_message)) 
             self.rpc_mode += 1
