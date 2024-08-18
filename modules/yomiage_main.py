@@ -111,7 +111,7 @@ async def yomiage(content, guild: discord.Guild):
                             description="ゲームモードが有効です！VCの状況を確認してみよう。",
                             color=discord.Colour.orange()
                         )
-                        message = content.reply(embed=embed)
+                        message = await content.reply(embed=embed)
                         await message.delete(delay=4.0)
                         return
 
