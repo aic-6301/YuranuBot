@@ -77,7 +77,7 @@ sound_effects = [
     ["あばばっば", "abababba.mp3", 0.5, None],
 
     ["まげちゃーん！", "maggechaaan.mp3", 0.5, None],
-    ["ぬーぶ", "You are noob.wav", 0.3, None],
+    ["ぬーぶ", "You are noob.mp3", 0.3, None],
     
 
     ["しかのこ", "sikanoko.mp3", 0.5, None],
