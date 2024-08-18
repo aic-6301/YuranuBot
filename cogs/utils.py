@@ -31,7 +31,7 @@ class utils(commands.Cog):
             #Uptimeを計算するために時間を取得
             curr_time = time.time()
             #稼働時間を計算
-            elapsed = curr_time - start_time = self.bot.start_time
+            elapsed = curr_time - self.bot.start_time
             #時分秒に変換
             hours, remainder = divmod(elapsed, 3600)
             minutes, seconds = divmod(remainder, 60)
