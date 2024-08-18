@@ -107,6 +107,3 @@ def make_welcome_image(user: discord.Member, guild: discord.Guild):
     base.save(output_path)
 
     return output_path, name
-
-def make_pc_status(pc: PCStatus):
-    
