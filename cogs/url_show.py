@@ -75,8 +75,10 @@ class Discord_URL_Loader( commands.Cog ):
 
                                 color=discord.Color.brand_green()
                             )
-                            #アイコンがなかったとき用のイメージを用意
-                            file = discord.File(R"images\guest.png", filename="guest.png")
+
+                            if guild.icon == None or tar_message == None:
+                                #アイコンがなかったとき用のイメージを用意
+                                file = discord.File(R"images\guest.png", filename="guest.png")
 
                             #サーバーアイコンとどこのやつか表示
                             if guild.icon != None:
