@@ -62,6 +62,7 @@ sound_effects = [
     ["心折れた", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
 
     ["まだだめだ", "madadameda.mp3", 0.2, None],
+    ["マダダメダ", "madadameda2.mp3", 0.2, None],
     ["ばばんばばん", "ace.mp3", 0.2, None],
     ["俺はハンターだ！！", "im a hunter.mp3", 0.5, None],
     ["消えてもらおうか！！", "kietemoraouka.mp3", 0.6, None],
