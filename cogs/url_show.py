@@ -6,7 +6,7 @@ from modules.db_settings import save_server_setting, get_server_setting
 from discord.ext import commands
 from discord import app_commands
 
-URL_REGEX = re.compile(r"https?://(ptb|canary\.)?discord(?:app)?\.com/channels/(\d+)/(\d+)/(\d+)")
+URL_REGEX = re.compile(r"https?://(ptb\.|canary\.)?discord(?:app)?\.com/channels/(\d+)/(\d+)/(\d+)")
 
 class Discord_URL_Loader( commands.Cog ):
     def __init__(self, bot: commands.Bot):
@@ -49,7 +49,7 @@ class Discord_URL_Loader( commands.Cog ):
                 logging.debug(f"{__name__} -> Discord Message URLを検出")
 
                 #URLからそれぞれを検出
-                guild_id, channel_id, message_id = search.groups()
+                type, guild_id, channel_id, message_id = search.groups()
                 
                 #ギルドを取得
                 guild = self.bot.get_guild(int(guild_id))
