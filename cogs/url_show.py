@@ -83,7 +83,7 @@ class Discord_URL_Loader( commands.Cog ):
 
                             #サーバーアイコンとどこのやつか表示
                             if guild.icon != None:
-                                embed.set_author(icon_url=guild.icon.url, name=f"Message{guild.name} | {channel.name}")
+                                embed.set_author(icon_url=guild.icon.url, name=f"{guild.name} | {channel.name}")
                             else:
                                 embed.set_author(icon_url="attachment://guest.png", name=f"Message ({guild.name} | {channel.name})")
 
