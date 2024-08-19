@@ -76,6 +76,7 @@ class Discord_URL_Loader( commands.Cog ):
                                 color=discord.Color.brand_green()
                             )
 
+                            file = None
                             if guild.icon == None or tar_message == None:
                                 #アイコンがなかったとき用のイメージを用意
                                 file = discord.File(R"images\guest.png", filename="guest.png")
@@ -102,7 +103,10 @@ class Discord_URL_Loader( commands.Cog ):
                                         embed.set_image(url=attach.url)
 
                             #送信
-                            await message.reply(embed=embed, file=file)
+                            if file != None:
+                                await message.reply(embed=embed, file=file)
+                            else:
+                                await message.reply(embed=embed)
 
 async def setup(bot: commands.Bot ) -> None:
     await bot.add_cog(Discord_URL_Loader(bot))
