@@ -35,10 +35,9 @@ class Discord_URL_Loader( commands.Cog ):
         interact.response.send_message("設定に失敗したのだ...")
 
     @commands.Cog.listener()
-    async def on_message(self, message):
-
+    async def on_message(self, message: discord.Message):
         #サーバー設定を読み込み、この機能を使用するかを検出
-        use = get_server_setting("discord_url_load")
+        use = get_server_setting(message.guild.id,"discord_url_load")
         if use == 1:
             if message.author == self.bot.user:
                 return
