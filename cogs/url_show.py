@@ -82,10 +82,12 @@ class Discord_URL_Loader( commands.Cog ):
                                 file = discord.File(R"images\guest.png", filename="guest.png")
 
                             #サーバーアイコンとどこのやつか表示
+                            author_str = f"{guild.name} | {channel.name}"
+                            
                             if guild.icon != None:
-                                embed.set_author(icon_url=guild.icon.url, name=f"{guild.name} | {channel.name}")
+                                embed.set_author(icon_url=guild.icon.url, name=author_str)
                             else:
-                                embed.set_author(icon_url="attachment://guest.png", name=f"Message ({guild.name} | {channel.name})")
+                                embed.set_author(icon_url="attachment://guest.png", name=author_str)
 
                             #送信元のユーザーアイコン
                             if tar_message.author.avatar != None:
