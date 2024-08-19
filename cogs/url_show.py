@@ -79,6 +79,9 @@ class Discord_URL_Loader( commands.Cog ):
                             #画像の場合は画像を埋め込む
                             if attach.content_type == "image":
                                 embed.set_image(url=attach.url)
+
+async def setup(bot: commands.Bot ) -> None:
+    await bot.add_cog(Discord_URL_Loader(bot))
                                 
 
                 
