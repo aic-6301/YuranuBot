@@ -1,11 +1,8 @@
-import subprocess
 import discord
-import asyncio
 import time
 import sys
 import os
 import platform
-import logging
 
 from discord.ext import commands, tasks
 from discord import app_commands

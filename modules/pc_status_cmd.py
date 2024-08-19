@@ -54,6 +54,9 @@ async def pc_status():
     
     pc = PCStatus()
 
+    for i in range(1):
+        computer.Hardware[i].Update()
+
     if os_info.system == "Windows":
         for hard in computer.Hardware:
             if str(hard.HardwareType) == "Cpu":
