@@ -129,6 +129,7 @@ class Computer( commands.Cog ):
                               f"・Total: {pc.ram_total}GB\n"+
                               f"・Percent: {pc.ram_percent}%",
                         inline=False)
+        embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
         
         await interact.response.send_message(embed=embed)
 
