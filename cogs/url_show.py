@@ -15,13 +15,15 @@ class Discord_URL_Loader( commands.Cog ):
         self.bot = bot
 
     @app_commands.command(name="discord-url-load", description="DiscordのメッセージURLからメッセージを取得するのだ")
-    @app_commands.rename(use="速度")
+    @app_commands.rename(use="設定")
     @app_commands.choices(use=[
         app_commands.Choice(name="使用する", value=1),
         app_commands.Choice(name="使用しない", value=0)
     ])
     async def discord_url_load(self, interact: discord.Interaction, use: int):
+        # DBに保存
         result = save_server_setting(interact.guild.id, "discord_url_load", use)
+        
         if result == None:
             use_str:str = None
             if use == 1:
@@ -29,15 +31,15 @@ class Discord_URL_Loader( commands.Cog ):
             else:
                 use_str = "使用しない"
             
-            interact.response.send_message(f"Discord URL Loaderを**「{use_str}」**に設定したのだ！")
+            await interact.response.send_message(f"Discord URL Loaderを**「{use_str}」**に設定したのだ！")
             return
         
-        interact.response.send_message("設定に失敗したのだ...")
+        await interact.response.send_message("設定に失敗したのだ...")
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         #サーバー設定を読み込み、この機能を使用するかを検出
-        use = get_server_setting(message.guild.id,"discord_url_load")
+        use = get_server_setting(message.guild.id, "discord_url_load")
         if use == 1:
             if message.author == self.bot.user:
                 return
@@ -78,6 +80,9 @@ class Discord_URL_Loader( commands.Cog ):
                             #画像の場合は画像を埋め込む
                             if attach.content_type == "image":
                                 embed.set_image(url=attach.url)
+
+                    #送信
+                    await tar_message.reply(embed=embed)
 
 async def setup(bot: commands.Bot ) -> None:
     await bot.add_cog(Discord_URL_Loader(bot))
