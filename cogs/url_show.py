@@ -6,7 +6,7 @@ from modules.db_settings import save_server_setting, get_server_setting
 from discord.ext import commands
 from discord import app_commands
 
-URL_REGEX = re.compile(r"https?://(?:ptb.)discord(?:app)?\.com/channels/(\d+)/(\d+)/(\d+)")
+URL_REGEX = re.compile(r"https?://(ptb|canary\.)?discord(?:app)?\.com/channels/(\d+)/(\d+)/(\d+)")
 
 class Discord_URL_Loader( commands.Cog ):
     def __init__(self, bot: commands.Bot):
