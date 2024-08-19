@@ -1,11 +1,9 @@
 import discord
-import time
-import sys
 import re
-import platform
+import logging
 
 from modules.db_settings import save_server_setting, get_server_setting
-from discord.ext import commands, tasks
+from discord.ext import commands
 from discord import app_commands
 
 URL_REGEX = re.compile(r"https?://(?:ptb.)discord(?:app)?\.com/channels/(\d+)/(\d+)/(\d+)")
@@ -48,41 +46,61 @@ class Discord_URL_Loader( commands.Cog ):
             search = URL_REGEX.search(message.content)
 
             if search:
+                logging.debug(f"{__name__} -> Discord Message URLを検出")
+
                 #URLからそれぞれを検出
                 guild_id, channel_id, message_id = search.groups()
                 
-                #ギルドとチャンネルを取得
+                #ギルドを取得
                 guild = self.bot.get_guild(int(guild_id))
-                channel = guild.get_channel(int(channel_id))
 
-                #↑からメッセージを検索
-                tar_message = await channel.fetch_message(int(message_id))
+                if guild != None:
+                    #チャンネルを取得
+                    logging.debug(f"{__name__} -> ギルドを発見")
+                    channel = guild.get_channel(int(channel_id))
 
-                if guild != None and channel!= None and tar_message != None:
-                    #Embedでいろいーろ
-                    embed=discord.Embed(
-                        #メッセージの送信者
-                        title=f"{tar_message.author.name}",
-                        #メッセージの内容
-                        description=f"{tar_message.content}",
+                    if channel != None:
+                        #↑からメッセージを検索
+                        logging.debug(f"{__name__} -> チャンネルを発見")
+                        tar_message = await channel.fetch_message(int(message_id))
 
-                        color=discord.Color.brand_green()
-                    )
-                    #サーバーアイコンとどこのやつか表示
-                    embed.set_author(icon_url=guild.icon.url, name=f"Message ({guild.name} | {channel.name})")
-                    #送信元のユーザーアイコン
-                    embed.set_thumbnail(url=tar_message.author.avatar.url)
+                        if tar_message != None:
+                            logging.debug(f"{__name__} -> メッセージを発見")
+                            #Embedでいろいーろ
+                            embed=discord.Embed(
+                                #メッセージの送信者
+                                title=f"Message from {tar_message.author.name}",
+                                #メッセージの内容
+                                description=f"{tar_message.content}",
 
-                    # 埋め込みがある場合はそれも読み込む
-                    if tar_message.attachments:
-                        for attach in tar_message.attachments:
-                            attach: discord.Attachment
-                            #画像の場合は画像を埋め込む
-                            if attach.content_type == "image":
-                                embed.set_image(url=attach.url)
+                                color=discord.Color.brand_green()
+                            )
+                            #アイコンがなかったとき用のイメージを用意
+                            file = discord.File(R"images\guest.png", filename="guest.png")
 
-                    #送信
-                    await tar_message.reply(embed=embed)
+                            #サーバーアイコンとどこのやつか表示
+                            if guild.icon != None:
+                                embed.set_author(icon_url=guild.icon.url, name=f"Message{guild.name} | {channel.name}")
+                            else:
+                                embed.set_author(icon_url="attachment://guest.png", name=f"Message ({guild.name} | {channel.name})")
+
+                            #送信元のユーザーアイコン
+                            if tar_message.author.avatar != None:
+                                embed.set_thumbnail(url=tar_message.author.avatar.url)
+                            else:
+                                embed.set_thumbnail(url="attachment://guest.png")
+
+                            # 埋め込みがある場合はそれも読み込む
+                            if tar_message.attachments:
+                                logging.debug(f"{__name__} -> ファイルを検出")
+                                for attach in tar_message.attachments:
+                                    #画像の場合は画像を埋め込む
+                                    if attach.content_type.startswith("image"):
+                                        logging.debug(f"{__name__} -> 画像を検出")
+                                        embed.set_image(url=attach.url)
+
+                            #送信
+                            await message.reply(embed=embed, file=file)
 
 async def setup(bot: commands.Bot ) -> None:
     await bot.add_cog(Discord_URL_Loader(bot))
