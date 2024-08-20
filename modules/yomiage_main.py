@@ -55,7 +55,6 @@ fix_words = [
 
 # (例: "あ", "example.mp3", *volume*, *返信メッセージなど*
 sound_effects = [
-    ["自然係のPC", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
     ["そらぬの心", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
     ["どっかぁん", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
     ["サ終", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
@@ -74,8 +73,6 @@ sound_effects = [
     ["南部EQ", "nanbueq.mp3", 0.7, None],
     ["あきかきEQ", "Akikaki_EQ.mp3", 0.2, None],
 
-    ["あｂ", "abababa.mp3", 0.5, None],
-    ["あばばばば", "abababa.mp3", 0.5, None],
     ["あばばっば", "abababba.mp3", 0.5, None],
 
     ["まげちゃーん！", "maggechaaan.mp3", 0.5, None],

@@ -13,10 +13,6 @@ from modules.delete import delete_file_latency
 
 
 class utils(commands.Cog):
-    @app_commands.command(name="sbc",description="Shizen Black Companyの説明資料なのだ")#Shizen Black Companyの宣伝
-    async def sbc_command(self, interact:discord.Interaction):
-        await interact.response.send_message('**～ドライバーの腕が生かせる最高職場～　Shizen Black Company** https://black.shizen.lol')
-
     @app_commands.command(name="dashboard", description="ダッシュボードについてなのだ")
     async def dashboard(self, interact: discord.Interaction):
         await interact.response.send_message("ZundaCordのダッシュボード「ZunDash」\nhttps://bot.yuranu.net/")
