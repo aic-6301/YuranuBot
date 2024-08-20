@@ -66,14 +66,15 @@ class Computer( commands.Cog ):
         if message.author == self.bot.user:
             return
         
-        prefix = await self.bot.get_prefix(message)
-        if message.content == (f"{prefix}rpc stop"):
-            self.rpc_loop.stop()
-            await message.reply("✅ RPC Loop Stopped!")
-        
-        elif message.content == (f"{prefix}rpc start"):
-            self.rpc_loop.start()
-            await message.reply("✅ RPC Loop Started!")
+        if message.author == self.bot.owner_id:
+            prefix = await self.bot.get_prefix(message)
+            if message.content == (f"{prefix}rpc stop"):
+                self.rpc_loop.stop()
+                await message.reply("✅ RPC Loop Stopped!")
+            
+            elif message.content == (f"{prefix}rpc start"):
+                self.rpc_loop.start()
+                await message.reply("✅ RPC Loop Started!")
     
     @app_commands.command(name="status",description="Botを稼働しているPCの状態を表示するのだ")#PCの状態
     async def status(self, interact: discord.Interaction):
