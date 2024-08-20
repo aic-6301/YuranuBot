@@ -72,10 +72,9 @@ class Discord_URL_Loader( commands.Cog ):
                             return
 
                         else:
-                            if channel.id == 1274365861410377749:
-                                #↑からメッセージを検索
-                                logging.debug(f"{__name__} -> チャンネルを発見")
-                                tar_message = await channel.fetch_message(int(message_id))
+                            #↑からメッセージを検索
+                            logging.debug(f"{__name__} -> チャンネルを発見")
+                            tar_message = await channel.fetch_message(int(message_id))
 
                         if tar_message != None:
                             logging.debug(f"{__name__} -> メッセージを発見")
