@@ -19,16 +19,17 @@ class yomi(commands.Cog):
 
     @commands.Cog.listener() ##読み上げ用のイベント
     async def on_message(self, message: discord.Message):
-        if (message.guild.voice_client is None): ##ギルド内に接続していない場合は無視
+        if message.guild is None: 
             return
-
-        if message.author.bot: ##ボットの内容は読み上げない
+        if message.guild.voice_client is None: # ギルド内に接続していない場合は無視
+            return
+        if message.author.bot: # ボットの内容は読み上げない
             return
         
-        channel = get_server_setting(message.guild.id, "speak_channel") ##読み上げるチャンネルをデータベースから取得
+        channel = get_server_setting(message.guild.id, "speak_channel") # 読み上げるチャンネルをデータベースから取得
         
-        if (message.channel.id == channel): ##ChannelIDが読み上げ対象のIDと一致しているか
-            await yomiage(message, message.guild)##難なくエラーをすり抜けたチャンネルにはもれなく読み上げ
+        if (message.channel.id == channel): # ChannelIDが読み上げ対象のIDと一致しているか
+            await yomiage(message, message.guild)# 難なくエラーをすり抜けたチャンネルにはもれなく読み上げ
 
 
 async def setup(bot: commands.Bot) -> None:

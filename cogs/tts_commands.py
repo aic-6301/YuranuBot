@@ -100,10 +100,9 @@ class yomiage_cmds(commands.Cog):
             # もしずんだもんならずんだもん専用の接続メッセージを使用
             if spkID == 3:
                 mess = random.choice(zunda_conn_message)
-                await yomiage(mess, interact.guild)
             else:
                 mess = random.choice(conn_message)
-                await yomiage(mess, interact.guild)
+            await yomiage(mess, interact.guild)
 
         except Exception as e:
             exception_type, exception_object, exception_traceback = sys.exc_info()
