@@ -59,10 +59,23 @@ class Discord_URL_Loader( commands.Cog ):
                     logging.debug(f"{__name__} -> ギルドを発見")
                     channel = guild.get_channel(int(channel_id))
 
-                    if channel != None and channel.id != 1274365861410377749:
-                        #↑からメッセージを検索
-                        logging.debug(f"{__name__} -> チャンネルを発見")
-                        tar_message = await channel.fetch_message(int(message_id))
+                    if channel != None:
+                        if channel.id == 1274365861410377749:
+                            embed=discord.Embed(
+                                title="ちょっと！なにしてるのだ！？",
+                                description="おっと、見せられない内容なようです。",
+                                color=discord.Color.purple()
+                            )
+                            embed.add_field(name="チャンネル", value=f"<#{channel.id}>")
+
+                            await message.reply(embed=embed)
+                            return
+
+                        else:
+                            if channel.id == 1274365861410377749:
+                                #↑からメッセージを検索
+                                logging.debug(f"{__name__} -> チャンネルを発見")
+                                tar_message = await channel.fetch_message(int(message_id))
 
                         if tar_message != None:
                             logging.debug(f"{__name__} -> メッセージを発見")
