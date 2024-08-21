@@ -77,8 +77,8 @@ class yomiage_cmds(commands.Cog):
                 value="安定性、機能性向上にご協力いただき本当にありがとうございます！！",
                 inline=False
                 )
-            file = discord.File(R"images\connect.png", filename="connect.png")
-            embed.set_image(url=f"attachment://connect.png")
+            file = discord.File(R"images\boticon_zunda.png", filename="boticon_zunda.png")
+            embed.set_thumbnail(url=f"attachment://boticon_zunda.png")
             embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
 
             await interact.response.send_message(embed=embed, file=file)
