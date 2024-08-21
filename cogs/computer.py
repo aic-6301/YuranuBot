@@ -45,17 +45,17 @@ class Computer( commands.Cog ):
             elif self.rpc_mode == 3:
                 pc = await pc_status()
 
-                status_message = f"CPU: {pc.cpu_load}% | GPU: {pc.gpu_load}%"
+                status_message = f"CPU: {pc.cpu_load:1f}% | GPU: {pc.gpu_load:1f}%"
 
             elif self.rpc_mode == 4:
                 pc = await pc_status()
 
-                status_message = f"RAM: {pc.ram_use}/{pc.ram_total}GB ({pc.ram_percent}%)"
+                status_message = f"RAM: {pc.ram_use:2f}/{pc.ram_total:2f}GB ({pc.ram_percent:1f}%)"
 
             elif self.rpc_mode == 5:
                 pc = await pc_status()
 
-                status_message = f"GPUMem: {pc.gpu_mem_use}GB"
+                status_message = f"GPUMem: {pc.gpu_mem_use:2f}/{pc.gpu_mem_total:2f}GB ({pc.gpu_mem_percent:1f}%)"
                 self.rpc_mode = 0
 
             await self.bot.change_presence(activity=discord.Game(name=status_message)) 
@@ -116,19 +116,21 @@ class Computer( commands.Cog ):
                         inline=False)
         
         embed.add_field(name=f"> CPU ({pc.cpu_name})",
-                        value=f"・Usage: {pc.cpu_load}%\n"+
-                              f"・Freq: {pc.cpu_freq}GHz",
+                        value=f"・Usage: {pc.cpu_load:1f}%\n"+
+                              f"・Freq: {pc.cpu_freq:2f}GHz",
                         inline=False)
         
         embed.add_field(name=f"> GPU ({pc.gpu_name})",
-                        value=f"・Usage: {pc.gpu_load}%\n"+
-                              f"・Mem: {pc.gpu_mem_use}GB",
+                        value=f"・Core Usage: {pc.gpu_load:1f}%\n"+
+                              f"・Mem Used: {pc.gpu_mem_use:2f}GB\n"+
+                              f"・Mem Total: {pc.gpu_mem_total:2f}GB\n"+
+                              f"・Mem Usage: {pc.gpu_mem_percent:1f}%",
                         inline=False)
         
         embed.add_field(name="> RAM",
-                        value=f"・Usage: {pc.ram_use}GB\n"+
-                              f"・Total: {pc.ram_total}GB\n"+
-                              f"・Percent: {pc.ram_percent}%",
+                        value=f"・Used: {pc.ram_use:2f}GB\n"+
+                              f"・Total: {pc.ram_total:2f}GB\n"+
+                              f"・Usage: {pc.ram_percent:1f}%",
                         inline=False)
         embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
         

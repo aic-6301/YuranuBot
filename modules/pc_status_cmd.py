@@ -24,6 +24,8 @@ class PCStatus():
     gpu_name: str = None
     gpu_load: float = None
     gpu_mem_use: float = None
+    gpu_mem_total: float = 4.0 # GPUの最大メモリを取得できないため、自分で設定してある
+    gpu_mem_percent: float = None
 
 ##Windowsの場合の処理
 if platform.uname().system == "Windows":
@@ -66,20 +68,23 @@ async def pc_status():
 
             for sensor in hard.Sensors:
                 if str(sensor.Name) == "CPU Total":
-                    pc.cpu_load = format(sensor.Value, ".1f")
+                    pc.cpu_load = sensor.Value
                 if str(sensor.Name) == "GPU Core":
-                    pc.gpu_load = format(sensor.Value, ".1f")
+                    pc.gpu_load = sensor.Value
                 if str(sensor.Name) == "D3D Dedicated Memory Used":
-                    pc.gpu_mem_use = format(sensor.Value/1024, ".2f")
+                    pc.gpu_mem_use = sensor.Value/1024
                 
     elif os_info.system == "Linux":
         pc.cpu_name = platform.processor()
         pc.cpu_load = psutil.cpu_percent(percpu=False)
 
     pc.os_name = os_info.system
-    pc.cpu_freq = format(psutil.cpu_freq().current / 1000, ".2f")
-    pc.ram_use = format(ram_info.used/1024/1024/1024, ".2f")
-    pc.ram_total = format(ram_info.total/1024/1024/1024, ".2f")
+    pc.cpu_freq = psutil.cpu_freq().current / 1000
+    pc.ram_use = ram_info.used/1024/1024/1024
+    pc.ram_total = ram_info.total/1024/1024/1024
     pc.ram_percent = ram_info.percent
+
+    if pc.gpu_mem_total != None and pc.gpu_mem_use != None:
+        pc.gpu_mem_percent = (pc.gpu_mem_use / pc.gpu_mem_total) * 100
 
     return pc
