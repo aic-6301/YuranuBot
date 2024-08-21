@@ -44,7 +44,7 @@ class Computer( commands.Cog ):
                 hours, remainder = divmod(remainder, 3600)
                 minutes, seconds = divmod(remainder, 60)
 
-                activity_message = f"Uptime: {int(days)}d {int(hours)}h {int(minutes)}m {int(seconds)}s"
+                activity_message = f"起動時間: {int(days)}日 {int(hours)}時間 {int(minutes)}分"
                 status = Status.online
             
             elif self.rpc_mode == 3:
