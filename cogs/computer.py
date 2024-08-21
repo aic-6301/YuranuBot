@@ -6,6 +6,7 @@ import platform
 
 from discord.ext import commands, tasks
 from discord import app_commands
+from discord import Status
 from modules.pc_status_cmd import pc_status, PCStatus
 from modules.db_settings import save_server_setting
 from modules.exception import sendException
@@ -19,16 +20,19 @@ class Computer( commands.Cog ):
             self.rpc_loop.start()
 
     if os.getenv("USE_RPC") == "True":
-        @tasks.loop(seconds=7)
+        @tasks.loop(seconds=10)
         async def rpc_loop(self):
 
             pc = PCStatus
+            activity_message = None
+            status = None
 
             if self.rpc_mode == 1:
                 guild_count = len(self.bot.guilds)
                 user_count = sum(len(guild.members) for guild in self.bot.guilds)
 
-                status_message = f"{guild_count} Guilds | {user_count} Users"
+                activity_message = f"{guild_count} Guilds | {user_count} Users"
+                status = Status.online
 
             elif self.rpc_mode == 2:
                 #Uptimeを計算するために時間を取得
@@ -40,41 +44,49 @@ class Computer( commands.Cog ):
                 hours, remainder = divmod(remainder, 3600)
                 minutes, seconds = divmod(remainder, 60)
 
-                status_message = f"Uptime: {int(days)}d {int(hours)}h {int(minutes)}m"
-
+                activity_message = f"Uptime: {int(days)}d {int(hours)}h {int(minutes)}m {int(seconds)}s"
+                status = Status.online
+            
             elif self.rpc_mode == 3:
                 pc = await pc_status()
 
-                status_message = f"CPU: {pc.cpu_load:.1f}% | GPU: {pc.gpu_load:.1f}%"
-
+                if pc.cpu_load >= 90 or pc.gpu_load >= 90 or pc.gpu_mem_percent >= 90 or pc.ram_percent >= 90:
+                    activity_message = "⚠リソース使用率: 高"
+                    status = Status.dnd
+                elif pc.cpu_load >= 70 or pc.gpu_load >= 70 or pc.gpu_mem_percent >= 70 or pc.ram_percent >= 70:
+                    activity_message = "リソース使用率: 中"
+                    status = Status.idle
+                else:
+                    activity_message = "リソース使用率: 低"
+                    status = Status.online
+            
             elif self.rpc_mode == 4:
-                pc = await pc_status()
+                activity_message = "More at bot.yuranu.net"
+                status = Status.online
 
-                status_message = f"RAM: {pc.ram_use:.2f}/{pc.ram_total:.2f}GB ({pc.ram_percent:.1f}%)"
-
-            elif self.rpc_mode == 5:
-                pc = await pc_status()
-
-                status_message = f"GPUMem: {pc.gpu_mem_use:.2f}/{pc.gpu_mem_total:.2f}GB ({pc.gpu_mem_percent:.1f}%)"
                 self.rpc_mode = 0
+            
+            await self.bot.change_presence(status=status, activity=discord.CustomActivity(name=activity_message)) 
 
-            await self.bot.change_presence(activity=discord.Game(name=status_message)) 
             self.rpc_mode += 1
 
-    @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
-        if message.author == self.bot.user:
+    @commands.command()
+    async def rpc_stop(self, ctx: commands.Context):
+        if ctx.author.bot:
             return
-        
-        if message.author == self.bot.owner_id:
-            prefix = await self.bot.get_prefix(message)
-            if message.content == (f"{prefix}rpc stop"):
-                self.rpc_loop.stop()
-                await message.reply("✅ RPC Loop Stopped!")
+
+        if await self.bot.is_owner(ctx.author):
+            self.rpc_loop.stop()
+            await ctx.reply("✅ RPC Loop Stopped!")
             
-            elif message.content == (f"{prefix}rpc start"):
-                self.rpc_loop.start()
-                await message.reply("✅ RPC Loop Started!")
+    @commands.command()
+    async def rpc_start(self, ctx: commands.Context):
+        if ctx.author.bot:
+            return
+
+        if await self.bot.is_owner(ctx.author):
+            self.rpc_loop.start()
+            await ctx.reply("✅ RPC Loop Started!")
     
     @app_commands.command(name="status",description="Botを稼働しているPCの状態を表示するのだ")#PCの状態
     async def status(self, interact: discord.Interaction):
