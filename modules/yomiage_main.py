@@ -188,7 +188,7 @@ async def yomiage(content, guild: discord.Guild):
         files_content = search_content(content)
 
         # コンテンツ  +　文章
-        if files_content != None:
+        if files_content is not None:
             fixed_content = files_content + fixed_content
 
     elif type(content) == str:
