@@ -1,30 +1,21 @@
-import subprocess
 import discord
+import time
 import sys
 import os
 import platform
 
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord import app_commands
-
-from modules.pc_status_cmd import pc_status
+from modules.pc_status_cmd import pc_status, PCStatus
 from modules.db_settings import save_server_setting
 from modules.exception import sendException
 from modules.delete import delete_file_latency
 
+
 class utils(commands.Cog):
-    def __init__(self, bot: commands.Bot):
-        self.bot = bot
-
-    @app_commands.command(name="sbc",description="Shizen Black Companyの説明資料なのだ")#Shizen Black Companyの宣伝
-    async def sbc_command(self, interact:discord.Interaction):
-        await interact.response.send_message('**～ドライバーの腕が生かせる最高職場～　Shizen Black Company** https://black.shizen.lol')
-
-    # @app_commands.command(name="status",description="Botを稼働しているPCの状態を表示するのだ")#PCの状態
-    # async def status(self, interact: discord.Interaction):
-    #     ##PCのステータスを送信
-        
-        
+    @app_commands.command(name="dashboard", description="ダッシュボードについてなのだ")
+    async def dashboard(self, interact: discord.Interaction):
+        await interact.response.send_message("ZundaCordのダッシュボード「ZunDash」\nhttps://bot.yuranu.net/")
 
     @app_commands.command(name="serv-join-message", description="サーバー参加者へメッセージを送信するチャンネルを設定するのだ！")
     @app_commands.rename(activate="メッセージ送信のオンオフ")

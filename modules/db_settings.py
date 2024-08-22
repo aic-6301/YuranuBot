@@ -16,6 +16,7 @@ server_settings = [
     ("vc_speaker", "INTEGER NOT NULL DEFAULT 3"),
     ("vc_user_announce", "INTEGER NOT NULL DEFAULT 1"),
     ("soundtext_mode", "INTEGER NOT NULL DEFAULT 2"),
+    ("discord_url_load", "INTEGER NOT NULL DEFAULT 0")
 ]
 
 user_settings = [

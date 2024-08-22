@@ -53,6 +53,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.voice_states = True
 intents.members = True
+intents.guilds = True
 logging.debug("discord.py -> インテント生成完了")
 
 ### クライアントの生成
@@ -64,6 +65,9 @@ if type(PREFIX) == str:
 else:
     logging.error("dotenv -> .envに「PREFIX」が設定されていません！")
     sys.exit()
+
+#スタート時間を作成
+bot.start_time = None
 
 ##sendExceptionが利用できるようにする
 exception_init(bot)
@@ -101,6 +105,8 @@ async def on_ready():
     except:
         logging.exception(f'api.py -> APIサーバーの起動に失敗')
 
+    #稼働時間を表示するために保存する
+    bot.start_time = time.time()
 
     logging.info(f'discord.py -> {bot.user}に接続しました！やったのだー！ ')
     await tree.sync()
