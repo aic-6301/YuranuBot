@@ -89,7 +89,7 @@ async def on_ready():
             except Exception as e:
                 logging.exception(f'discord.py -> 読み込み失敗: {file[:-3]}')
                 logging.exception(e)
-                
+
     try:
         ##jishakuを読み込む
         await bot.load_extension('jishaku')
@@ -113,13 +113,13 @@ async def on_ready():
     logging.debug("discord.py -> コマンドツリーを同期しました")
 
     channel_myserv = bot.get_channel(1222923566379696190)
-    
+
     if exceptions == True:
         channel_myserv.send("botは起動しました！\n⚠一部のcogファイルにエラー発生⚠")
     else:
         await channel_myserv.send("botは起動しました！")
 
-        
+
 
 # 文章をすべて文字で表現(正規表現確認用)
 @bot.tree.context_menu(name="装飾前の本文確認")
@@ -143,7 +143,7 @@ async def show_content(interact: discord.Interaction, message: discord.Message):
         description=f"```{content}```"
     )
     await interact.response.send_message(embed=embed)
-    
+
 # クライアントの実行
 if type(TOKEN)==str:
     bot.run(TOKEN)

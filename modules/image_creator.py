@@ -60,13 +60,13 @@ def make_welcome_image(user: discord.Member, guild: discord.Guild):
 
     # ボーダーを生成
     base.paste(border, border_pos, mask)
-    
+
 
     # 円形のマスクを作成
     mask = Image.new("L", (min_size, min_size), 0)
     draw_ = ImageDraw.Draw(mask)
     draw_.ellipse((0, 0, min_size, min_size), fill=255)
-    
+
     # マスクを適用+画像に張り付け
     base.paste(icon_, icon_pos, mask)
 

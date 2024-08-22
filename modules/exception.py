@@ -15,6 +15,6 @@ async def sendException(e, filename, line_no):
                 )
     embed.add_field(name="**//エラー内容//**", inline=False, value=
                     f"{filename}({line_no}行) -> [{type(e)}] {e}")
-    
+
     await channel_myserv.send(embed=embed)
     # await channel_sdev.send(embed=embed)

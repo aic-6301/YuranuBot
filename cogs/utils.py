@@ -37,16 +37,16 @@ class utils(commands.Cog):
                     if result is None:
                         await interact.response.send_message(f"**<#{channel.id}>に参加メッセージを設定したのだ！**")
                         return
-                    
+
                 elif activate == 0:
                     result = save_server_setting(interact.guild.id, read_type, 0)
                     if result is None:
                         await interact.response.send_message(f"**参加メッセージ機能を使わないのだ！**")
                         return
-                
+
                 await interact.response.send_message("エラーが発生したのだ...")
                 return
-            
+
             await interact.response.send_message("このコマンドは管理者のみ実行できるのだ！")
 
         except Exception as e:
@@ -54,6 +54,6 @@ class utils(commands.Cog):
             filename = exception_traceback.tb_frame.f_code.co_filename
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
-    
+
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(utils(bot))

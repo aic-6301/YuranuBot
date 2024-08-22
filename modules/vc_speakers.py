@@ -24,7 +24,7 @@ def load_from_voicevox_app():
     #スピーカー情報を取得し、jsonに変換
     try:
         global spk_list
-        
+
         #VOICEVOXにリクエスト
         spk_req = requests.get(url=f"http://{VC_HOST}:{VC_PORT}/speakers")
         des_spks = spk_req.json()
@@ -38,12 +38,12 @@ def load_from_voicevox_app():
                 if style["name"] in ("ノーマル","ふつう", "人間ver.") :
                     name=des_spk["name"]
                     spk_id=style["id"]
-                    
+
                     #特定のIDを無視する
                     if spk_id not in ignore_id:
                         #リストに追加
                         spk_list.append([name, spk_id])
-        
+
         logging.debug(f"vc_speakers -> 読み込み完了: {len(spk_list)}人の話者が登録済")
     except:
         logging.exception("vc_speakers -> VOICEVOXアプリから話者の読み込みに失敗")
@@ -68,7 +68,7 @@ for spk_name, spk_id in spk_list:
 #ユーザー向けのリスト
 for spk_name, spk_id in spk_list:
     user_spk_choices.append(app_commands.Choice(name=spk_name, value=spk_id))
-    
+
 logging.debug(f"vc_speakers -> 話者リスト: {len(spk_choices)}人の話者を登録済")
 
 #ユーザー向けChoiceリストにデフォルト設定を追加
@@ -88,4 +88,3 @@ def find_spker(id=None, name=None):
         for spk_name, spk_id in spk_list:
             if spk_name == name:
                 return [spk_name, spk_id]
-            

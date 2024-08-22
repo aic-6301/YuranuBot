@@ -53,7 +53,7 @@ if platform.uname().system == "Windows":
 async def pc_status():
     os_info = platform.uname()
     ram_info = psutil.virtual_memory()
-    
+
     pc = PCStatus()
 
     for i in range(1):
@@ -73,7 +73,7 @@ async def pc_status():
                     pc.gpu_load = sensor.Value
                 if str(sensor.Name) == "D3D Dedicated Memory Used":
                     pc.gpu_mem_use = sensor.Value/1024
-                
+
     elif os_info.system == "Linux":
         pc.cpu_name = platform.processor()
         pc.cpu_load = psutil.cpu_percent(percpu=False)

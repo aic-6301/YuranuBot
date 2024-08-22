@@ -53,7 +53,7 @@ class Simple(discord.ui.View):
         super().__init__(timeout=timeout)
 
     async def start(self, ctx: discord.Interaction|commands.Context, pages: list[discord.Embed]):
-        
+
         if isinstance(ctx, discord.Interaction):
             ctx = await commands.Context.from_interaction(ctx)
 

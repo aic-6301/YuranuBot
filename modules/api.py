@@ -24,7 +24,7 @@ class posttdata(BaseModel):
     vc_exit_message: Optional[str] = None
     connect_message: Optional[str] = None
     vc_speaker: Optional[int] = None
-    
+
 
 class user_posttdata(BaseModel):
     vc_speaker: Optional[int] = None
@@ -144,7 +144,7 @@ async def post_guild_settings(server_id: int, data: dictionary_post):
             return JSONResponse(content={"message": "Server Not found"}, status_code=404)
     except Exception as e:
         return JSONResponse(content={"message": "Internal Server Error", "error": str(e)}, status_code=500)
-    
+
 
 # User settings
 

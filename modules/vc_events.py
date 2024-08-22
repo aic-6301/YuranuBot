@@ -17,7 +17,7 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
         if auto_channel == after.channel.id:
             if not member.guild.voice_client or member.guild.voice_client.channel != after.channel:
                 await after.channel.connect()
-            
+
                 spkID = get_server_setting(member.guild.id, "vc_speaker")
                 if spkID == 3:
                     mess = random.choice(zunda_conn_message)
@@ -38,7 +38,7 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
                         members.pop(count)
                         count -= 1
                     count += 1
-                    
+
                 if len(members) == 0:
                     await member.guild.voice_client.disconnect()
                     return
@@ -53,18 +53,18 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
                     if (after.channel.id == bot_client.channel.id):
                         if _announce == 2:
                             user_mess = get_user_setting(member.id, "conn_msg")
-                            
+
                             if user_mess == "nan" and mess is not None:
                                 await yomiage(f"{member.display_name}{mess}", member.guild)
 
                             elif user_mess != None:
                                 user_mess = user_mess.replace("<user>", member.display_name)
                                 await yomiage(user_mess, member.guild)
-                                
+
                         elif _announce == 1:
                             if mess is not None:
                                 await yomiage(f"{member.display_name}{mess}", member.guild)
-                    
+
                 ##退席時に読み上げる
                 if before.channel is not None:
                     _announce = get_server_setting(before.channel.guild.id, "vc_user_announce")
@@ -84,8 +84,8 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
                         elif _announce == 1:
                             if mess is not None:
                                 await yomiage(f"{member.display_name}{mess}", member.guild)
-                        
-                        
+
+
     if member.guild.voice_client:
         if after.channel == member.guild.voice_client.channel:
             #カメラ配信の開始・終了を読み上げる

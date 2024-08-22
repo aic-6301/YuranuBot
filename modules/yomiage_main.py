@@ -96,7 +96,7 @@ if (not os.path.isdir(VC_OUTPUT)):
 ##読み上げのキューに入れる前に特定ワードを変換します
 async def yomiage(content, guild: discord.Guild):
     # サウンドボード
-    
+
     global ace_left
     if type(content) == discord.Message:
         soundtext_mode = get_server_setting(guild.id, "soundtext_mode")
@@ -123,13 +123,13 @@ async def yomiage(content, guild: discord.Guild):
 
                     if sound[1] == "explosion.mp3":
                         ace_left += 1
-                        
+
                         if ace_left >= 5:
                             sound_dir = "explosion2.mp3"
-                            
+
                     else:
                         ace_left = 0
-                    
+
                     logging.debug(f"サウンドボードの単語を検出: {content.content}")
 
                     sound_file = f"{SOUNDBOARD_DIR}{sound_dir}"

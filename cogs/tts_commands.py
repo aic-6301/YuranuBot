@@ -20,10 +20,10 @@ import modules.pages as Page
 class yomiage_cmds(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-    
+
     yomi = app_commands.Group(name="yomiage", description="読み上げ関連のコマンドを実行するのだ")
-        
-    
+
+
     @app_commands.command(name="vc-start", description="ユーザーが接続しているボイスチャットに接続するのだ")
     async def vc_command(self, interact: discord.Interaction):
         try:
@@ -33,7 +33,7 @@ class yomiage_cmds(commands.Cog):
             if (interact.guild.voice_client is not None):
                 await interact.response.send_message("すでにほかのボイスチャンネルにつながっているのだ...")
                 return
-            
+
             await interact.user.voice.channel.connect()
 
             ##接続を知らせるメッセージを送信
@@ -47,7 +47,7 @@ class yomiage_cmds(commands.Cog):
                 length_limit = f"!!文字数制限なし!!"
             else:
                 length_limit = f"{length_limit}文字"
-        
+
             embed = discord.Embed(
                 title="接続したのだ！",
                 description="ボイスチャンネルに参加しました！",
@@ -184,14 +184,14 @@ class yomiage_cmds(commands.Cog):
             spk_name = "**話者検索時にエラーが発生**"
         else:
             spk_name = spk_info[0]
-        
+
         user_speed = get_user_setting(interact.user.id, "speak_speed")
         if user_speed == 0: user_speed = "サーバー設定を使用"
         connect_msg = get_user_setting(interact.user.id, "conn_msg")
         if connect_msg == "nan": connect_msg = "デフォルト設定"
         disconnect_msg = get_user_setting(interact.user.id, "disconn_msg")
         if disconnect_msg == "nan": disconnect_msg = "デフォルト設定"
-        
+
         # Embedに設定内容を表示
         embed = discord.Embed(
             title="ユーザーの読み上げ設定を表示するのだ！",
@@ -227,7 +227,7 @@ class yomiage_cmds(commands.Cog):
             if result is None:
                 await interact.response.send_message(f"☑**「<#{channel.id}>」**を読み上げるのだ！")
                 return
-            
+
             await interact.response.send_message(f"設定に失敗したのだ...")
 
         except Exception as e:
@@ -235,8 +235,8 @@ class yomiage_cmds(commands.Cog):
             filename = exception_traceback.tb_frame.f_code.co_filename
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
-        
-    
+
+
     @yomi.command(name="announcement", description="ユーザーの入退出を読み上げするのだ")
     @app_commands.rename(activate="有効無効")
     @app_commands.choices(
@@ -258,7 +258,7 @@ class yomiage_cmds(commands.Cog):
                 elif activate == 2:
                     await interact.response.send_message(f"ユーザーの入退出読み上げを**「有効(ユーザー別有効)」**にしたのだ！")
                 return
-            
+
             await interact.response.send_message(f"設定に失敗したのだ...")
 
         except Exception as e:
@@ -290,7 +290,7 @@ class yomiage_cmds(commands.Cog):
 
                 await interact.response.send_message(embed=embed)
                 return
-            
+
             await interact.response.send_message(f"設定に失敗したのだ...")
 
         except Exception as e:
@@ -298,7 +298,7 @@ class yomiage_cmds(commands.Cog):
             filename = exception_traceback.tb_frame.f_code.co_filename
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
-    
+
 
     @yomi.command(name="dictionary-list", description="サーバー辞書の単語を表示するのだ")
     async def vc_dictionary(self, interact: discord.Interaction):
@@ -361,7 +361,7 @@ class yomiage_cmds(commands.Cog):
 
                 await interact.response.send_message(embed=embed)
                 return
-            
+
             await interact.response.send_message(f"設定に失敗したのだ...")
 
         except Exception as e:
@@ -382,7 +382,7 @@ class yomiage_cmds(commands.Cog):
                     color=discord.Color.green()
                 )
                 embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
-                
+
                 for i in range(len(result)):
                     embed.add_field(
                         name=f"サウンドテキスト{i+1}",
@@ -434,10 +434,10 @@ class yomiage_cmds(commands.Cog):
                     mode_str = "ゲームモード"
                 else:
                     mode_str = "無効"
-                    
+
                 await interact.response.send_message(f"サウンドテキスト機能を**「{mode_str}」**にしたのだ！")
                 return
-            
+
             await interact.response.send_message(f"設定に失敗したのだ...")
 
         except Exception as e:
@@ -459,7 +459,7 @@ class yomiage_cmds(commands.Cog):
                     spker_name = find_spker(id=id)
                     await interact.response.send_message(f"サーバー話者を**{spker_name[0]}**に変更したのだ！")
                     return
-                
+
                 await interact.response.send_message("エラーが発生したのだ...")
             else:
                 await interact.response.send_message("このコマンドは管理者のみ実行できるのだ")
@@ -486,7 +486,7 @@ class yomiage_cmds(commands.Cog):
                     spker_name = find_spker(id=id)
                     await interact.response.send_message(f"ユーザー話者を**{spker_name[0]}**に変更したのだ！")
                     return
-                
+
             await interact.response.send_message("エラーが発生したのだ...")
 
         except Exception as e:
@@ -511,7 +511,7 @@ class yomiage_cmds(commands.Cog):
             if result is None:
                 await interact.response.send_message(f"読み上げ速度を**「{speed}」**に変更したのだ！")
                 return
-            
+
             await interact.response.send_message("エラーが発生したのだ...")
 
         except Exception as e:
@@ -540,7 +540,7 @@ class yomiage_cmds(commands.Cog):
                     await interact.response.send_message(f"ユーザー読み上げ速度を**「{speed}」**に変更したのだ！")
 
                 return 
-            
+
             await interact.response.send_message("エラーが発生したのだ...")
 
         except Exception as e:
@@ -559,7 +559,7 @@ class yomiage_cmds(commands.Cog):
             if result is None:
                 await interact.response.send_message(f"読み上げ文字数を**「{limit}文字」**に変更したのだ！")
                 return
-            
+
             await interact.response.send_message("エラーが発生したのだ...")
 
         except Exception as e:
@@ -575,7 +575,7 @@ class yomiage_cmds(commands.Cog):
             if res is None:
                 await interact.response.send_message("**参加時の読み上げ内容を変更したのだ！**")
                 return
-            
+
             await interact.response.send_message("設定に失敗したのだ...")
 
         except Exception as e:
@@ -583,7 +583,7 @@ class yomiage_cmds(commands.Cog):
             filename = exception_traceback.tb_frame.f_code.co_filename
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
-            
+
     @yomi.command(name="exit-message", description="退出時の読み上げ内容を変更するのだ<<必ず最初にユーザー名が来るのだ>>")
     async def change_vc_exit_message(self, interact: discord.Interaction, text: str):
         try:
@@ -591,14 +591,14 @@ class yomiage_cmds(commands.Cog):
             if res is None:
                 await interact.response.send_message("**退出時の読み上げ内容を変更したのだ！**")
                 return
-            
+
             await interact.response.send_message("設定に失敗したのだ...")
         except Exception as e:
             exception_type, exception_object, exception_traceback = sys.exc_info()
             filename = exception_traceback.tb_frame.f_code.co_filename
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
-    
+
 
     @yomi.command(name="user-join-message", description="[ユーザー別]参加時の読み上げを設定するのだ！")
     @app_commands.describe(text="<user> : ユーザー名")
@@ -608,7 +608,7 @@ class yomiage_cmds(commands.Cog):
             if res is None:
                 await interact.response.send_message("**ユーザー別 参加時の読み上げ内容を変更したのだ！**")
                 return
-            
+
             await interact.response.send_message("設定に失敗したのだ...")
         except Exception as e:
             exception_type, exception_object, exception_traceback = sys.exc_info()
@@ -624,7 +624,7 @@ class yomiage_cmds(commands.Cog):
             if res is None:
                 await interact.response.send_message("**ユーザー別 退出時の読み上げ内容を変更したのだ！**")
                 return
-            
+
             await interact.response.send_message("設定に失敗したのだ...")
         except Exception as e:
             exception_type, exception_object, exception_traceback = sys.exc_info()
@@ -641,7 +641,7 @@ class yomiage_cmds(commands.Cog):
             if res is None:
                 await interact.response.send_message("**読み上げ接続時の読み上げ内容を変更したのだ！**")
                 return
-            
+
             await interact.response.send_message("設定に失敗したのだ...")  
             logging.warning(res)  
 
@@ -659,7 +659,7 @@ class yomiage_cmds(commands.Cog):
                 vc_id = interact.user.voice.channel.id
                 if interact.user.voice is not None: ##設定するユーザーがチャンネルに入っていることを確認するのだ
                     res = save_server_setting(interact.guild_id, "auto_connect", vc_id)
-                
+
                 else: ##ユーザーがボイスチャットに入っていない場合
                     await interact.response.send_message("自動接続したいチャンネルに入ってから実行するのだ！")
                     return
@@ -669,28 +669,28 @@ class yomiage_cmds(commands.Cog):
                 return
 
             await interact.response.send_message(f"「<#{vc_id}>」に自動接続を設定したのだ！")
-            
+
         except Exception as e:
             exception_type, exception_object, exception_traceback = sys.exc_info()
             filename = exception_traceback.tb_frame.f_code.co_filename
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
 
-    
+
     @app_commands.command(name="vc-stop", description="ボイスチャンネルから退出するのだ")
     async def vc_disconnect_command(self, interact: discord.Interaction):
         try:
             if ((interact.guild.voice_client is None)):
                 await interact.response.send_message("私はボイスチャンネルに接続していないのだ...")
                 return
-            
+
             elif((interact.user.voice is None)):
                 await interact.response.send_message("ボイスチャンネルに接続していないのだ...入ってから実行するのだ")
                 return
             elif interact.user.voice.channel != interact.guild.voice_client.channel:
                 await interact.response.send_message("入ってるボイスチャンネルと違うチャンネルなのだ...実行してるチャンネルでやるのだ")
                 return
-            
+
             await interact.guild.voice_client.disconnect()
             await interact.response.send_message("切断したのだ")
         except Exception as e:
@@ -698,7 +698,7 @@ class yomiage_cmds(commands.Cog):
             filename = exception_traceback.tb_frame.f_code.co_filename
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
-    
+
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(yomiage_cmds(bot))

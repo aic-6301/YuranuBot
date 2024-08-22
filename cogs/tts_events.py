@@ -11,7 +11,7 @@ from modules.db_settings import get_server_setting
 class yomi(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-    
+
     @commands.Cog.listener()
     async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
         ###ボイスチャンネル内で変化があった時の処理
@@ -25,9 +25,9 @@ class yomi(commands.Cog):
             return
         if message.author.bot: # ボットの内容は読み上げない
             return
-        
+
         channel = get_server_setting(message.guild.id, "speak_channel") # 読み上げるチャンネルをデータベースから取得
-        
+
         if (message.channel.id == channel): # ChannelIDが読み上げ対象のIDと一致しているか
             await yomiage(message, message.guild)# 難なくエラーをすり抜けたチャンネルにはもれなく読み上げ
 

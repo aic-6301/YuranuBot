@@ -45,7 +45,7 @@ def get_dictionary(server_id):
         return result
     else:
         return None
-    
+
 ##設定を上書きするやつ
 def save_dictionary(server_id: int, text, reading, user: int):
     """
@@ -67,7 +67,7 @@ def save_dictionary(server_id: int, text, reading, user: int):
 
         logging.debug(f"Server '{server_id}' Dictionary was updated ({text}: {reading})")
         return
-    
+
     except Exception as e:
         return e
 
@@ -89,7 +89,7 @@ def delete_dictionary(server_id: int, text):
 
         logging.debug(f"Server '{server_id}' Dictionary was updated (deleted: {text})")
         return
-    
+
     except Exception as e:
         return e
 

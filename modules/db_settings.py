@@ -48,7 +48,7 @@ def db_load(file):
 
         conn = sqlite3.connect(file)
         cursor = conn.cursor()
-        
+
         conn.autocommit = True
 
         return True
@@ -80,7 +80,7 @@ def db_init():
         for name, type in server_settings:
             if name not in columns:
                 cursor.execute(f'ALTER TABLE server_settings ADD COLUMN {name} {type}')
-    
+
 
         ##追加した名前のオブジェクトがなかった場合に新しく作成(user_settings)
         ##user_settingの状態を取得
@@ -91,10 +91,10 @@ def db_init():
         for name, type in user_settings:
             if name not in columns:
                 cursor.execute(f'ALTER TABLE user_settings ADD COLUMN {name} {type}')
-    
+
         conn.commit()
         return True
-    
+
     except Exception as e:
         exception_type, exception_object, exception_traceback = sys.exc_info()
         filename = exception_traceback.tb_frame.f_code.co_filename
@@ -131,7 +131,7 @@ def get_server_setting(id, type):
 
         return result[0]
 
-        
+
 # サーバー設定をすべて取得し返す
 def get_server_all_setting(id):
     """
@@ -154,7 +154,7 @@ def get_server_all_setting(id):
         return result
     else:
         cursor.execute(f'INSERT INTO {list_type} ({id_type}) VALUES (?)', (id,))
-        
+
         cursor.execute(f'SELECT * FROM {list_type} WHERE {id_type} = {id}')
         result = cursor.fetchone()
 
@@ -184,19 +184,19 @@ def save_server_setting(id, type, new_value):
             if type in server_settings:
                 cursor.execute(f'INSERT INTO {list_type} ({id_type}, "{type}") VALUES ({id}, {new_value})')
                 conn.commit()
-                
+
                 logging.info(f"{list_type} '{id}' was created ({type}: {new_value})")
                 return
             else:
                 return 1
-    
+
         cursor.execute(f'UPDATE {list_type} SET "{type}" = "{new_value}" WHERE {id_type} = {id}')
         conn.commit()
 
         logging.info(f"{list_type} '{id}' was updated ({type}: {new_value})")
         return
-    
-    
+
+
     except Exception as e:
         exception_type, exception_object, exception_traceback = sys.exc_info()
         filename = exception_traceback.tb_frame.f_code.co_filename
@@ -232,10 +232,10 @@ def get_user_setting(id, type):
 
             result = cursor.fetchone()
             return result[0]
-        
+
     except Exception as e:
         logging.error(f"database -> {e}")
-    
+
 ##データベースから設定を読み出し、返すやつ
 def get_user_all_settings(id):
     """
@@ -265,10 +265,10 @@ def get_user_all_settings(id):
 
             result = cursor.fetchone()
             return result
-        
+
     except Exception as e:
         logging.error(f"database -> {e}")
-    
+
 ##設定を上書きするやつ
 def save_user_setting(id, type, new_value):
     """
@@ -291,19 +291,19 @@ def save_user_setting(id, type, new_value):
             if type in server_settings:
                 cursor.execute(f'INSERT INTO {list_type} ({id_type}, "{type}") VALUES ({id}, {new_value})')
                 conn.commit()
-                
+
                 logging.debug(f"{list_type} '{id}' was created ({type}: {new_value})")
                 return
             else:
                 return 1
-    
+
         cursor.execute(f'UPDATE {list_type} SET "{type}" = "{new_value}" WHERE {id_type} = {id}')
         conn.commit()
 
         logging.debug(f"{list_type} '{id}' was updated ({type}: {new_value})")
         return
-    
-    
+
+
     except Exception as e:
         exception_type, exception_object, exception_traceback = sys.exc_info()
         filename = exception_traceback.tb_frame.f_code.co_filename
