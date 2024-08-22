@@ -579,7 +579,7 @@ class yomiage_cmds(commands.Cog):
             if result is None:
                 if speed == 0:
                     await interact.response.send_message(
-                        f"ユーザー読み上げ速度を**サーバー読み上げ速度**に変更したのだ！")
+                        "ユーザー読み上げ速度を**サーバー読み上げ速度**に変更したのだ！")
                 else:
                     await interact.response.send_message(
                         f"ユーザー読み上げ速度を**「{speed}」**に変更したのだ！")
