@@ -163,7 +163,6 @@ async def yomiage(content, guild: discord.Guild):
                     return
 
     if type(content) == discord.message.Message:
-
         fixed_content = content.content
 
         # 絵文字を文字に変換
