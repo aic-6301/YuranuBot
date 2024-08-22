@@ -1,3 +1,10 @@
+from discord import FFmpegPCMAudio, PCMVolumeTransformer
+from collections import deque, defaultdict
+from dotenv import load_dotenv
+from modules.delete import delete_file_latency
+from modules.db_vc_dictionary import get_dictionary
+from modules.exception import sendException
+from modules.db_settings import get_server_setting, get_user_setting
 import discord
 import platform
 import logging
@@ -12,14 +19,6 @@ import os
 
 os_name = platform.uname().system
 
-from modules.db_settings import get_server_setting, get_user_setting
-from modules.exception import sendException
-from modules.db_vc_dictionary import get_dictionary
-from modules.delete import delete_file_latency
-from dotenv import load_dotenv
-from collections import deque, defaultdict
-from discord import FFmpegPCMAudio, PCMVolumeTransformer
-
 load_dotenv()
 USE_VOICEVOX_APP = os.getenv("USE_VOICEVOX_APP")
 
@@ -29,13 +28,13 @@ else:
     print("voicevox coreを利用します")
     from voicevox_core import AccelerationMode, AudioQuery, VoicevoxCore
 
-    ###読み上げ用のコアをロードし、作成します
+    # 読み上げ用のコアをロードし、作成します
     core = VoicevoxCore(
         acceleration_mode=AccelerationMode.AUTO,
-        open_jtalk_dict_dir = './voicevox/open_jtalk_dic_utf_8-1.11'
+        open_jtalk_dict_dir="./voicevox/open_jtalk_dic_utf_8-1.11",
     )
 
-## VOICEVOX用の設定
+# VOICEVOX用の設定
 VC_OUTPUT = "./yomiage_data/"
 FS = 24000
 VC_HOST = "127.0.0.1"
@@ -44,22 +43,41 @@ VC_PORT = 50021
 SOUNDBOARD_DIR = "./sounds/"
 
 fix_words = [
-    [r'(https?://\S+)', "URL省略 "],
-    [r'<a:\w+:\d+>', "アニメ絵文字 "],
-    [r'<:\w+:\d+>', "絵文字 "],
-    [r':\w+:', "絵文字 "],
-    [r'```[\s\S]*?```', "コードブロック省略"],
-    [r'\|\|.*?\|\|', "、"],
-    ["～", "ー"]
+    [r"(https?://\S+)", "URL省略 "],
+    [r"<a:\w+:\d+>", "アニメ絵文字 "],
+    [r"<:\w+:\d+>", "絵文字 "],
+    [r":\w+:", "絵文字 "],
+    [r"```[\s\S]*?```", "コードブロック省略"],
+    [r"\|\|.*?\|\|", "、"],
+    ["～", "ー"],
 ]
 
 # (例: "あ", "example.mp3", *volume*, *返信メッセージなど*
 sound_effects = [
-    ["そらぬの心", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
-    ["どっかぁん", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
-    ["サ終", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
-    ["心折れた", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
-
+    [
+        "そらぬの心",
+        "explosion.mp3",
+        0.15,
+        "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150",
+    ],
+    [
+        "どっかぁん",
+        "explosion.mp3",
+        0.15,
+        "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150",
+    ],
+    [
+        "サ終",
+        "explosion.mp3",
+        0.15,
+        "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150",
+    ],
+    [
+        "心折れた",
+        "explosion.mp3",
+        0.15,
+        "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150",
+    ],
     ["まだだめだ", "madadameda.mp3", 0.2, None],
     ["マダダメダ", "madadameda2.mp3", 0.2, None],
     ["ばばんばばん", "ace.mp3", 0.2, None],
@@ -69,18 +87,14 @@ sound_effects = [
     ["ようこそ私の世界へ", "ULT-VIPER.mp3", 0.5, None],
     ["狩りの時間よ！", "ULT-REYNA.mp3", 0.5, None],
     ["見てなよ！", "ULT-JETT.mp3", 0.6, None],
-
     ["南部EQ", "nanbueq.mp3", 0.7, None],
     ["あきかきEQ", "Akikaki_EQ.mp3", 0.2, None],
-
     ["あばばっば", "abababba.mp3", 0.5, None],
-
     ["まげちゃーん！", "maggechaaan.mp3", 0.5, None],
     ["ぬーぶ", "You are noob.mp3", 0.2, None],
     ["ざんねん", "zannen.mp3", 0.5, None],
     ["おわあ！", "owaa.mp3", 0.5, None],
     ["すぐなえてこそいざ", "sugunaete.mp3", 0.4, None],
-
     ["しかのこ", "sikanoko.mp3", 0.5, None],
     ["ういびーむ", "uibeam.mp3", 0.1, None],
     # ["(スパイク設置)", "valorant-spike-plant.mp3", 1, None]
@@ -89,14 +103,16 @@ sound_effects = [
 yomiage_serv_list = defaultdict(deque)
 ace_left = 0
 
-##ディレクトリがない場合は作成する
-if (not os.path.isdir(VC_OUTPUT)):
+# ディレクトリがない場合は作成する
+if not os.path.isdir(VC_OUTPUT):
     os.mkdir(VC_OUTPUT)
 
-##読み上げのキューに入れる前に特定ワードを変換します
+# 読み上げのキューに入れる前に特定ワードを変換します
+
+
 async def yomiage(content, guild: discord.Guild):
     # サウンドボード
-    
+
     global ace_left
     if type(content) == discord.Message:
         soundtext_mode = get_server_setting(guild.id, "soundtext_mode")
@@ -115,7 +131,7 @@ async def yomiage(content, guild: discord.Guild):
                         embed = discord.Embed(
                             title="ちょっと待つのだ！",
                             description="ゲームモードが有効です！VCの状況を確認してみよう。",
-                            color=discord.Colour.orange()
+                            color=discord.Colour.orange(),
                         )
                         message = await content.reply(embed=embed)
                         await message.delete(delay=4.0)
@@ -123,13 +139,13 @@ async def yomiage(content, guild: discord.Guild):
 
                     if sound[1] == "explosion.mp3":
                         ace_left += 1
-                        
+
                         if ace_left >= 5:
                             sound_dir = "explosion2.mp3"
-                            
+
                     else:
                         ace_left = 0
-                    
+
                     logging.debug(f"サウンドボードの単語を検出: {content.content}")
 
                     sound_file = f"{SOUNDBOARD_DIR}{sound_dir}"
@@ -147,100 +163,106 @@ async def yomiage(content, guild: discord.Guild):
                     return
 
     if type(content) == discord.message.Message:
-            ace_left == 0
+        ace_left == 0
 
-            fixed_content = content.content
+        fixed_content = content.content
 
-            ## 絵文字を文字に変換
-            fixed_content = emoji.demojize(fixed_content)
+        # 絵文字を文字に変換
+        fixed_content = emoji.demojize(fixed_content)
 
-            ## メンションされたユーザーのIDを名前に変換
-            for mention in content.mentions:
-                fixed_content = fixed_content.replace(f'<@{mention.id}>', "@"+mention.display_name)
+        # メンションされたユーザーのIDを名前に変換
+        for mention in content.mentions:
+            fixed_content = fixed_content.replace(f"<@{mention.id}>",
+                                                  "@" + mention.display_name)
 
-            ## チャンネルIDをチャンネル名に置き換える
-            channel_mentions = re.findall(r'<#([0-9]+)>', fixed_content)
-            for channel_id in channel_mentions:
-                channel = discord.utils.get(content.guild.channels, id=int(channel_id))
-                if channel:
-                    fixed_content = fixed_content.replace(f'<#{channel_id}>', f'{channel.name}')
+        # チャンネルIDをチャンネル名に置き換える
+        channel_mentions = re.findall(r"<#([0-9]+)>", fixed_content)
+        for channel_id in channel_mentions:
+            channel = discord.utils.get(content.guild.channels,
+                                        id=int(channel_id))
+            if channel:
+                fixed_content = fixed_content.replace(f"<#{channel_id}>",
+                                                      f"{channel.name}")
 
-            ##コンテンツ関連の文章を生成する
-            files_content = search_content(content)
+        # コンテンツ関連の文章を生成する
+        files_content = search_content(content)
 
-            ##コンテンツ  +　文章
-            if files_content != None:
-                fixed_content = files_content + fixed_content
+        # コンテンツ  +　文章
+        if files_content != None:
+            fixed_content = files_content + fixed_content
 
     elif type(content) == str:
         fixed_content = content
 
-    ##サーバー辞書に登録された内容で置き換える
+    # サーバー辞書に登録された内容で置き換える
     dicts = get_dictionary(guild.id)
     if dicts != None:
         for text, reading, user in dicts:
-            fixed_content = fixed_content.replace(text.lower(), reading.lower())
+            fixed_content = fixed_content.replace(text.lower(),
+                                                  reading.lower())
 
-    ##fix_wordに含まれたワードをfix_end_wordに変換する
+    # fix_wordに含まれたワードをfix_end_wordに変換する
     for word in fix_words:
-        fixed_content = re.sub(word[0], word[1], fixed_content, flags=re.IGNORECASE)
+        fixed_content = re.sub(word[0],
+                               word[1],
+                               fixed_content,
+                               flags=re.IGNORECASE)
 
-    ##文字制限の設定を取得する
+    # 文字制限の設定を取得する
     length_limit = get_server_setting(guild.id, "length_limit")
 
-    if (length_limit > 0): ##文字数制限(1文字以上なら有効化)
-        speak_content = fixed_content[:length_limit] ##文字数制限（省略もつけちゃうよ♡）
+    if length_limit > 0:  # 文字数制限(1文字以上なら有効化)
+        speak_content = fixed_content[:length_limit]  # 文字数制限（省略もつけちゃうよ♡）
     else:
         speak_content = fixed_content
 
-    if (speak_content != fixed_content):
+    if speak_content != fixed_content:
         speak_content = speak_content + "、省略"
 
-    #ユーザ読み上げ速度がある場合はそっちを優先
+    # ユーザ読み上げ速度がある場合はそっちを優先
     speed = get_server_setting(guild.id, "speak_speed")
 
     usr_speed = None
-    if (type(content) == discord.message.Message):
+    if type(content) == discord.message.Message:
         usr_speed = get_user_setting(content.author.id, "speak_speed")
 
     if usr_speed != 0 and usr_speed is not None:
         speed = usr_speed
 
-    ##サーバー話者を取得する
+    # サーバー話者を取得する
     spkID = get_server_setting(guild.id, "vc_speaker")
 
-    ##読み上げ内容がメっセージの場合はユーザー話者を取得する
+    # 読み上げ内容がメっセージの場合はユーザー話者を取得する
     spkID_usr = None
-    if (type(content)==discord.message.Message):
+    if type(content) == discord.message.Message:
         spkID_usr = get_user_setting(content.author.id, "vc_speaker")
 
-    ##ユーザー話者がない場合はサーバー話者を利用する
+    # ユーザー話者がない場合はサーバー話者を利用する
     if spkID_usr != -1 and spkID_usr is not None:
         spkID = spkID_usr
 
     await queue_yomiage(speak_content, guild, spkID, speed)
 
-async def queue_yomiage(content: str, guild: discord.Guild, spkID: int, speed: float = 1):
+
+async def queue_yomiage(content: str,
+                        guild: discord.Guild,
+                        spkID: int,
+                        speed: float = 1):
     try:
         logging.debug(f'"{content}" 速度: {speed}, 話者ID: {spkID}')
 
         if USE_VOICEVOX_APP == "True":
-            params = (
-                ('text', content),
-                ('speaker', spkID)
-            )
-            _query = requests.post(
-                f'http://{VC_HOST}:{VC_PORT}/audio_query',
-                params=params
-            )
+            params = (("text", content), ("speaker", spkID))
+            _query = requests.post(f"http://{VC_HOST}:{VC_PORT}/audio_query",
+                                   params=params)
             query = _query.json()
             query["speedScale"] = speed
 
             synthesis = requests.post(
-                f'http://{VC_HOST}:{VC_PORT}/synthesis',
-                headers = {"Content-Type": "application/json"},
-                params = params,
-                data = json.dumps(query)
+                f"http://{VC_HOST}:{VC_PORT}/synthesis",
+                headers={"Content-Type": "application/json"},
+                params=params,
+                data=json.dumps(query),
             )
             voice_byte = synthesis.content
 
@@ -252,7 +274,7 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int, speed: f
 
             voice_byte = core.synthesis(audio_query, spkID)
 
-        ###作成時間を記録するため、timeを利用する
+        # 作成時間を記録するため、timeを利用する
         wav_time = time.time()
         voice_file = f"{VC_OUTPUT}{guild.id}-{wav_time}.wav"
 
@@ -262,7 +284,7 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int, speed: f
         else:
             ConnectionError()
 
-        with wave.open(voice_file,  'rb') as f:
+        with wave.open(voice_file, "rb") as f:
             # 情報取得
             fr = f.getframerate()
             fn = f.getnframes()
@@ -283,7 +305,10 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int, speed: f
         line_no = exception_traceback.tb_lineno
         await sendException(e, filename, line_no)
 
-##コンテンツが添付されている場合の処理
+
+# コンテンツが添付されている場合の処理
+
+
 def search_content(content: discord.message.Message):
     send_content = ""
 
@@ -291,13 +316,12 @@ def search_content(content: discord.message.Message):
     sticker_length = len(content.stickers)
 
     if attach_length > 0:
-        if attach_length >= 3: ##ファイル数が３つ以上なら
+        if attach_length >= 3:  # ファイル数が３つ以上なら
             _len = 2
             file_count = True
         else:
             _len = attach_length
             file_count = False
-
 
         for i in range(_len):
             attachment = content.attachments[i]
@@ -320,19 +344,18 @@ def search_content(content: discord.message.Message):
                 fixed_content = f"PDFファイル"
             send_content += fixed_content
 
-            if i != _len-1:#と　もつける
+            if i != _len - 1:  # と　もつける
                 send_content += "と"
-        #ファイルが多すぎてもこれでおっけ！
+        # ファイルが多すぎてもこれでおっけ！
         if file_count:
             send_content += f"とその他{attach_length-2}ファイル"
-        #語尾もちゃんとつける！
+        # 語尾もちゃんとつける！
         send_content += "が添付されました、"
 
     if sticker_length > 0:
         send_content += "スタンプが送信されました、"
 
     return send_content
-
 
 
 def send_voice(queue, voice_client):
@@ -348,9 +371,9 @@ def send_voice(queue, voice_client):
     pcmaudio_fixed = PCMVolumeTransformer(FFmpegPCMAudio(directry))
     pcmaudio_fixed.volume = volume
 
-    voice_client.play(pcmaudio_fixed, after=lambda e:send_voice(queue, voice_client))
+    voice_client.play(pcmaudio_fixed,
+                      after=lambda e: send_voice(queue, voice_client))
 
     if latency != -1:
-        ## 再生スタートが完了したら時間差でファイルを削除する。
+        # 再生スタートが完了したら時間差でファイルを削除する。
         delete_file_latency(directry, latency)
-
