@@ -12,7 +12,7 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
 
     # #####!!!!!!自動接続関連!!!!!!!!!!########
     # ##接続時に自動接続する
-    if after.channel != None:
+    if after.channel is not None:
         auto_channel = get_server_setting(member.guild.id, "auto_connect")
         if auto_channel == after.channel.id:
             if not member.guild.voice_client or member.guild.voice_client.channel != after.channel:
@@ -30,7 +30,7 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
 
     if member.guild.voice_client and before.channel != after.channel:
         if before.channel == member.guild.voice_client.channel:
-            if before.channel != None:
+            if before.channel is not None:
                 members = before.channel.members
                 count = 0
                 for m in before.channel.members:
@@ -57,7 +57,7 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
                             if user_mess == "nan" and mess is not None:
                                 await yomiage(f"{member.display_name}{mess}", member.guild)
 
-                            elif user_mess != None:
+                            elif user_mess is not None:
                                 user_mess = user_mess.replace("<user>", member.display_name)
                                 await yomiage(user_mess, member.guild)
                                 
@@ -77,7 +77,7 @@ async def vc_inout_process(member: discord.Member, before: discord.VoiceState, a
                             if user_mess == "nan" and mess is not None:
                                 await yomiage(f"{member.display_name}{mess}", member.guild)
 
-                            elif user_mess != None:
+                            elif user_mess is not None:
                                 user_mess = user_mess.replace("<user>", member.display_name)
                                 await yomiage(user_mess, member.guild)
 

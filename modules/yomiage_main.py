@@ -169,7 +169,7 @@ async def yomiage(content, guild: discord.Guild):
             files_content = search_content(content)
 
             ##コンテンツ  +　文章
-            if files_content != None:
+            if files_content is not None:
                 fixed_content = files_content + fixed_content
 
     elif type(content) == str:
@@ -177,7 +177,7 @@ async def yomiage(content, guild: discord.Guild):
 
     ##サーバー辞書に登録された内容で置き換える
     dicts = get_dictionary(guild.id)
-    if dicts != None:
+    if dicts is not None:
         for text, reading, user in dicts:
             fixed_content = fixed_content.replace(text.lower(), reading.lower())
 

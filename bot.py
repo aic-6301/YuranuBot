@@ -36,13 +36,13 @@ else:
 db_load("database.db")
 db_data = db_init()
 
-if db_data==False:
+if db_data is False:
     logging.exception("サーバー「設定」データベースの読み込みに失敗しました")
     sys.exit()
 else:
     logging.debug("Database -> サーバー設定を読み込みました。")
 
-if dic_data==False:
+if dic_data is False:
     logging.exception("サーバー「辞書」データベースの読み込みに失敗しました")
     sys.exit()
 else:
@@ -114,7 +114,7 @@ async def on_ready():
 
     channel_myserv = bot.get_channel(1222923566379696190)
     
-    if exceptions == True:
+    if exceptions is True:
         channel_myserv.send("botは起動しました！\n⚠一部のcogファイルにエラー発生⚠")
     else:
         await channel_myserv.send("botは起動しました！")

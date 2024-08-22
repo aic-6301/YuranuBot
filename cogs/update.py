@@ -32,7 +32,7 @@ class Update(commands.Cog):
             logging.debug(f"update -> サポートサーバーID: {support_id}")
             support_enable = True
 
-        elif type(support_id) != None:
+        elif type(support_id) is not None:
             logging.exception("update -> サポートサーバーのID記述が不適切")
         else:
             logging.warn("update -> サポートサーバー未登録(管理コマンドが利用不可)")
