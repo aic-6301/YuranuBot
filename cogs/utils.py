@@ -50,7 +50,7 @@ class utils(commands.Cog):
                                                  0)
                     if result is None:
                         await interact.response.send_message(
-                            f"**参加メッセージ機能を使わないのだ！**")
+                            "**参加メッセージ機能を使わないのだ！**")
                         return
 
                 await interact.response.send_message("エラーが発生したのだ...")
