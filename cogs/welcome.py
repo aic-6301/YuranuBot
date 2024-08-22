@@ -5,7 +5,9 @@ from modules.delete import delete_file_latency
 from modules.db_settings import get_server_setting
 from modules.image_creator import make_welcome_image
 
+
 class Welcome(commands.Cog):
+
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
@@ -20,16 +22,21 @@ class Welcome(commands.Cog):
                     path = make_welcome_image(member, guild)
 
                     file = discord.File(path[0], filename=f"{path[1]}")
-                    embed = discord.Embed(title=f"「{guild.name}」へようこそなのだ！", 
-                                        description=f"{member.mention}がやってきました。",
-                                        color= discord.Color.green(),
-                                        )
+                    embed = discord.Embed(
+                        title=f"「{guild.name}」へようこそなのだ！",
+                        description=f"{member.mention}がやってきました。",
+                        color=discord.Color.green(),
+                    )
                     embed.set_image(url=f"attachment://{path[1]}")
-                    embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
+                    embed.set_footer(
+                        text=f"{self.bot.user.display_name} | Made by yurq.",
+                        icon_url=self.bot.user.avatar.url,
+                    )
 
                     await chn.send(file=file, embed=embed)
 
                     delete_file_latency(path[0], 2)
+
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(Welcome(bot))
