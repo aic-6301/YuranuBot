@@ -12,19 +12,20 @@ from discord.ext import commands
 
 
 class Update(commands.Cog):
+
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     # 管理用サーバーにコマンドを追加 ------------------------
-    #サポートサーバーが利用可能かの認識用
+    # サポートサーバーが利用可能かの認識用
     support_enable = False
 
     try:
-        #.envを読み込み
+        # .envを読み込み
         dotenv.load_dotenv()
-        #サポート鯖のIDを取得
+        # サポート鯖のIDを取得
         support_id = os.getenv("OP_SERVER")
-        #strである場合はintに変換
+        # strである場合はintに変換
         if type(support_id) == str:
             support_id = int(support_id)
             support_obj = Object(support_id)
@@ -40,53 +41,49 @@ class Update(commands.Cog):
         logging.exception("update -> サポートサーバーの読み込みに失敗")
 
     # 管理コマンド関係 -----------------------------
-    @app_commands.command(name="op-update", description="(管理コマンド)botをアップデートして自動再起動するのだ")
+    @app_commands.command(
+        name="op-update",
+        description="(管理コマンド)botをアップデートして自動再起動するのだ",
+    )
     @app_commands.guilds(support_obj)
     async def op_update(self, interact: discord.Interaction):
         # Embedを先に送信し、アップデートを促す
-        #embedを作成
+        # embedを作成
         embed = discord.Embed(
             title="更新中なのだ...",
             description="しばらくお待ちください...",
-            color=discord.Color.blue()
+            color=discord.Color.blue(),
         )
-        embed.add_field(
-            name="アップデート状態",
-            value="`githubから取得中...`"
-        )
+        embed.add_field(name="アップデート状態", value="`githubから取得中...`")
         interact.response.send_message(embed=embed)
 
-        #githubからpullする
-        result = subprocess.run(['git', 'pull'], capture_output=True, text=True)
+        # githubからpullする
+        result = subprocess.run(["git", "pull"],
+                                capture_output=True,
+                                text=True)
         output = result.stdout
         error = result.stderr
 
-        #エラーがない場合は続行、エラーの場合は停止
+        # エラーがない場合は続行、エラーの場合は停止
         if len(error) <= 0:
             embed = discord.Embed(
                 title="更新中なのだ...",
                 description="しばらくお待ちください...",
-                color=discord.Color.green()
+                color=discord.Color.green(),
             )
-            embed.add_field(
-                name="アップデート状態",
-                value="`アップデート完了、再起動します`"
-            )
+            embed.add_field(name="アップデート状態", value="`アップデート完了、再起動します`")
             interact.response.edit_message(embed=embed)
             asyncio.sleep(2)
             sys.exit()
-        else: 
+        else:
             embed = discord.Embed(
                 title="更新に失敗したのだ",
                 description="エラーが発生したようです...",
-                color=discord.Color.red()
+                color=discord.Color.red(),
             )
-            embed.add_field(
-                name="アップデート状態",
-                value=f"`{error}`"
-            )
+            embed.add_field(name="アップデート状態", value=f"`{error}`")
             interact.response.edit_message(embed=embed)
+
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(Update(bot))
-
