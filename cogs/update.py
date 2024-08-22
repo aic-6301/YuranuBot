@@ -60,7 +60,7 @@ class Update(commands.Cog):
         # githubからpullする
         result = subprocess.run(["git", "pull"],
                                 capture_output=True,
-                                text=True)
+                                text=True, check=True)
         output = result.stdout
         error = result.stderr
 

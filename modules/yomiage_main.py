@@ -163,7 +163,6 @@ async def yomiage(content, guild: discord.Guild):
                     return
 
     if type(content) == discord.message.Message:
-        ace_left == 0
 
         fixed_content = content.content
 
@@ -223,7 +222,7 @@ async def yomiage(content, guild: discord.Guild):
     speed = get_server_setting(guild.id, "speak_speed")
 
     usr_speed = None
-    if type(content) == discord.message.Message:
+    if type(content) is discord.message.Message:
         usr_speed = get_user_setting(content.author.id, "speak_speed")
 
     if usr_speed != 0 and usr_speed is not None:
@@ -234,7 +233,7 @@ async def yomiage(content, guild: discord.Guild):
 
     # 読み上げ内容がメっセージの場合はユーザー話者を取得する
     spkID_usr = None
-    if type(content) == discord.message.Message:
+    if type(content) is discord.message.Message:
         spkID_usr = get_user_setting(content.author.id, "vc_speaker")
 
     # ユーザー話者がない場合はサーバー話者を利用する
