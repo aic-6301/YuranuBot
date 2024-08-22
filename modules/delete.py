@@ -4,13 +4,16 @@ import logging
 import os
 import sys
 
+
 def delete_file_latency(file_name, latency):
-    task = threading.Thread(target=delete_file_latency_, args=(file_name, latency))
+    task = threading.Thread(target=delete_file_latency_,
+                            args=(file_name, latency))
     task.start()
+
 
 def delete_file_latency_(file_name, latency):
     try:
-        time.sleep(latency+2.0)
+        time.sleep(latency + 2.0)
         os.remove(file_name)
 
     except Exception as e:

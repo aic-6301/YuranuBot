@@ -10,7 +10,8 @@ from discord.ext import commands
 
 battery = psutil.sensors_battery()
 
-class PCStatus():
+
+class PCStatus:
     os_name: str = None
 
     cpu_name: str = None
@@ -24,22 +25,25 @@ class PCStatus():
     gpu_name: str = None
     gpu_load: float = None
     gpu_mem_use: float = None
-    gpu_mem_total: float = 4.0 # GPUの最大メモリを取得できないため、自分で設定してある
+    gpu_mem_total: float = 4.0  # GPUの最大メモリを取得できないため、自分で設定してある
     gpu_mem_percent: float = None
 
-##Windowsの場合の処理
+
+# Windowsの場合の処理
 if platform.uname().system == "Windows":
-    ### LibreHardwareMonitorのライブラリをロード
+    # LibreHardwareMonitorのライブラリをロード
     import clr
-    clr.AddReference(r'dll\LibreHardwareMonitorLib') 
+
+    clr.AddReference(r"dll\LibreHardwareMonitorLib")
 
     from LibreHardwareMonitor.Hardware import Computer
+
     logging.debug("LibreHardWareMonitorLib -> 読み込み完了")
 
-    ### 表示するデータを選択してオープン
+    # 表示するデータを選択してオープン
     computer = Computer()
 
-    ###LibreHardwareMonitorの設定を格納する
+    # LibreHardwareMonitorの設定を格納する
     computer.IsCpuEnabled = True
     computer.IsGpuEnabled = True
     # computer.IsMemoryEnabled = True
@@ -49,6 +53,7 @@ if platform.uname().system == "Windows":
     # computer.IsStorageEnabled = True
 
     computer.Open()
+
 
 async def pc_status():
     os_info = platform.uname()
@@ -72,7 +77,7 @@ async def pc_status():
                 if str(sensor.Name) == "GPU Core":
                     pc.gpu_load = sensor.Value
                 if str(sensor.Name) == "D3D Dedicated Memory Used":
-                    pc.gpu_mem_use = sensor.Value/1024
+                    pc.gpu_mem_use = sensor.Value / 1024
 
     elif os_info.system == "Linux":
         pc.cpu_name = platform.processor()
@@ -80,8 +85,8 @@ async def pc_status():
 
     pc.os_name = os_info.system
     pc.cpu_freq = psutil.cpu_freq().current / 1000
-    pc.ram_use = ram_info.used/1024/1024/1024
-    pc.ram_total = ram_info.total/1024/1024/1024
+    pc.ram_use = ram_info.used / 1024 / 1024 / 1024
+    pc.ram_total = ram_info.total / 1024 / 1024 / 1024
     pc.ram_percent = ram_info.percent
 
     if pc.gpu_mem_total != None and pc.gpu_mem_use != None:
